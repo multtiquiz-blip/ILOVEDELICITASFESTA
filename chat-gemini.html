@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Delinha - I Love Delicitas</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 600px; margin: 2rem auto; padding: 1rem; }
+        #chat { background: #f8f9fa; border-radius: 1rem; padding: 1rem; height: 400px; overflow-y: auto; margin-bottom: 1rem; }
+        .user { text-align: right; background: #ae2f34; color: white; padding: 0.5rem; border-radius: 1rem; margin: 0.5rem 0; display: inline-block; width: auto; max-width: 80%; float: right; clear: both; }
+        .bot { text-align: left; background: #e9ecef; color: #1d1b1b; padding: 0.5rem; border-radius: 1rem; margin: 0.5rem 0; max-width: 80%; float: left; clear: both; }
+        .clearfix::after { content: ""; clear: both; display: table; }
+        input, button { padding: 0.5rem; font-size: 1rem; }
+        input { width: 70%; }
+        button { width: 25%; background: #ae2f34; color: white; border: none; border-radius: 2rem; }
+    </style>
+</head>
+<body>
+    <h1>🧁 Delinha (modo teste)</h1>
+    <div id="chat" class="clearfix"></div>
+    <div>
+        <input type="text" id="pergunta" placeholder="Digite sua pergunta...">
+        <button onclick="enviar()">Enviar</button>
+    </div>
+    <p style="font-size:0.8rem; margin-top:1rem;">* Testando com API Gemini. A Delinha pode demorar alguns segundos.</p>
+
+    <script>
+        // COLE SUA CHAVE AQUI
+        const API_KEY = "AQ.Ab8RN6LUhgKXZsgxkrYJ-EDuXqYfVZj47DH4jJ9j9iG2CVoyJg";
+        const SYSTEM_PROMPT = `Você é a Delinha, especialista em festas da I Love Delicitas. 
+        Seu tom é amigável, acolhedor, profissional. Use emojis com moderação.
+        Regras de negócio:
+        - Produtos: salgados, doces e lanches artesanais. Não trabalhamos com bolo, refrigerantes ou bebidas.
+        - Fritura: O cliente pode retirar o pedido já frito ou congelado (sem custo extra). 
+          Se o cliente quiser que a equipe vá até o local do evento para fritar, isso é um serviço adicional com orçamento separado.
+        - Entrega: Não temos frota própria. Cliente retira ou contrata entregador por aplicativo.
+        - Pagamento: Pix ou cartão em até 3 vezes. Sinal de 50%.
+        - Prazos: até 300 un = 72h; 300-800 un = 7 dias; acima de 800 un ou com fritura local = 15 dias.
+        - Orçamento: valores somente via WhatsApp. Nunca dê preços fixos.
+        - Respostas devem ser curtas, claras e úteis. Nunca invente informações.`;
+
+        async function enviar() {
+            const input = document.getElementById('pergunta');
+            const mensagem = input.value.trim();
+            if (!mensagem) return;
+            adicionarMensagem(mensagem, 'user');
+            input.value = '';
+
+            try {
+                const resposta = await chamarGemini(mensagem);
+                adicionarMensagem(resposta, 'bot');
+            } catch (erro) {
+                adicionarMensagem("Erro: não consegui responder agora. Tente novamente.", 'bot');
+                console.error(erro);
+            }
+        }
+
+        async function chamarGemini(textoUsuario) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+            const corpo = {
+                system_instruction: {
+                    parts: [{ text: SYSTEM_PROMPT }]
+                },
+                contents: [{
+                    parts: [{ text: textoUsuario }]
+                }]
+            };
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(corpo)
+            });
+            if (!response.ok) {
+                const erro = await response.text();
+                throw new Error(erro);
+            }
+            const data = await response.json();
+            return data.candidates[0]?.content?.parts[0]?.text || "Desculpe, não entendi. Pode perguntar de outra forma?";
+        }
+
+        function adicionarMensagem(texto, tipo) {
+            const chatDiv = document.getElementById('chat');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = tipo === 'user' ? 'user' : 'bot';
+            msgDiv.innerText = texto;
+            chatDiv.appendChild(msgDiv);
+            chatDiv.scrollTop = chatDiv.scrollHeight;
+        }
+    </script>
+</body>
+</html>
