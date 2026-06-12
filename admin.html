@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel I Love Delicitas</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
     body { background: #f1f5f9; font-family: system-ui, sans-serif; }
@@ -18,21 +19,24 @@
     input, textarea, select { border: 1px solid #cbd5e1; border-radius: 0.5rem; padding: 0.5rem; width: 100%; background: white; }
     label { font-weight: 600; font-size: 0.875rem; display: block; margin-bottom: 0.25rem; color: #334155; }
     .image-preview { width: 60px; height: 60px; object-fit: cover; border-radius: 0.5rem; margin-top: 0.5rem; border: 1px solid #e2e8f0; }
+    .status-badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; display: inline-block; }
+    .status-success { background: #d1fae5; color: #065f46; }
+    .status-error { background: #fee2e2; color: #991b1b; }
+    .status-warning { background: #fed7aa; color: #92400e; }
   </style>
 </head>
 <body class="p-4 md:p-8">
 
 <div id="app" class="max-w-7xl mx-auto">
-  <!-- HEADER -->
   <div class="bg-white rounded-xl shadow-md p-5 flex justify-between items-center mb-6">
     <div>
       <h1 class="text-2xl font-bold text-gray-800">Painel I Love Delicitas</h1>
-      <p class="text-sm text-gray-500 mt-1">Edite todos os dados do site – as alterações salvam no navegador (e opcionalmente no Supabase)</p>
+      <p class="text-sm text-gray-500 mt-1">Edite os dados – as alterações vão para o Supabase e para o site</p>
     </div>
-    <div id="status" class="text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full">✅ Modo local – dados carregados</div>
+    <div id="status" class="status-badge status-warning">🔄 Conectando...</div>
   </div>
 
-  <!-- ABAS -->
+  <!-- Abas (mesmo layout) -->
   <div class="flex flex-wrap gap-2 mb-6 border-b pb-2">
     <button onclick="mostrarAba('config')" id="btnConfig" class="tab-active px-5 py-2.5 rounded-lg font-semibold">⚙️ Configurações</button>
     <button onclick="mostrarAba('regras')" id="btnRegras" class="tab-inactive px-5 py-2.5 rounded-lg font-semibold">📊 Calculadora</button>
@@ -43,434 +47,301 @@
     <button onclick="mostrarAba('horario')" id="btnHorario" class="tab-inactive px-5 py-2.5 rounded-lg font-semibold">⏰ Horário</button>
   </div>
 
-  <!-- ==================== CONFIGURAÇÕES ==================== -->
-  <div id="abaConfig" class="card">
-    <h2 class="text-xl font-bold mb-4">Configurações Gerais</h2>
-    <div id="configList" class="grid md:grid-cols-2 gap-4"></div>
-    <button onclick="salvarConfiguracoes()" class="btn-primary mt-4">💾 Salvar Configurações</button>
-  </div>
-
-  <!-- ==================== REGRAS DA CALCULADORA ==================== -->
-  <div id="abaRegras" class="card hidden">
-    <h2 class="text-xl font-bold mb-4">Regras da Calculadora</h2>
-    <div id="regrasList"></div>
-    <button onclick="salvarRegras()" class="btn-primary mt-4">💾 Salvar Regras</button>
-  </div>
-
-  <!-- ==================== CARDÁPIO ==================== -->
-  <div id="abaCardapio" class="card hidden">
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl font-bold">Cardápio Completo</h2>
-      <button onclick="novoProduto()" class="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm">+ Adicionar Produto</button>
-    </div>
-    <div id="produtosList" class="space-y-2 max-h-[500px] overflow-y-auto"></div>
-  </div>
-
-  <!-- ==================== FAQ ==================== -->
-  <div id="abaFaq" class="card hidden">
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl font-bold">Perguntas Frequentes (FAQ)</h2>
-      <button onclick="novoFaq()" class="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm">+ Adicionar FAQ</button>
-    </div>
-    <div id="faqList" class="space-y-2 max-h-[500px] overflow-y-auto"></div>
-  </div>
-
-  <!-- ==================== RESPOSTAS DA DELINHA ==================== -->
-  <div id="abaRespostas" class="card hidden">
-    <h2 class="text-xl font-bold mb-4">Respostas da Delinha (Chat)</h2>
-    <div id="respostasList"></div>
-    <button onclick="salvarRespostas()" class="btn-primary mt-4">💾 Salvar Respostas</button>
-  </div>
-
-  <!-- ==================== REDES SOCIAIS ==================== -->
-  <div id="abaRedes" class="card hidden">
-    <h2 class="text-xl font-bold mb-4">Redes Sociais</h2>
-    <div id="redesList" class="grid md:grid-cols-2 gap-4"></div>
-    <button onclick="salvarRedes()" class="btn-primary mt-4">💾 Salvar Redes</button>
-  </div>
-
-  <!-- ==================== HORÁRIO ==================== -->
-  <div id="abaHorario" class="card hidden">
-    <h2 class="text-xl font-bold mb-4">Horário de Funcionamento</h2>
-    <div id="horarioList" class="grid md:grid-cols-2 gap-4"></div>
-    <button onclick="salvarHorario()" class="btn-primary mt-4">💾 Salvar Horário</button>
-  </div>
+  <!-- Abas (conteúdo) -->
+  <div id="abaConfig" class="card"><h2 class="text-xl font-bold mb-4">Configurações Gerais</h2><div id="configList" class="grid md:grid-cols-2 gap-4"></div><button onclick="salvarConfiguracoes()" class="btn-primary mt-4">💾 Salvar Configurações</button></div>
+  <div id="abaRegras" class="card hidden"><h2 class="text-xl font-bold mb-4">Regras da Calculadora</h2><div id="regrasList"></div><button onclick="salvarRegras()" class="btn-primary mt-4">💾 Salvar Regras</button></div>
+  <div id="abaCardapio" class="card hidden"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">Cardápio</h2><button onclick="novoProduto()" class="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm">+ Adicionar</button></div><div id="produtosList" class="space-y-2 max-h-[500px] overflow-y-auto"></div></div>
+  <div id="abaFaq" class="card hidden"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">FAQ</h2><button onclick="novoFaq()" class="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm">+ Adicionar</button></div><div id="faqList" class="space-y-2 max-h-[500px] overflow-y-auto"></div></div>
+  <div id="abaRespostas" class="card hidden"><h2 class="text-xl font-bold mb-4">Respostas da Delinha</h2><div id="respostasList"></div><button onclick="salvarRespostas()" class="btn-primary mt-4">💾 Salvar Respostas</button></div>
+  <div id="abaRedes" class="card hidden"><h2 class="text-xl font-bold mb-4">Redes Sociais</h2><div id="redesList" class="grid md:grid-cols-2 gap-4"></div><button onclick="salvarRedes()" class="btn-primary mt-4">💾 Salvar Redes</button></div>
+  <div id="abaHorario" class="card hidden"><h2 class="text-xl font-bold mb-4">Horário</h2><div id="horarioList" class="grid md:grid-cols-2 gap-4"></div><button onclick="salvarHorario()" class="btn-primary mt-4">💾 Salvar Horário</button></div>
 </div>
 
 <script>
-  // =====================================================
-  // DADOS PADRÃO (tudo o que o site precisa)
-  // =====================================================
+  // ========== CONFIG SUPABASE ==========
+  const SUPABASE_URL = 'https://sikiufknmldvkcxcktsn.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpa2l1ZmtubWxkdmtjeGNrdHNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNjYzMzgsImV4cCI6MjA5Njg0MjMzOH0.WKh9GdL3yJxnQqGUhLIeJNOm-7NRhgaMXW8vlkmEb0I';
+  let supabase = null;
+  let supabaseConectado = false;
+
+  // ========== DADOS PADRÃO (FALLBACK) ==========
   let dados = {
-    config: [
-      { chave: 'logo_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo' },
-      { chave: 'banner_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY' },
-      { chave: 'titulo_hero', valor: 'A Celebração que o Seu Paladar Merece' },
-      { chave: 'subtitulo_hero', valor: 'Doces e salgados artesanais. Fritura no local, retirada ou frete por aplicativo. BH e região.' },
-      { chave: 'texto_retirada', valor: '📦 Retirada no local ou frete por aplicativo (consultar valor)' },
-      { chave: 'texto_pagamento', valor: '💳 Pagamento: Pix ou cartão de crédito em até 3x' },
-      { chave: 'texto_fritura', valor: '🍟 Serviço de fritura no local incluso por até 4 horas de evento. Consulte valores.' },
-      { chave: 'telefone', valor: '5531999999999' },
-      { chave: 'whatsapp_link', valor: 'https://wa.me/5531999999999' },
-      { chave: 'rodape_texto', valor: 'Gastronomia artesanal para festas em Belo Horizonte. Qualidade artesanal com a agilidade que você precisa.' },
-      { chave: 'rodape_copyright', valor: '© 2025 I Love Delicitas. Todos os direitos reservados.' },
-      { chave: 'cep_entrega', valor: '30000-000 a 35000-000 (Belo Horizonte)' },
-      { chave: 'mensagem_promocional', valor: '🎉 Reserve com 15 dias de antecedência e ganhe 5% de desconto!' }
-    ],
-    regras: [
-      { tipo_evento: 'adulto', salgados_por_pessoa: 12, doces_por_pessoa: 6 },
-      { tipo_evento: 'infantil', salgados_por_pessoa: 10, doces_por_pessoa: 6 },
-      { tipo_evento: 'corporativo', salgados_por_pessoa: 8, doces_por_pessoa: 4 }
-    ],
-    produtos: [
-      { id: 1, nome: 'Coxinha de Frango', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Clássica massa de batata com frango desfiado temperado.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY' },
-      { id: 2, nome: 'Bolinha de Queijo', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Massa cremosa recheada com mussarela selecionada.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0ug3bpYC-14I1zO_V97PZ7Fim7BL0amfHX29RlVcu_yRoGkDYHJ6_a6VyX1aTBGbgIUVAV81BgXI_QR7AOMINpO8jDZV2BP8rLuWLJg2s1D0ksCnhzV_WitKxREq6N2SNyOUKF6jZ542g0MldwI4Y5SUhR9JtLWAWOy5HW9qUJ9cOUse400WRjrgjmh6gZfWTwkg2taQPrkh596wdx8ZTysbCSGrM0dpYMpOVmvmc5K_o5bYIOCxpUBkczA' },
-      { id: 3, nome: 'Risole de Carne', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Recheio de carne bovina moída com temperos da casa.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0uhwURqBjCY-ysz5Do_AYSGrA2SS77pSEf8y8fW3b57ktXyrZTXNgm5oMnObhrKY7g3oFBY_G8ZkuLbjg-fI84iGllruOF5_EvdjBKY3fPVhB2mBq0AXhGxKA4yjK8SVjId21wxUxNeUJNPoV4UMiOMOzGVnHFhGMY5uFuUf_r--E37whcipdnJnPycipYUUVVYQhlHlZz_jFowD5MEmcUXVx6avhQV_i08nG0nKBx-DeQTv2kq9USniFeoR' },
-      { id: 4, nome: 'Bolinha Presunto e Queijo', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Combinação perfeita de presunto e queijo derretido.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0ujIoGjcTUfESCmAjnBwBtv2V2QMjDI7aHmMDjkHO2Ec9i8u4otaWDq1saiK-vkKofwaEx_lk4Fx1jhHHoMxbAolITSKHLP4OfMMaozYNCxjJDNcaCkznGxIp78Es9uNAL_oZ4hwTwF7odzCMrcayduggGmJ7nyFlVDIrBKh3OmTUsIY1dVBgkV4ajGbnerExLvB8ThYnyPdtcPb6g2953qYlzjo-sgl0xGi-8axaBBUBDasHCrTfMyfMcc' },
-      { id: 5, nome: 'Pastel de Calabresa', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Calabresa moída com toque especial de ervas.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0uhoAPdXxn2heAYFv0TTRroX115rnEcWjsxhnaIjeYF5NK2THaLYXeVT7qtAQvY-Gs_nucdZkI_dMxUQLZLkZQ_iKGvZFQBUvlxedlFBL7Twzh72BRZyVs93M_D8nHk1hG57B0cg8wK0qbJRikZiQTBzStrwXe5QKZekuVCvJCxHEt42gNUrRw0lX34q4oxO8XWkmIcafJ2UjElH-e2qjlcIQC7ZGQn6cNROrcXObIjSbIUjYd9E3VWV7Pk' },
-      { id: 6, nome: 'Pastel de Milho', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Recheio suave de milho verde selecionado.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0ujdQf6etdUVjy-AH23W66Tc1tvz0bvfa6gb0Orn1z8y1KpigHM3I68khjZiHdTKg0d1wpmaTWRCIPQBFVaZcONyEWFH2TkzAXNRp7HtviU5AUH7CXfLMECE8neNkl0z1fr9IW9D1iRP_jaHhCc5eKdHP0T3w6-6PVS09d9UXgkAn_mLKaGhPKK7udIZQo8Ji8lm8UkZGaxZFSCYVI0I8h7bLrPgLO9j0e8luAwUyKGnu4_qX-EiTCZhpKk' },
-      { id: 7, nome: 'Mini Quibe', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Trigo de alta qualidade com carne e hortelã fresca.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0ug7Z_3vibGIQV_ru4AAVLufkJJ-djoHVkFvjdaZWAtTC2N12hBnIB3MOc6174Q6zxwXHV9EOdewI2HytnaZUa8l3UvPnfE3Ok4B1iaw3con5ZjyAekTsXe_mcJvOkVbASDr8bIG7sZ0Svq5ykPm2nXwFAy5hk1Lq5rsrWXN-_1fpcK2WK50ITfXpCk7ObdZIGdV2DoPia8n6ecQg8hS7pp9wL-_Wnv6bQGiyTQtojIDIQt-xQvJgQMNLGvK' },
-      { id: 8, nome: 'Medalhão de Salsicha', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Salsicha premium envolta em massa crocante.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0ujLO2kxjAyLn3v3hrOZQvnDzje_IJTjN4fvzAkBmXm2uv-Q5rX-ehwh6ifZ_19G-N_diIEQFPwQVs7eA6CmXbM1zp9AE8JUmxoP32uvt-LS6cqVrnzZWqV-BgUsjji6-jQobHxoqpD2bPaGTzdP_fHlU6O-qqUtKErk85v2pePx8MYVPCGKtuSGpcMYbUZ8yjKGqNyNUQbqniIOMcBwkjRBkoipBjkJySwMJAtuYrrAy3LEQ1KQP61K_3vd' },
-      { id: 9, nome: 'Empada de Frango', preco: 125, categoria: 'Assados', unidade: 'Cento (100 un.)', descricao: 'Massa podre tradicional com recheio cremoso.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0uhT2DFMiIXo6dcHOIcwQwDtF6mfpRyzpE11jeulvjnvTlOakapO0gakJcbbqreE5pU72soB7JqUQNbsSv29wTcVLnN0SGQEQd1-rLUTOR0QAFTVz8HTbf3Ps8MIlqOcdD1i1S65--wsG3StcT42EXTnNXAcg7pdCqBcgrd55i3auNqOSP69WnPWr8wdCz6g5ZRUYilMYUz94tGN9hgEJD9fsdgSwiJ4woAVMJbJyXhAT5DNh8N9mZrEQQTu' },
-      { id: 10, nome: 'Empada de Queijo', preco: 125, categoria: 'Assados', unidade: 'Cento (100 un.)', descricao: 'Deliciosa massa amanteigada com queijo.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0uhT2DFMiIXo6dcHOIcwQwDtF6mfpRyzpE11jeulvjnvTlOakapO0gakJcbbqreE5pU72soB7JqUQNbsSv29wTcVLnN0SGQEQd1-rLUTOR0QAFTVz8HTbf3Ps8MIlqOcdD1i1S65--wsG3StcT42EXTnNXAcg7pdCqBcgrd55i3auNqOSP69WnPWr8wdCz6g5ZRUYilMYUz94tGN9hgEJD9fsdgSwiJ4woAVMJbJyXhAT5DNh8N9mZrEQQTu' },
-      { id: 11, nome: 'Empada de Presunto', preco: 125, categoria: 'Assados', unidade: 'Cento (100 un.)', descricao: 'Sabor suave e textura que derrete na boca.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0uhT2DFMiIXo6dcHOIcwQwDtF6mfpRyzpE11jeulvjnvTlOakapO0gakJcbbqreE5pU72soB7JqUQNbsSv29wTcVLnN0SGQEQd1-rLUTOR0QAFTVz8HTbf3Ps8MIlqOcdD1i1S65--wsG3StcT42EXTnNXAcg7pdCqBcgrd55i3auNqOSP69WnPWr8wdCz6g5ZRUYilMYUz94tGN9hgEJD9fsdgSwiJ4woAVMJbJyXhAT5DNh8N9mZrEQQTu' },
-      { id: 12, nome: 'Empada de Palmito', preco: 125, categoria: 'Assados', unidade: 'Cento (100 un.)', descricao: 'Recheio de palmito especial e cremoso.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0uhT2DFMiIXo6dcHOIcwQwDtF6mfpRyzpE11jeulvjnvTlOakapO0gakJcbbqreE5pU72soB7JqUQNbsSv29wTcVLnN0SGQEQd1-rLUTOR0QAFTVz8HTbf3Ps8MIlqOcdD1i1S65--wsG3StcT42EXTnNXAcg7pdCqBcgrd55i3auNqOSP69WnPWr8wdCz6g5ZRUYilMYUz94tGN9hgEJD9fsdgSwiJ4woAVMJbJyXhAT5DNh8N9mZrEQQTu' },
-      { id: 13, nome: 'Mini Esfirra Assada', preco: 125, categoria: 'Assados', unidade: 'Cento (100 un.)', descricao: 'Massa leve e fofinha com carne temperada.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0uhwURqBjCY-ysz5Do_AYSGrA2SS77pSEf8y8fW3b57ktXyrZTXNgm5oMnObhrKY7g3oFBY_G8ZkuLbjg-fI84iGllruOF5_EvdjBKY3fPVhB2mBq0AXhGxKA4yjK8SVjId21wxUxNeUJNPoV4UMiOMOzGVnHFhGMY5uFuUf_r--E37whcipdnJnPycipYUUVVYQhlHlZz_jFowD5MEmcUXVx6avhQV_i08nG0nKBx-DeQTv2kq9USniFeoR' },
-      { id: 14, nome: 'Mini Marta Rocha', preco: 125, categoria: 'Assados', unidade: 'Cento (100 un.)', descricao: 'Salgado assado especial da casa.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0uhwURqBjCY-ysz5Do_AYSGrA2SS77pSEf8y8fW3b57ktXyrZTXNgm5oMnObhrKY7g3oFBY_G8ZkuLbjg-fI84iGllruOF5_EvdjBKY3fPVhB2mBq0AXhGxKA4yjK8SVjId21wxUxNeUJNPoV4UMiOMOzGVnHFhGMY5uFuUf_r--E37whcipdnJnPycipYUUVVYQhlHlZz_jFowD5MEmcUXVx6avhQV_i08nG0nKBx-DeQTv2kq9USniFeoR' },
-      { id: 15, nome: 'Mini Pão de Frango', preco: 125, categoria: 'Assados', unidade: 'Cento (100 un.)', descricao: 'Pãozinho caseiro recheado com frango cremoso.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0uiTjpuUGiUIi_uCtbInbHa6-OALQ8nSTKnuFumYRZw7yLtq6OfxIyFXowUf71zPpKSzY52QjbdLaTxonk2FhbThmuz0R7mO6bCmzudODEvNr8oZhYSQBpoduFHJqw9O0zkMBhPNk6n1ku0kxQsdvPrj7fVQ0wrlXt1_bns0KurekpWreBzryrqGdPakbp2RNfh1_wdhTjry-5PI93R9yFmd2Cj0qh67tvOMx_dhvZBRvThZvQU77eUXufwP' },
-      { id: 16, nome: 'Mini Pão Batata Calabresa', preco: 125, categoria: 'Assados', unidade: 'Cento (100 un.)', descricao: 'Massa de batata com calabresa e cebola.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0uiTjpuUGiUIi_uCtbInbHa6-OALQ8nSTKnuFumYRZw7yLtq6OfxIyFXowUf71zPpKSzY52QjbdLaTxonk2FhbThmuz0R7mO6bCmzudODEvNr8oZhYSQBpoduFHJqw9O0zkMBhPNk6n1ku0kxQsdvPrj7fVQ0wrlXt1_bns0KurekpWreBzryrqGdPakbp2RNfh1_wdhTjry-5PI93R9yFmd2Cj0qh67tvOMx_dhvZBRvThZvQU77eUXufwP' },
-      { id: 17, nome: 'Mini X-Burguer', preco: 4.90, categoria: 'Lanches', unidade: 'Unidade (Mín. 10)', descricao: 'Hambúrguer artesanal e queijo no mini pão.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0uj8bACtDY9tmuQoPWVGx-rmuGRTnMXEkySN8z2R-afFNDg67Ad8mvBnAJxMSFyyU20NOKikNSUOOjb3vbYx3-bwm6m1HR7rYoFuF8xYfvSU62bZGy9ywURwsPOjNrfGT4RCzMrvkqMJinTMv-_D_D_8Ntjf0iiYeApA2tKlhggOhmS2q_aWv5KsGBCM2-so__FnhsPi8LTDSUFgjexZC3vm5TWkS1GM4_7WjX_XCc7AAx9LZVbUK-k68xT5' },
-      { id: 18, nome: 'Mini X-Calabresa', preco: 4.90, categoria: 'Lanches', unidade: 'Unidade (Mín. 10)', descricao: 'Fatias de calabresa acebolada e queijo.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0uj8bACtDY9tmuQoPWVGx-rmuGRTnMXEkySN8z2R-afFNDg67Ad8mvBnAJxMSFyyU20NOKikNSUOOjb3vbYx3-bwm6m1HR7rYoFuF8xYfvSU62bZGy9ywURwsPOjNrfGT4RCzMrvkqMJinTMv-_D_D_8Ntjf0iiYeApA2tKlhggOhmS2q_aWv5KsGBCM2-so__FnhsPi8LTDSUFgjexZC3vm5TWkS1GM4_7WjX_XCc7AAx9LZVbUK-k68xT5' },
-      { id: 19, nome: 'Mini X-Salada', preco: 4.90, categoria: 'Lanches', unidade: 'Unidade (Mín. 10)', descricao: 'Mini burguer com queijo, alface e tomate.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0uj8bACtDY9tmuQoPWVGx-rmuGRTnMXEkySN8z2R-afFNDg67Ad8mvBnAJxMSFyyU20NOKikNSUOOjb3vbYx3-bwm6m1HR7rYoFuF8xYfvSU62bZGy9ywURwsPOjNrfGT4RCzMrvkqMJinTMv-_D_D_8Ntjf0iiYeApA2tKlhggOhmS2q_aWv5KsGBCM2-so__FnhsPi8LTDSUFgjexZC3vm5TWkS1GM4_7WjX_XCc7AAx9LZVbUK-k68xT5' },
-      { id: 20, nome: 'Mini X-Frango', preco: 4.90, categoria: 'Lanches', unidade: 'Unidade (Mín. 10)', descricao: 'Frango grelhado suculento com queijo.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0uj8bACtDY9tmuQoPWVGx-rmuGRTnMXEkySN8z2R-afFNDg67Ad8mvBnAJxMSFyyU20NOKikNSUOOjb3vbYx3-bwm6m1HR7rYoFuF8xYfvSU62bZGy9ywURwsPOjNrfGT4RCzMrvkqMJinTMv-_D_D_8Ntjf0iiYeApA2tKlhggOhmS2q_aWv5KsGBCM2-so__FnhsPi8LTDSUFgjexZC3vm5TWkS1GM4_7WjX_XCc7AAx9LZVbUK-k68xT5' },
-      { id: 21, nome: 'Brigadeiro Chocolate', preco: 140, categoria: 'Doces', unidade: 'Cento (100 un.)', descricao: 'O clássico preferido de chocolate belga.', imagem: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
-      { id: 22, nome: 'Brigadeiro Branco', preco: 140, categoria: 'Doces', unidade: 'Cento (100 un.)', descricao: 'Doçura suave do leite condensado puro.', imagem: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
-      { id: 23, nome: 'Olho de Sogra', preco: 140, categoria: 'Doces', unidade: 'Cento (100 un.)', descricao: 'Ameixa selecionada com beijinho de coco.', imagem: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
-      { id: 24, nome: 'Cajuzinho', preco: 140, categoria: 'Doces', unidade: 'Cento (100 un.)', descricao: 'Amendoim torrado com toque de cacau.', imagem: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
-      { id: 25, nome: 'Casadinho', preco: 140, categoria: 'Doces', unidade: 'Cento (100 un.)', descricao: 'União do brigadeiro preto e branco.', imagem: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
-      { id: 26, nome: 'Beijinho de Coco', preco: 140, categoria: 'Doces', unidade: 'Cento (100 un.)', descricao: 'Coco ralado fresco e leite condensado.', imagem: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
-      { id: 27, nome: 'Mini Tortinhas Mousse', preco: 150, categoria: 'Doces', unidade: 'Cento (100 un.)', descricao: 'Tortinhas crocantes com mousse aerada.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0ujZQMZLaX69NTcOe1py-xglNJfMNYr5zqp67pQvxEPC-EpjA41VGwb2-9XQJnOIw_gw97-58WMBBfkNxKJ2r8vacVDQMS8ztfzytTPJjSuYO7lrF0suO6UpO0s95rcDkuC55cEVHLm6yJe8BVTCo2aVQ8btD8RHtGHrJhwWmoCNPOGntCaeT-Mm5KfvFW4sgfmKY0jnXPVIn7M9-6dUll82gUq17qVeL14rexObBIzhdBJ1gThY4DCScMQ' },
-      { id: 28, nome: 'Mini Trufas Gourmet', preco: 250, categoria: 'Doces', unidade: 'Cento (100 un.)', descricao: 'Trufas artesanais com chocolate nobre.', imagem: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' }
-    ],
-    faq: [
-      { id: 1, pergunta: 'Qual o prazo mínimo para encomendar?', resposta: 'Recomendamos um prazo mínimo de 7 dias para encomendas menores e 15 dias para grandes eventos, garantindo a qualidade e frescor dos nossos produtos artesanais.', ordem: 1 },
-      { id: 2, pergunta: 'Como faço para reservar minha data?', resposta: 'A reserva é confirmada mediante o pagamento de um sinal ou aprovação total do orçamento via Pix ou Cartão.', ordem: 2 },
-      { id: 3, pergunta: 'Posso alterar meu pedido depois de confirmado?', resposta: 'Alterações podem ser solicitadas com até 72 horas de antecedência, sujeitas a disponibilidade de agenda e insumos.', ordem: 3 },
-      { id: 4, pergunta: 'Vocês entregam?', resposta: 'O cliente retira no local ou contrata um entregador por aplicativo (Uber, 99, etc.). Não temos frota própria.', ordem: 4 },
-      { id: 5, pergunta: 'Posso retirar meu pedido?', resposta: 'Sim, a retirada pode ser agendada em nossa unidade central em horários pré-estabelecidos.', ordem: 5 },
-      { id: 6, pergunta: 'Como é calculado o frete?', resposta: 'O valor do frete é calculado com base na distância entre nossa cozinha e o local do seu evento, quando você contrata o entregador.', ordem: 6 },
-      { id: 7, pergunta: 'Quais formas de pagamento são aceitas?', resposta: 'Aceitamos PIX e Cartão de Crédito em até 3 vezes.', ordem: 7 },
-      { id: 8, pergunta: 'É possível parcelar?', resposta: 'Sim, oferecemos parcelamento em até 3x no cartão de crédito.', ordem: 8 },
-      { id: 9, pergunta: 'Como funciona a segurança da minha encomenda?', resposta: 'Seguimos rigorosos protocolos de higiene. Sua encomenda é preparada com cuidado e embalada adequadamente.', ordem: 9 },
-      { id: 10, pergunta: 'Existe contrato?', resposta: 'Para todos os pedidos, emitimos um comprovante detalhado que serve como contrato de prestação de serviços.', ordem: 10 },
-      { id: 11, pergunta: 'Como meus dados são utilizados?', resposta: 'Seus dados são usados exclusivamente para a gestão do seu pedido e melhoria da sua experiência, em conformidade com a LGPD.', ordem: 11 },
-      { id: 12, pergunta: 'Meus dados são protegidos?', resposta: 'Sim, utilizamos criptografia e servidores seguros para garantir que suas informações pessoais estejam sempre protegidas.', ordem: 12 },
-      { id: 13, pergunta: 'Como falar com o suporte?', resposta: 'WhatsApp: (31) 99999-9999 | Telefone: (31) 3333-3333 | E-mail: suporte@ilovedelicitas.com.br | Horário: Seg à Sex, 09h às 18h', ordem: 13 }
-    ],
-    respostas: [
-      { palavra_chave: 'prazo', resposta: 'Nosso prazo mínimo é de 72 horas. Para eventos grandes, recomendamos 15 dias de antecedência.' },
-      { palavra_chave: 'pagamento', resposta: 'Aceitamos Pix ou cartão de crédito em até 3 vezes.' },
-      { palavra_chave: 'entrega', resposta: 'Você retira no local ou contrata um frete por aplicativo. Não temos frota própria.' },
-      { palavra_chave: 'fritura', resposta: 'Fazemos a fritura no local do evento por até 4 horas. Consulte o valor pelo WhatsApp.' },
-      { palavra_chave: 'calcular', resposta: 'Use a calculadora do site para saber as quantidades. Depois me pergunte o valor total pelo WhatsApp :)' }
-    ],
-    redes: [
-      { plataforma: 'instagram', url: 'https://instagram.com/ilovedelicitas', ativo: true },
-      { plataforma: 'facebook', url: 'https://facebook.com/ilovedelicitas', ativo: true },
-      { plataforma: 'tiktok', url: 'https://tiktok.com/@ilovedelicitas', ativo: true },
-      { plataforma: 'youtube', url: '', ativo: false },
-      { plataforma: 'twitter', url: '', ativo: false },
-      { plataforma: 'linkedin', url: '', ativo: false }
-    ],
-    horario: [
-      { dia: 'segunda', abertura: '09:00', fechamento: '18:00', fechado: false },
-      { dia: 'terca', abertura: '09:00', fechamento: '18:00', fechado: false },
-      { dia: 'quarta', abertura: '09:00', fechamento: '18:00', fechado: false },
-      { dia: 'quinta', abertura: '09:00', fechamento: '18:00', fechado: false },
-      { dia: 'sexta', abertura: '09:00', fechamento: '18:00', fechado: false },
-      { dia: 'sabado', abertura: '09:00', fechamento: '16:00', fechado: false },
-      { dia: 'domingo', abertura: '', fechamento: '', fechado: true }
-    ]
+    config: [],
+    regras: [],
+    produtos: [],
+    faq: [],
+    respostas: [],
+    redes: [],
+    horario: []
   };
 
-  // ========== SALVAR E CARREGAR DO LOCALSTORAGE ==========
-  function carregarDoLocalStorage() {
-    const saved = localStorage.getItem('admin_dados_ilovedelicitas');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (parsed.config) dados.config = parsed.config;
-        if (parsed.regras) dados.regras = parsed.regras;
-        if (parsed.produtos) dados.produtos = parsed.produtos;
-        if (parsed.faq) dados.faq = parsed.faq;
-        if (parsed.respostas) dados.respostas = parsed.respostas;
-        if (parsed.redes) dados.redes = parsed.redes;
-        if (parsed.horario) dados.horario = parsed.horario;
-      } catch(e) {}
+  // Dados padrão completos (como no código anterior)
+  const CONFIG_PADRAO = [
+    { chave: 'logo_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo' },
+    { chave: 'banner_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY' },
+    { chave: 'titulo_hero', valor: 'A Celebração que o Seu Paladar Merece' },
+    { chave: 'subtitulo_hero', valor: 'Doces e salgados artesanais. Fritura no local, retirada ou frete por aplicativo. BH e região.' },
+    { chave: 'texto_retirada', valor: '📦 Retirada no local ou frete por aplicativo (consultar valor)' },
+    { chave: 'texto_pagamento', valor: '💳 Pagamento: Pix ou cartão de crédito em até 3x' },
+    { chave: 'texto_fritura', valor: '🍟 Serviço de fritura no local incluso por até 4 horas de evento. Consulte valores.' },
+    { chave: 'telefone', valor: '5531999999999' },
+    { chave: 'whatsapp_link', valor: 'https://wa.me/5531999999999' },
+    { chave: 'rodape_texto', valor: 'Gastronomia artesanal para festas em Belo Horizonte. Qualidade artesanal com a agilidade que você precisa.' },
+    { chave: 'rodape_copyright', valor: '© 2025 I Love Delicitas. Todos os direitos reservados.' },
+    { chave: 'cep_entrega', valor: '30000-000 a 35000-000 (Belo Horizonte)' },
+    { chave: 'mensagem_promocional', valor: '🎉 Reserve com 15 dias de antecedência e ganhe 5% de desconto!' }
+  ];
+  const REGRAS_PADRAO = [
+    { tipo_evento: 'adulto', salgados_por_pessoa: 12, doces_por_pessoa: 6 },
+    { tipo_evento: 'infantil', salgados_por_pessoa: 10, doces_por_pessoa: 6 },
+    { tipo_evento: 'corporativo', salgados_por_pessoa: 8, doces_por_pessoa: 4 }
+  ];
+  const RESPOSTAS_PADRAO = [
+    { palavra_chave: 'prazo', resposta: 'Nosso prazo mínimo é de 72 horas. Para eventos grandes, recomendamos 15 dias de antecedência.' },
+    { palavra_chave: 'pagamento', resposta: 'Aceitamos Pix ou cartão de crédito em até 3 vezes.' },
+    { palavra_chave: 'entrega', resposta: 'Você retira no local ou contrata um frete por aplicativo. Não temos frota própria.' },
+    { palavra_chave: 'fritura', resposta: 'Fazemos a fritura no local do evento por até 4 horas. Consulte o valor pelo WhatsApp.' },
+    { palavra_chave: 'calcular', resposta: 'Use a calculadora do site para saber as quantidades. Depois me pergunte o valor total pelo WhatsApp :)' }
+  ];
+  const REDES_PADRAO = [
+    { plataforma: 'instagram', url: 'https://instagram.com/ilovedelicitas', ativo: true },
+    { plataforma: 'facebook', url: 'https://facebook.com/ilovedelicitas', ativo: true },
+    { plataforma: 'tiktok', url: 'https://tiktok.com/@ilovedelicitas', ativo: true },
+    { plataforma: 'youtube', url: '', ativo: false },
+    { plataforma: 'twitter', url: '', ativo: false },
+    { plataforma: 'linkedin', url: '', ativo: false }
+  ];
+  const HORARIO_PADRAO = [
+    { dia: 'segunda', abertura: '09:00', fechamento: '18:00', fechado: false },
+    { dia: 'terca', abertura: '09:00', fechamento: '18:00', fechado: false },
+    { dia: 'quarta', abertura: '09:00', fechamento: '18:00', fechado: false },
+    { dia: 'quinta', abertura: '09:00', fechamento: '18:00', fechado: false },
+    { dia: 'sexta', abertura: '09:00', fechamento: '18:00', fechado: false },
+    { dia: 'sabado', abertura: '09:00', fechamento: '16:00', fechado: false },
+    { dia: 'domingo', abertura: '', fechamento: '', fechado: true }
+  ];
+
+  // ========== FUNÇÕES DE CARREGAMENTO ==========
+  async function inicializar() {
+    try {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      await carregarDoSupabase();
+      supabaseConectado = true;
+      document.getElementById('status').innerHTML = '✅ Conectado ao Supabase';
+      document.getElementById('status').className = 'status-badge status-success';
+    } catch(e) {
+      supabaseConectado = false;
+      document.getElementById('status').innerHTML = '⚠️ Offline - dados locais';
+      document.getElementById('status').className = 'status-badge status-warning';
+      carregarDadosLocais();
     }
+    renderizarTudo();
   }
 
-  function salvarNoLocalStorage() {
-    localStorage.setItem('admin_dados_ilovedelicitas', JSON.stringify({
-      config: dados.config,
-      regras: dados.regras,
-      produtos: dados.produtos,
-      faq: dados.faq,
-      respostas: dados.respostas,
-      redes: dados.redes,
-      horario: dados.horario
-    }));
+  async function carregarDoSupabase() {
+    try {
+      const [c, r, p, f, rs, red, hor] = await Promise.all([
+        supabase.from('configuracoes').select('*'),
+        supabase.from('regras_calculadora').select('*'),
+        supabase.from('cardapio').select('*').order('id'),
+        supabase.from('faq').select('*').order('ordem'),
+        supabase.from('respostas_delinha').select('*'),
+        supabase.from('redes_sociais').select('*'),
+        supabase.from('horario_funcionamento').select('*').order('id')
+      ]);
+      dados.config = c.data && c.data.length ? c.data : [...CONFIG_PADRAO];
+      dados.regras = r.data && r.data.length ? r.data : [...REGRAS_PADRAO];
+      dados.produtos = p.data && p.data.length ? p.data : [];
+      dados.faq = f.data && f.data.length ? f.data : [];
+      dados.respostas = rs.data && rs.data.length ? rs.data : [...RESPOSTAS_PADRAO];
+      dados.redes = red.data && red.data.length ? red.data : [...REDES_PADRAO];
+      dados.horario = hor.data && hor.data.length ? hor.data : [...HORARIO_PADRAO];
+      
+      // Se não houver produtos ou faq, inserir padrão no banco
+      if (!p.data.length) await popularProdutosEPadrao();
+      if (!f.data.length) await popularFaqEPadrao();
+    } catch(e) { console.warn(e); carregarDadosLocais(); }
   }
 
-  // ========== RENDERIZAÇÃO INICIAL ==========
+  async function popularProdutosEPadrao() {
+    const PRODUTOS_PADRAO = [
+      { nome: 'Coxinha de Frango', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Clássica massa de batata com frango desfiado.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY' },
+      { nome: 'Bolinha de Queijo', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Massa cremosa recheada com mussarela.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0ug3bpYC-14I1zO_V97PZ7Fim7BL0amfHX29RlVcu_yRoGkDYHJ6_a6VyX1aTBGbgIUVAV81BgXI_QR7AOMINpO8jDZV2BP8rLuWLJg2s1D0ksCnhzV_WitKxREq6N2SNyOUKF6jZ542g0MldwI4Y5SUhR9JtLWAWOy5HW9qUJ9cOUse400WRjrgjmh6gZfWTwkg2taQPrkh596wdx8ZTysbCSGrM0dpYMpOVmvmc5K_o5bYIOCxpUBkczA' }
+    ];
+    for(let p of PRODUTOS_PADRAO) await supabase.from('cardapio').insert(p);
+    dados.produtos = PRODUTOS_PADRAO;
+  }
+
+  async function popularFaqEPadrao() {
+    const FAQ_PADRAO = [
+      { pergunta: 'Qual o prazo mínimo para encomendar?', resposta: 'Recomendamos um prazo mínimo de 7 dias para encomendas menores e 15 dias para grandes eventos.', ordem: 1 },
+      { pergunta: 'Como faço para reservar minha data?', resposta: 'A reserva é confirmada mediante o pagamento de um sinal ou aprovação total do orçamento via Pix ou Cartão.', ordem: 2 },
+      { pergunta: 'Vocês entregam?', resposta: 'O cliente retira no local ou contrata um entregador por aplicativo (Uber, 99, etc.). Não temos frota própria.', ordem: 3 },
+      { pergunta: 'Quais formas de pagamento são aceitas?', resposta: 'Aceitamos PIX e Cartão de Crédito em até 3 vezes.', ordem: 4 }
+    ];
+    for(let f of FAQ_PADRAO) await supabase.from('faq').insert(f);
+    dados.faq = FAQ_PADRAO;
+  }
+
+  function carregarDadosLocais() {
+    dados.config = [...CONFIG_PADRAO];
+    dados.regras = [...REGRAS_PADRAO];
+    dados.respostas = [...RESPOSTAS_PADRAO];
+    dados.redes = [...REDES_PADRAO];
+    dados.horario = [...HORARIO_PADRAO];
+    if (!dados.produtos.length) dados.produtos = [];
+    if (!dados.faq.length) dados.faq = [];
+  }
+
+  // ========== RENDERIZAÇÃO (igual ao anterior) ==========
   function renderizarTudo() {
-    renderizarConfiguracoes();
-    renderizarRegras();
-    renderizarProdutos();
-    renderizarFaq();
-    renderizarRespostas();
-    renderizarRedes();
-    renderizarHorario();
+    renderizarConfiguracoes(); renderizarRegras(); renderizarProdutos(); renderizarFaq(); renderizarRespostas(); renderizarRedes(); renderizarHorario();
   }
-
   function renderizarConfiguracoes() {
-    const container = document.getElementById('configList');
     const campos = ['logo_url','banner_url','titulo_hero','subtitulo_hero','texto_retirada','texto_pagamento','texto_fritura','telefone','whatsapp_link','rodape_texto','rodape_copyright','cep_entrega','mensagem_promocional'];
+    const container = document.getElementById('configList');
     container.innerHTML = campos.map(chave => {
       const item = dados.config.find(c => c.chave === chave);
       return `<div><label>${chave}</label><input type="text" id="cfg_${chave}" value="${escapeHtml(item?.valor || '')}" class="w-full">${chave.includes('url') && item?.valor ? `<img src="${item.valor}" class="image-preview" onerror="this.style.display='none'">` : ''}</div>`;
     }).join('');
   }
-
   function renderizarRegras() {
     const container = document.getElementById('regrasList');
-    container.innerHTML = dados.regras.map(r => `
-      <div class="border rounded-lg p-4 mb-4 bg-gray-50">
-        <label class="font-bold capitalize">${r.tipo_evento}</label>
-        <div class="grid md:grid-cols-2 gap-4 mt-2">
-          <div><label>Salgados por pessoa</label><input type="number" id="reg_${r.tipo_evento}_s" value="${r.salgados_por_pessoa}" class="w-full"></div>
-          <div><label>Doces por pessoa</label><input type="number" id="reg_${r.tipo_evento}_d" value="${r.doces_por_pessoa}" class="w-full"></div>
-        </div>
-      </div>
-    `).join('');
+    container.innerHTML = dados.regras.map(r => `<div class="border rounded-lg p-4 mb-4 bg-gray-50"><label class="font-bold capitalize">${r.tipo_evento}</label><div class="grid md:grid-cols-2 gap-4 mt-2"><div><label>Salgados/pessoa</label><input type="number" id="reg_${r.tipo_evento}_s" value="${r.salgados_por_pessoa}"></div><div><label>Doces/pessoa</label><input type="number" id="reg_${r.tipo_evento}_d" value="${r.doces_por_pessoa}"></div></div></div>`).join('');
   }
-
   function renderizarProdutos() {
     const container = document.getElementById('produtosList');
-    if (!dados.produtos.length) { container.innerHTML = '<div class="text-center py-8 text-gray-400">Nenhum produto</div>'; return; }
-    container.innerHTML = dados.produtos.map(p => `
-      <div class="flex justify-between items-center border-b py-3">
-        <div class="flex-1"><span class="font-bold">${escapeHtml(p.nome)}</span> - R$ ${p.preco} - ${p.categoria}</div>
-        <div><button onclick="editarProduto(${p.id})" class="btn-outline">Editar</button> <button onclick="excluirProduto(${p.id})" class="text-red-600 ml-2">Excluir</button></div>
-      </div>
-    `).join('');
+    if(!dados.produtos.length) { container.innerHTML = '<div class="text-center py-8 text-gray-400">Nenhum produto</div>'; return; }
+    container.innerHTML = dados.produtos.map(p => `<div class="flex justify-between items-center border-b py-3"><div><span class="font-bold">${escapeHtml(p.nome)}</span> - R$ ${p.preco} - ${p.categoria}</div><div><button onclick="editarProduto(${p.id})" class="btn-outline">Editar</button> <button onclick="excluirProduto(${p.id})" class="text-red-600 ml-2">Excluir</button></div></div>`).join('');
   }
-
   function renderizarFaq() {
     const container = document.getElementById('faqList');
-    if (!dados.faq.length) { container.innerHTML = '<div class="text-center py-8 text-gray-400">Nenhuma FAQ</div>'; return; }
-    container.innerHTML = dados.faq.map(f => `
-      <div class="flex justify-between items-center border-b py-3">
-        <div class="flex-1"><span class="font-bold">${escapeHtml(f.pergunta)}</span><br><span class="text-sm text-gray-500">${escapeHtml(f.resposta.substring(0,80))}...</span></div>
-        <div><button onclick="editarFaq(${f.id})" class="btn-outline">Editar</button> <button onclick="excluirFaq(${f.id})" class="text-red-600 ml-2">Excluir</button></div>
-      </div>
-    `).join('');
+    if(!dados.faq.length) { container.innerHTML = '<div class="text-center py-8 text-gray-400">Nenhuma FAQ</div>'; return; }
+    container.innerHTML = dados.faq.map(f => `<div class="flex justify-between items-center border-b py-3"><div><span class="font-bold">${escapeHtml(f.pergunta)}</span><br><span class="text-sm text-gray-500">${escapeHtml(f.resposta.substring(0,80))}...</span></div><div><button onclick="editarFaq(${f.id})" class="btn-outline">Editar</button> <button onclick="excluirFaq(${f.id})" class="text-red-600 ml-2">Excluir</button></div></div>`).join('');
   }
-
   function renderizarRespostas() {
     const container = document.getElementById('respostasList');
-    container.innerHTML = dados.respostas.map(r => `
-      <div class="border p-3 rounded mb-3">
-        <label class="font-bold">Palavra-chave: ${escapeHtml(r.palavra_chave)}</label>
-        <textarea id="resp_${r.palavra_chave}" class="w-full mt-1" rows="2">${escapeHtml(r.resposta)}</textarea>
-      </div>
-    `).join('');
+    container.innerHTML = dados.respostas.map(r => `<div class="border p-3 rounded mb-3"><label class="font-bold">Palavra-chave: ${escapeHtml(r.palavra_chave)}</label><textarea id="resp_${r.palavra_chave}" class="w-full mt-1" rows="2">${escapeHtml(r.resposta)}</textarea></div>`).join('');
   }
-
   function renderizarRedes() {
     const plataformas = ['instagram','facebook','tiktok','youtube','twitter','linkedin'];
     const container = document.getElementById('redesList');
-    container.innerHTML = plataformas.map(plat => {
-      const item = dados.redes.find(r => r.plataforma === plat);
-      return `<div><label class="capitalize">${plat}</label><input type="url" id="rede_${plat}" value="${item?.url || ''}" placeholder="https://${plat}.com/..." class="w-full"></div>`;
-    }).join('');
+    container.innerHTML = plataformas.map(plat => { const item = dados.redes.find(r=>r.plataforma===plat); return `<div><label class="capitalize">${plat}</label><input type="url" id="rede_${plat}" value="${item?.url || ''}" placeholder="https://${plat}.com/..." class="w-full"></div>`; }).join('');
   }
-
   function renderizarHorario() {
-    const dias = ['segunda','terca','quarta','quinta','sexta','sabado','domingo'];
-    const labels = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
+    const dias = ['segunda','terca','quarta','quinta','sexta','sabado','domingo'], labels = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
     const container = document.getElementById('horarioList');
-    container.innerHTML = dias.map((dia, idx) => {
-      const item = dados.horario.find(h => h.dia === dia);
-      return `<div class="border p-3 rounded"><label class="font-bold">${labels[idx]}</label><div class="grid grid-cols-2 gap-2 mt-1"><div><label class="text-xs">Abertura</label><input type="time" id="abertura_${dia}" value="${item?.abertura || '09:00'}"></div><div><label class="text-xs">Fechamento</label><input type="time" id="fechamento_${dia}" value="${item?.fechamento || '18:00'}"></div></div><label class="flex items-center gap-2 mt-2"><input type="checkbox" id="fechado_${dia}" ${item?.fechado ? 'checked' : ''}> Fechado</label></div>`;
-    }).join('');
-    // ativar/desativar campos
-    dias.forEach(dia => {
-      const cb = document.getElementById(`fechado_${dia}`);
-      if (cb) cb.addEventListener('change', e => {
-        document.getElementById(`abertura_${dia}`).disabled = e.target.checked;
-        document.getElementById(`fechamento_${dia}`).disabled = e.target.checked;
-      });
-    });
+    container.innerHTML = dias.map((dia,idx) => { const item = dados.horario.find(h=>h.dia===dia); return `<div class="border p-3 rounded"><label class="font-bold">${labels[idx]}</label><div class="grid grid-cols-2 gap-2 mt-1"><div><label class="text-xs">Abertura</label><input type="time" id="abertura_${dia}" value="${item?.abertura || '09:00'}"></div><div><label class="text-xs">Fechamento</label><input type="time" id="fechamento_${dia}" value="${item?.fechamento || '18:00'}"></div></div><label class="flex items-center gap-2 mt-2"><input type="checkbox" id="fechado_${dia}" ${item?.fechado ? 'checked' : ''}> Fechado</label></div>`; }).join('');
+    dias.forEach(dia => { const cb = document.getElementById(`fechado_${dia}`); if(cb) cb.addEventListener('change', e => { document.getElementById(`abertura_${dia}`).disabled = e.target.checked; document.getElementById(`fechamento_${dia}`).disabled = e.target.checked; }); });
   }
 
-  // ========== SALVAR ALTERAÇÕES ==========
-  function salvarConfiguracoes() {
+  // ========== FUNÇÕES DE SALVAMENTO (SUPABASE + LOCAL) ==========
+  async function salvarConfiguracoes() {
     const campos = ['logo_url','banner_url','titulo_hero','subtitulo_hero','texto_retirada','texto_pagamento','texto_fritura','telefone','whatsapp_link','rodape_texto','rodape_copyright','cep_entrega','mensagem_promocional'];
-    for (let chave of campos) {
+    for(let chave of campos) {
       const valor = document.getElementById(`cfg_${chave}`).value;
       let idx = dados.config.findIndex(c => c.chave === chave);
-      if (idx >= 0) dados.config[idx].valor = valor;
+      if(idx>=0) dados.config[idx].valor = valor;
       else dados.config.push({ chave, valor });
+      if(supabaseConectado) await supabase.from('configuracoes').upsert({ chave, valor }, { onConflict: 'chave' });
     }
-    salvarNoLocalStorage();
     alert('Configurações salvas!');
   }
-
-  function salvarRegras() {
-    for (let r of dados.regras) {
+  async function salvarRegras() {
+    for(let r of dados.regras) {
       const s = parseInt(document.getElementById(`reg_${r.tipo_evento}_s`).value);
       const d = parseInt(document.getElementById(`reg_${r.tipo_evento}_d`).value);
-      r.salgados_por_pessoa = s;
-      r.doces_por_pessoa = d;
+      r.salgados_por_pessoa = s; r.doces_por_pessoa = d;
+      if(supabaseConectado) await supabase.from('regras_calculadora').upsert({ tipo_evento: r.tipo_evento, salgados_por_pessoa: s, doces_por_pessoa: d }, { onConflict: 'tipo_evento' });
     }
-    salvarNoLocalStorage();
     alert('Regras salvas!');
   }
-
-  function salvarRespostas() {
-    for (let r of dados.respostas) {
+  async function salvarRespostas() {
+    for(let r of dados.respostas) {
       const nova = document.getElementById(`resp_${r.palavra_chave}`).value;
       r.resposta = nova;
+      if(supabaseConectado) await supabase.from('respostas_delinha').upsert({ palavra_chave: r.palavra_chave, resposta: nova }, { onConflict: 'palavra_chave' });
     }
-    salvarNoLocalStorage();
     alert('Respostas salvas!');
   }
-
-  function salvarRedes() {
+  async function salvarRedes() {
     const plataformas = ['instagram','facebook','tiktok','youtube','twitter','linkedin'];
-    for (let plat of plataformas) {
+    for(let plat of plataformas) {
       const url = document.getElementById(`rede_${plat}`).value;
-      let idx = dados.redes.findIndex(r => r.plataforma === plat);
-      if (idx >= 0) dados.redes[idx].url = url;
+      let idx = dados.redes.findIndex(r=>r.plataforma===plat);
+      if(idx>=0) dados.redes[idx].url = url;
       else dados.redes.push({ plataforma: plat, url, ativo: true });
+      if(supabaseConectado) await supabase.from('redes_sociais').upsert({ plataforma: plat, url, icone: plat, ativo: true }, { onConflict: 'plataforma' });
     }
-    salvarNoLocalStorage();
     alert('Redes sociais salvas!');
   }
-
-  function salvarHorario() {
+  async function salvarHorario() {
     const dias = ['segunda','terca','quarta','quinta','sexta','sabado','domingo'];
-    for (let dia of dias) {
+    for(let dia of dias) {
       const fechado = document.getElementById(`fechado_${dia}`).checked;
       const abertura = fechado ? null : document.getElementById(`abertura_${dia}`).value;
       const fechamento = fechado ? null : document.getElementById(`fechamento_${dia}`).value;
-      let idx = dados.horario.findIndex(h => h.dia === dia);
-      if (idx >= 0) {
-        dados.horario[idx].abertura = abertura;
-        dados.horario[idx].fechamento = fechamento;
-        dados.horario[idx].fechado = fechado;
-      } else {
-        dados.horario.push({ dia, abertura, fechamento, fechado });
-      }
+      let idx = dados.horario.findIndex(h=>h.dia===dia);
+      if(idx>=0) { dados.horario[idx].abertura = abertura; dados.horario[idx].fechamento = fechamento; dados.horario[idx].fechado = fechado; }
+      else dados.horario.push({ dia, abertura, fechamento, fechado });
+      if(supabaseConectado) await supabase.from('horario_funcionamento').upsert({ dia, abertura, fechamento, fechado }, { onConflict: 'dia' });
     }
-    salvarNoLocalStorage();
     alert('Horário salvo!');
   }
 
   // ========== CRUD PRODUTOS ==========
-  function novoProduto() {
-    const nome = prompt('Nome do produto');
-    if (!nome) return;
-    const preco = parseFloat(prompt('Preço (R$)'));
-    if (isNaN(preco)) return;
-    const categoria = prompt('Categoria (Fritos/Assados/Lanches/Doces)', 'Fritos');
-    const unidade = prompt('Unidade (ex: Cento)', 'Cento');
-    const descricao = prompt('Descrição curta', '');
+  async function novoProduto() {
+    const nome = prompt('Nome do produto'); if(!nome) return;
+    const preco = parseFloat(prompt('Preço')); if(isNaN(preco)) return;
+    const categoria = prompt('Categoria', 'Fritos');
+    const unidade = prompt('Unidade', 'Cento');
+    const descricao = prompt('Descrição', '');
     const imagem = prompt('URL da imagem', 'https://via.placeholder.com/300x200');
-    const novoId = dados.produtos.length ? Math.max(...dados.produtos.map(p => p.id)) + 1 : 1;
-    dados.produtos.push({ id: novoId, nome, preco, categoria, unidade, descricao, imagem });
-    salvarNoLocalStorage();
+    const novoId = dados.produtos.length ? Math.max(...dados.produtos.map(p=>p.id)) + 1 : 1;
+    const novo = { id: novoId, nome, preco, categoria, unidade, descricao, imagem };
+    if(supabaseConectado) await supabase.from('cardapio').insert([{ nome, preco, categoria, unidade, descricao, imagem }]);
+    dados.produtos.push(novo);
     renderizarProdutos();
   }
-
-  function editarProduto(id) {
-    const p = dados.produtos.find(x => x.id == id);
-    if (!p) return;
-    const nome = prompt('Nome', p.nome);
-    const preco = parseFloat(prompt('Preço', p.preco));
-    const categoria = prompt('Categoria', p.categoria);
-    const unidade = prompt('Unidade', p.unidade);
-    const descricao = prompt('Descrição', p.descricao);
-    const imagem = prompt('URL da imagem', p.imagem);
-    if (nome) p.nome = nome;
-    if (!isNaN(preco)) p.preco = preco;
-    if (categoria) p.categoria = categoria;
-    if (unidade) p.unidade = unidade;
-    if (descricao) p.descricao = descricao;
-    if (imagem) p.imagem = imagem;
-    salvarNoLocalStorage();
+  async function editarProduto(id) {
+    const p = dados.produtos.find(x=>x.id==id); if(!p) return;
+    const nome = prompt('Nome', p.nome); const preco = parseFloat(prompt('Preço', p.preco));
+    const categoria = prompt('Categoria', p.categoria); const unidade = prompt('Unidade', p.unidade);
+    const descricao = prompt('Descrição', p.descricao); const imagem = prompt('URL da imagem', p.imagem);
+    if(nome) p.nome = nome; if(!isNaN(preco)) p.preco = preco; if(categoria) p.categoria = categoria;
+    if(unidade) p.unidade = unidade; if(descricao) p.descricao = descricao; if(imagem) p.imagem = imagem;
+    if(supabaseConectado) await supabase.from('cardapio').update(p).eq('id', id);
     renderizarProdutos();
   }
-
-  function excluirProduto(id) {
-    if (confirm('Excluir permanentemente?')) {
-      dados.produtos = dados.produtos.filter(p => p.id !== id);
-      salvarNoLocalStorage();
-      renderizarProdutos();
-    }
+  async function excluirProduto(id) {
+    if(confirm('Excluir?')) { if(supabaseConectado) await supabase.from('cardapio').delete().eq('id', id); dados.produtos = dados.produtos.filter(p=>p.id!==id); renderizarProdutos(); }
   }
 
   // ========== CRUD FAQ ==========
-  function novoFaq() {
-    const pergunta = prompt('Pergunta');
-    if (!pergunta) return;
-    const resposta = prompt('Resposta');
-    if (!resposta) return;
-    const novoId = dados.faq.length ? Math.max(...dados.faq.map(f => f.id)) + 1 : 1;
-    dados.faq.push({ id: novoId, pergunta, resposta, ordem: dados.faq.length + 1 });
-    salvarNoLocalStorage();
+  async function novoFaq() {
+    const pergunta = prompt('Pergunta'); if(!pergunta) return;
+    const resposta = prompt('Resposta'); if(!resposta) return;
+    const novoId = dados.faq.length ? Math.max(...dados.faq.map(f=>f.id)) + 1 : 1;
+    const novo = { id: novoId, pergunta, resposta, ordem: dados.faq.length+1 };
+    if(supabaseConectado) await supabase.from('faq').insert([{ pergunta, resposta, ordem: dados.faq.length+1 }]);
+    dados.faq.push(novo);
     renderizarFaq();
   }
-
-  function editarFaq(id) {
-    const f = dados.faq.find(x => x.id == id);
-    if (!f) return;
-    const pergunta = prompt('Pergunta', f.pergunta);
-    const resposta = prompt('Resposta', f.resposta);
-    if (pergunta) f.pergunta = pergunta;
-    if (resposta) f.resposta = resposta;
-    salvarNoLocalStorage();
+  async function editarFaq(id) {
+    const f = dados.faq.find(x=>x.id==id); if(!f) return;
+    const pergunta = prompt('Pergunta', f.pergunta); const resposta = prompt('Resposta', f.resposta);
+    if(pergunta) f.pergunta = pergunta; if(resposta) f.resposta = resposta;
+    if(supabaseConectado) await supabase.from('faq').update({ pergunta, resposta }).eq('id', id);
     renderizarFaq();
   }
-
-  function excluirFaq(id) {
-    if (confirm('Excluir esta FAQ?')) {
-      dados.faq = dados.faq.filter(f => f.id !== id);
-      salvarNoLocalStorage();
-      renderizarFaq();
-    }
+  async function excluirFaq(id) {
+    if(confirm('Excluir?')) { if(supabaseConectado) await supabase.from('faq').delete().eq('id', id); dados.faq = dados.faq.filter(f=>f.id!==id); renderizarFaq(); }
   }
 
-  function mostrarAba(aba) {
-    const abas = ['config','regras','cardapio','faq','respostas','redes','horario'];
-    for (let a of abas) {
-      document.getElementById(`aba${a.charAt(0).toUpperCase()+a.slice(1)}`).classList.add('hidden');
-      document.getElementById(`btn${a.charAt(0).toUpperCase()+a.slice(1)}`).classList.remove('tab-active');
-      document.getElementById(`btn${a.charAt(0).toUpperCase()+a.slice(1)}`).classList.add('tab-inactive');
-    }
-    document.getElementById(`aba${aba.charAt(0).toUpperCase()+aba.slice(1)}`).classList.remove('hidden');
-    document.getElementById(`btn${aba.charAt(0).toUpperCase()+aba.slice(1)}`).classList.add('tab-active');
-  }
+  function mostrarAba(aba) { const abas = ['config','regras','cardapio','faq','respostas','redes','horario']; for(let a of abas) { document.getElementById(`aba${a.charAt(0).toUpperCase()+a.slice(1)}`).classList.add('hidden'); document.getElementById(`btn${a.charAt(0).toUpperCase()+a.slice(1)}`).classList.remove('tab-active'); document.getElementById(`btn${a.charAt(0).toUpperCase()+a.slice(1)}`).classList.add('tab-inactive'); } document.getElementById(`aba${aba.charAt(0).toUpperCase()+aba.slice(1)}`).classList.remove('hidden'); document.getElementById(`btn${aba.charAt(0).toUpperCase()+aba.slice(1)}`).classList.add('tab-active'); }
+  function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => m==='&'? '&amp;' : (m==='<'? '&lt;' : '&gt;')); }
 
-  function escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;'));
-  }
-
-  // Inicialização
-  carregarDoLocalStorage();
-  renderizarTudo();
+  inicializar();
 </script>
 </body>
 </html>
