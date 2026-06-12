@@ -7,10 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
-  <style>
-    body { background: #f3f4f6; }
-    .modal { transition: opacity 0.2s ease; }
-  </style>
+  <style>body { background: #f3f4f6; }</style>
 </head>
 <body class="p-4 md:p-8 font-sans">
 
@@ -25,7 +22,7 @@
     <p class="text-xs text-gray-400 text-center mt-4">Use: admin@ilovedelicitas.com / delinha123</p>
   </div>
 
-  <!-- PAINEL (oculto até login) -->
+  <!-- PAINEL -->
   <div id="adminPanel" class="hidden">
     <div class="flex justify-between items-center mb-6 bg-white p-4 rounded-lg shadow">
       <h1 class="text-2xl font-bold text-gray-800">Gerenciar Cardápio</h1>
@@ -38,7 +35,7 @@
   </div>
 </div>
 
-<!-- MODAL FORMULÁRIO -->
+<!-- MODAL -->
 <div id="itemModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
   <div class="bg-white rounded-2xl max-w-lg w-full p-6">
     <h3 id="modalTitle" class="text-xl font-bold mb-4">Novo Item</h3>
@@ -50,7 +47,7 @@
     </select>
     <input type="text" id="unidade" placeholder="Unidade (ex: Cento, Unidade)" class="w-full border rounded-lg p-2 mb-3">
     <textarea id="descricao" rows="2" placeholder="Descrição curta" class="w-full border rounded-lg p-2 mb-3"></textarea>
-    <input type="url" id="imagem" placeholder="URL da imagem (ex: https://..." class="w-full border rounded-lg p-2 mb-4">
+    <input type="url" id="imagem" placeholder="URL da imagem (ex: https://...)" class="w-full border rounded-lg p-2 mb-4">
     <div class="flex justify-end gap-2">
       <button onclick="fecharModal()" class="bg-gray-300 px-4 py-2 rounded-lg">Cancelar</button>
       <button onclick="salvarItem()" class="bg-red-600 text-white px-4 py-2 rounded-lg">Salvar</button>
@@ -60,14 +57,10 @@
 
 <script>
   let supabase = null;
-  let usuarioLogado = false;
-
   async function fazerLogin() {
     const email = document.getElementById('loginEmail').value;
     const senha = document.getElementById('loginPassword').value;
-    // Login simples fixo (seguro o suficiente para admin local)
     if (email === 'admin@ilovedelicitas.com' && senha === 'delinha123') {
-      usuarioLogado = true;
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('adminPanel').classList.remove('hidden');
       supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
@@ -77,36 +70,22 @@
       setTimeout(() => document.getElementById('loginError').classList.add('hidden'), 3000);
     }
   }
-
   async function carregarItens() {
     const { data, error } = await supabase.from('cardapio').select('*').order('id');
     if (error) { alert('Erro ao carregar itens'); return; }
     const container = document.getElementById('listaItems');
-    if (data.length === 0) {
-      container.innerHTML = '<div class="col-span-full text-center p-8 bg-white rounded-lg shadow">Nenhum item cadastrado. Clique em "Adicionar Item" para começar.</div>';
-      return;
-    }
+    if (data.length === 0) { container.innerHTML = '<div class="col-span-full text-center p-8 bg-white rounded-lg shadow">Nenhum item cadastrado. Clique em "Adicionar Item" para começar.</div>'; return; }
     container.innerHTML = data.map(item => `
       <div class="bg-white rounded-lg shadow p-4 flex justify-between items-center">
-        <div>
-          <h3 class="font-bold text-lg">${escapeHtml(item.name)}</h3>
-          <p class="text-sm text-gray-600">${escapeHtml(item.cat)} - R$ ${Number(item.price).toFixed(2)}</p>
-          <p class="text-xs text-gray-400">${escapeHtml(item.unit)}</p>
-        </div>
-        <div class="flex gap-2">
-          <button onclick="editarItem(${item.id})" class="text-blue-600 hover:text-blue-800">✏️ Editar</button>
-          <button onclick="excluirItem(${item.id})" class="text-red-600 hover:text-red-800">🗑️ Excluir</button>
-        </div>
+        <div><h3 class="font-bold text-lg">${escapeHtml(item.name)}</h3><p class="text-sm text-gray-600">${escapeHtml(item.cat)} - R$ ${Number(item.price).toFixed(2)}</p><p class="text-xs text-gray-400">${escapeHtml(item.unit)}</p></div>
+        <div class="flex gap-2"><button onclick="editarItem(${item.id})" class="text-blue-600">✏️ Editar</button><button onclick="excluirItem(${item.id})" class="text-red-600">🗑️ Excluir</button></div>
       </div>
     `).join('');
   }
-
-  function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
-
+  function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m) { return m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;'); }); }
   function abrirModal(item = null) {
     const modal = document.getElementById('itemModal');
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
+    modal.classList.remove('hidden'); modal.classList.add('flex');
     if (item) {
       document.getElementById('modalTitle').innerText = 'Editar Item';
       document.getElementById('itemId').value = item.id;
@@ -127,13 +106,7 @@
       document.getElementById('imagem').value = '';
     }
   }
-
-  function fecharModal() {
-    const modal = document.getElementById('itemModal');
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-  }
-
+  function fecharModal() { const modal = document.getElementById('itemModal'); modal.classList.add('hidden'); modal.classList.remove('flex'); }
   async function salvarItem() {
     const id = document.getElementById('itemId').value;
     const item = {
@@ -144,42 +117,16 @@
       description: document.getElementById('descricao').value,
       img: document.getElementById('imagem').value
     };
-    if (isNaN(item.price)) { alert('Preço inválido'); return; }
-    if (!item.name) { alert('Nome é obrigatório'); return; }
-
+    if (isNaN(item.price) || !item.name) { alert('Preencha nome e preço corretamente'); return; }
     let error;
-    if (id) {
-      const { error: err } = await supabase.from('cardapio').update(item).eq('id', id);
-      error = err;
-    } else {
-      const { error: err } = await supabase.from('cardapio').insert([item]);
-      error = err;
-    }
+    if (id) { const { error: err } = await supabase.from('cardapio').update(item).eq('id', id); error = err; }
+    else { const { error: err } = await supabase.from('cardapio').insert([item]); error = err; }
     if (error) { alert('Erro ao salvar: ' + error.message); return; }
-    fecharModal();
-    carregarItens();
+    fecharModal(); carregarItens();
   }
-
-  async function editarItem(id) {
-    const { data, error } = await supabase.from('cardapio').select('*').eq('id', id).single();
-    if (error) { alert('Erro ao buscar item'); return; }
-    abrirModal(data);
-  }
-
-  async function excluirItem(id) {
-    if (!confirm('Tem certeza que deseja excluir este item permanentemente?')) return;
-    const { error } = await supabase.from('cardapio').delete().eq('id', id);
-    if (error) { alert('Erro ao excluir'); return; }
-    carregarItens();
-  }
-
-  function logout() {
-    usuarioLogado = false;
-    document.getElementById('loginScreen').style.display = 'block';
-    document.getElementById('adminPanel').classList.add('hidden');
-    document.getElementById('loginEmail').value = '';
-    document.getElementById('loginPassword').value = '';
-  }
+  async function editarItem(id) { const { data, error } = await supabase.from('cardapio').select('*').eq('id', id).single(); if (!error) abrirModal(data); else alert('Erro ao buscar item'); }
+  async function excluirItem(id) { if (!confirm('Excluir permanentemente?')) return; await supabase.from('cardapio').delete().eq('id', id); carregarItens(); }
+  function logout() { document.getElementById('loginScreen').style.display = 'block'; document.getElementById('adminPanel').classList.add('hidden'); document.getElementById('loginEmail').value = ''; document.getElementById('loginPassword').value = ''; }
 </script>
 </body>
 </html>
