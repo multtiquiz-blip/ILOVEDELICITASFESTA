@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel iLove Delicitas</title>
+  <title>Painel Admin - I Love Delicitas</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
+  <style>body { background: #f3f4f6; }</style>
 </head>
-<body class="bg-gray-100 p-6">
-<div class="max-w-6xl mx-auto">
-  <!-- LOGIN -->
+<body class="p-6">
+<div class="max-w-7xl mx-auto">
   <div id="loginArea" class="bg-white rounded-2xl shadow-md max-w-md mx-auto mt-20 p-8">
-    <h2 class="text-2xl font-bold mb-4">Acesso admin</h2>
+    <h2 class="text-2xl font-bold mb-4">Acesso Admin</h2>
     <input type="email" id="adminEmail" placeholder="Email" class="w-full border p-2 mb-3 rounded">
     <input type="password" id="adminPass" placeholder="Senha" class="w-full border p-2 mb-4 rounded">
     <button onclick="fazerLogin()" class="bg-red-600 text-white w-full py-2 rounded-full">Entrar</button>
@@ -20,59 +20,58 @@
     <p class="text-xs text-gray-400 mt-4">Use: admin@ilovedelicitas.com / delinha123</p>
   </div>
 
-  <!-- PAINEL -->
   <div id="adminPanel" class="hidden">
     <div class="flex justify-between items-center mb-6 bg-white p-4 rounded-xl shadow">
-      <h1 class="text-2xl font-bold">Gerenciar Cardápio</h1>
-      <button onclick="logout()" class="bg-gray-300 px-4 py-2 rounded-lg">Sair</button>
+      <h1 class="text-2xl font-bold">Painel de Controle</h1>
+      <button onclick="logout()" class="bg-gray-300 px-4 py-2 rounded">Sair</button>
     </div>
-    <button onclick="abrirModal()" class="bg-green-600 text-white px-4 py-2 rounded-lg mb-4">+ Adicionar item</button>
-    <div id="listaItens" class="grid gap-4"></div>
-  </div>
-
-  <!-- MODAL -->
-  <div id="itemModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
-    <div class="bg-white rounded-2xl p-6 w-full max-w-md">
-      <h3 id="modalTitle" class="text-xl font-bold mb-4">Novo item</h3>
-      <input type="hidden" id="itemId">
-      <input type="text" id="nome" placeholder="Nome" class="w-full border p-2 mb-3 rounded">
-      <input type="number" id="preco" step="0.01" placeholder="Preço" class="w-full border p-2 mb-3 rounded">
-      <select id="categoria" class="w-full border p-2 mb-3 rounded">
-        <option value="Fritos">Fritos</option><option value="Assados">Assados</option><option value="Lanches">Lanches</option><option value="Doces">Doces</option>
-      </select>
-      <input type="text" id="unidade" placeholder="Unidade (ex: Cento)" class="w-full border p-2 mb-3 rounded">
-      <textarea id="descricao" placeholder="Descrição" class="w-full border p-2 mb-3 rounded"></textarea>
-      <input type="url" id="imagem" placeholder="URL da imagem" class="w-full border p-2 mb-4 rounded">
-      <div class="flex justify-end gap-2"><button onclick="fecharModal()" class="bg-gray-300 px-4 py-2 rounded">Cancelar</button><button onclick="salvarItem()" class="bg-red-600 text-white px-4 py-2 rounded">Salvar</button></div>
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="bg-white p-4 rounded-xl shadow"><h2 class="text-xl font-bold mb-4">⚙️ Configurações</h2><div id="configForm" class="space-y-3"></div><button onclick="salvarConfiguracoes()" class="bg-green-600 text-white px-4 py-2 rounded mt-3">Salvar</button></div>
+      <div class="bg-white p-4 rounded-xl shadow"><h2 class="text-xl font-bold mb-4">📊 Regras da calculadora</h2><div id="regrasForm" class="space-y-3"></div><button onclick="salvarRegras()" class="bg-green-600 text-white px-4 py-2 rounded mt-3">Salvar regras</button></div>
+      <div class="bg-white p-4 rounded-xl shadow md:col-span-2"><h2 class="text-xl font-bold mb-4">🍔 Cardápio</h2><button onclick="abrirModalProduto()" class="bg-blue-600 text-white px-3 py-1 rounded mb-3">+ Adicionar</button><div id="listaProdutos" class="space-y-2 max-h-96 overflow-y-auto"></div></div>
+      <div class="bg-white p-4 rounded-xl shadow md:col-span-2"><h2 class="text-xl font-bold mb-4">💬 Respostas da Delinha</h2><div id="respostasChatForm" class="space-y-3"></div><button onclick="salvarRespostasChat()" class="bg-green-600 text-white px-4 py-2 rounded mt-3">Salvar respostas</button></div>
     </div>
   </div>
 </div>
 
+<!-- MODAL PRODUTO -->
+<div id="produtoModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+  <div class="bg-white rounded-2xl p-6 w-full max-w-md"><h3 id="modalTitle" class="text-xl font-bold mb-4">Produto</h3><input type="hidden" id="produtoId"><input type="text" id="prodNome" placeholder="Nome" class="w-full border p-2 mb-2 rounded"><input type="number" id="prodPreco" step="0.01" placeholder="Preço" class="w-full border p-2 mb-2 rounded"><select id="prodCategoria" class="w-full border p-2 mb-2 rounded"><option value="Fritos">Fritos</option><option value="Assados">Assados</option><option value="Lanches">Lanches</option><option value="Doces">Doces</option></select><input type="text" id="prodUnidade" placeholder="Unidade" class="w-full border p-2 mb-2 rounded"><textarea id="prodDescricao" placeholder="Descrição" class="w-full border p-2 mb-2 rounded"></textarea><input type="url" id="prodImagem" placeholder="URL da imagem" class="w-full border p-2 mb-4 rounded"><div class="flex justify-end gap-2"><button onclick="fecharModalProduto()" class="bg-gray-300 px-4 py-2 rounded">Cancelar</button><button onclick="salvarProduto()" class="bg-red-600 text-white px-4 py-2 rounded">Salvar</button></div></div>
+</div>
+
 <script>
   let supabase;
+  let configuracoes = [], regras = [], produtos = [], respostasChat = [];
   async function fazerLogin() {
-    const email = document.getElementById('adminEmail').value;
-    const pass = document.getElementById('adminPass').value;
+    const email = document.getElementById('adminEmail').value, pass = document.getElementById('adminPass').value;
     if (email === 'admin@ilovedelicitas.com' && pass === 'delinha123') {
       document.getElementById('loginArea').style.display = 'none';
       document.getElementById('adminPanel').classList.remove('hidden');
       supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
-      carregarItens();
+      await carregarDados();
     } else { document.getElementById('loginError').classList.remove('hidden'); setTimeout(() => document.getElementById('loginError').classList.add('hidden'), 3000); }
   }
-  async function carregarItens() {
-    const { data, error } = await supabase.from('cardapio').select('*').order('id');
-    if (error) { alert('Erro ao carregar'); return; }
-    const container = document.getElementById('listaItens');
-    if (data.length === 0) { container.innerHTML = '<div class="bg-white p-8 text-center rounded-xl">Nenhum item. Clique em + Adicionar.</div>'; return; }
-    container.innerHTML = data.map(item => `<div class="bg-white p-4 rounded-xl shadow flex justify-between items-center"><div><h3 class="font-bold">${item.name}</h3><p class="text-sm text-gray-600">${item.cat} - R$ ${item.price.toFixed(2)} - ${item.unit}</p></div><div><button onclick="editarItem(${item.id})" class="text-blue-600 mr-2">Editar</button><button onclick="excluirItem(${item.id})" class="text-red-600">Excluir</button></div></div>`).join('');
+  async function carregarDados() {
+    const { data: c } = await supabase.from('configuracoes').select('*');
+    const { data: r } = await supabase.from('regras_calculadora').select('*');
+    const { data: p } = await supabase.from('cardapio').select('*').order('id');
+    const { data: rc } = await supabase.from('respostas_delinha').select('*');
+    configuracoes = c || []; regras = r || []; produtos = p || []; respostasChat = rc || [];
+    renderizarConfiguracoes(); renderizarRegras(); renderizarProdutos(); renderizarRespostasChat();
   }
-  function abrirModal(item = null) { const modal = document.getElementById('itemModal'); modal.classList.remove('hidden'); modal.classList.add('flex'); if (item) { document.getElementById('modalTitle').innerText = 'Editar Item'; document.getElementById('itemId').value = item.id; document.getElementById('nome').value = item.name; document.getElementById('preco').value = item.price; document.getElementById('categoria').value = item.cat; document.getElementById('unidade').value = item.unit; document.getElementById('descricao').value = item.description || ''; document.getElementById('imagem').value = item.img || ''; } else { document.getElementById('modalTitle').innerText = 'Adicionar Item'; document.getElementById('itemId').value = ''; document.getElementById('nome').value = ''; document.getElementById('preco').value = ''; document.getElementById('categoria').value = 'Fritos'; document.getElementById('unidade').value = ''; document.getElementById('descricao').value = ''; document.getElementById('imagem').value = ''; } }
-  function fecharModal() { const modal = document.getElementById('itemModal'); modal.classList.add('hidden'); modal.classList.remove('flex'); }
-  async function salvarItem() { const id = document.getElementById('itemId').value; const item = { name: document.getElementById('nome').value, price: parseFloat(document.getElementById('preco').value), cat: document.getElementById('categoria').value, unit: document.getElementById('unidade').value, description: document.getElementById('descricao').value, img: document.getElementById('imagem').value }; if (!item.name || isNaN(item.price)) { alert('Nome e preço são obrigatórios'); return; } let error; if (id) { const { error: err } = await supabase.from('cardapio').update(item).eq('id', id); error = err; } else { const { error: err } = await supabase.from('cardapio').insert([item]); error = err; } if (error) { alert('Erro ao salvar'); return; } fecharModal(); carregarItens(); }
-  async function editarItem(id) { const { data } = await supabase.from('cardapio').select('*').eq('id', id).single(); if (data) abrirModal(data); else alert('Item não encontrado'); }
-  async function excluirItem(id) { if (confirm('Excluir permanentemente?')) { await supabase.from('cardapio').delete().eq('id', id); carregarItens(); } }
-  function logout() { document.getElementById('loginArea').style.display = 'block'; document.getElementById('adminPanel').classList.add('hidden'); document.getElementById('adminEmail').value = ''; document.getElementById('adminPass').value = ''; }
+  function renderizarConfiguracoes() { const container = document.getElementById('configForm'); const campos = ['titulo_hero','subtitulo_hero','texto_retirada','texto_pagamento','texto_fritura','telefone','whatsapp_link','logo_url','banner_url']; container.innerHTML = campos.map(chave => { const item = configuracoes.find(c => c.chave === chave); return `<div><label class="block font-semibold">${chave}</label><input type="text" id="cfg_${chave}" value="${item?.valor || ''}" class="w-full border p-1 rounded"></div>`; }).join(''); }
+  async function salvarConfiguracoes() { const campos = ['titulo_hero','subtitulo_hero','texto_retirada','texto_pagamento','texto_fritura','telefone','whatsapp_link','logo_url','banner_url']; for (let chave of campos) { const valor = document.getElementById(`cfg_${chave}`).value; await supabase.from('configuracoes').upsert({ chave, valor }, { onConflict: 'chave' }); } alert('Configurações salvas!'); }
+  function renderizarRegras() { const container = document.getElementById('regrasForm'); container.innerHTML = regras.map(r => `<div class="border p-2 rounded"><label class="font-semibold">${r.tipo_evento}</label><div class="flex gap-2 mt-1"><input type="number" id="reg_${r.tipo_evento}_s" value="${r.salgados_por_pessoa}" placeholder="Salgados/pessoa" class="w-1/2 border p-1 rounded"><input type="number" id="reg_${r.tipo_evento}_d" value="${r.doces_por_pessoa}" placeholder="Doces/pessoa" class="w-1/2 border p-1 rounded"></div></div>`).join(''); }
+  async function salvarRegras() { for (let r of regras) { const s = document.getElementById(`reg_${r.tipo_evento}_s`).value; const d = document.getElementById(`reg_${r.tipo_evento}_d`).value; await supabase.from('regras_calculadora').upsert({ tipo_evento: r.tipo_evento, salgados_por_pessoa: parseInt(s), doces_por_pessoa: parseInt(d) }, { onConflict: 'tipo_evento' }); } alert('Regras salvas!'); }
+  function renderizarProdutos() { const container = document.getElementById('listaProdutos'); container.innerHTML = produtos.map(p => `<div class="flex justify-between items-center border-b py-2"><div><span class="font-bold">${p.nome}</span> - R$ ${p.preco} - ${p.categoria}</div><div><button onclick="editarProduto(${p.id})" class="text-blue-600 mr-2">Editar</button><button onclick="excluirProduto(${p.id})" class="text-red-600">Excluir</button></div></div>`).join(''); }
+  function abrirModalProduto(produto = null) { const modal = document.getElementById('produtoModal'); modal.classList.remove('hidden'); modal.classList.add('flex'); if (produto) { document.getElementById('modalTitle').innerText = 'Editar produto'; document.getElementById('produtoId').value = produto.id; document.getElementById('prodNome').value = produto.nome; document.getElementById('prodPreco').value = produto.preco; document.getElementById('prodCategoria').value = produto.categoria; document.getElementById('prodUnidade').value = produto.unidade || ''; document.getElementById('prodDescricao').value = produto.descricao || ''; document.getElementById('prodImagem').value = produto.imagem || ''; } else { document.getElementById('modalTitle').innerText = 'Novo produto'; document.getElementById('produtoId').value = ''; document.getElementById('prodNome').value = ''; document.getElementById('prodPreco').value = ''; document.getElementById('prodCategoria').value = 'Fritos'; document.getElementById('prodUnidade').value = ''; document.getElementById('prodDescricao').value = ''; document.getElementById('prodImagem').value = ''; } }
+  function fecharModalProduto() { const modal = document.getElementById('produtoModal'); modal.classList.add('hidden'); modal.classList.remove('flex'); }
+  async function salvarProduto() { const id = document.getElementById('produtoId').value; const produto = { nome: document.getElementById('prodNome').value, preco: parseFloat(document.getElementById('prodPreco').value), categoria: document.getElementById('prodCategoria').value, unidade: document.getElementById('prodUnidade').value, descricao: document.getElementById('prodDescricao').value, imagem: document.getElementById('prodImagem').value }; if (!produto.nome || isNaN(produto.preco)) { alert('Nome e preço obrigatórios'); return; } if (id) await supabase.from('cardapio').update(produto).eq('id', id); else await supabase.from('cardapio').insert([produto]); fecharModalProduto(); await carregarDados(); }
+  async function editarProduto(id) { const produto = produtos.find(p => p.id === id); if (produto) abrirModalProduto(produto); }
+  async function excluirProduto(id) { if (confirm('Excluir?')) { await supabase.from('cardapio').delete().eq('id', id); await carregarDados(); } }
+  function renderizarRespostasChat() { const container = document.getElementById('respostasChatForm'); container.innerHTML = respostasChat.map(r => `<div class="border p-2 rounded"><label class="font-semibold">Palavra-chave: ${r.palavra_chave}</label><textarea id="resp_${r.palavra_chave}" class="w-full border p-1 rounded mt-1" rows="2">${r.resposta}</textarea></div>`).join(''); }
+  async function salvarRespostasChat() { for (let r of respostasChat) { const novaResp = document.getElementById(`resp_${r.palavra_chave}`).value; await supabase.from('respostas_delinha').upsert({ palavra_chave: r.palavra_chave, resposta: novaResp }, { onConflict: 'palavra_chave' }); } alert('Respostas salvas!'); }
+  function logout() { document.getElementById('loginArea').style.display = 'block'; document.getElementById('adminPanel').classList.add('hidden'); }
 </script>
 </body>
 </html>
