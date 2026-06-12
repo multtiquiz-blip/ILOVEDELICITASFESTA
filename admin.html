@@ -21,23 +21,11 @@
 </head>
 <body class="p-4 md:p-8">
 
-<div id="loginContainer" class="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8 mt-20">
-  <h2 class="text-2xl font-bold text-center mb-6">Login Admin</h2>
-  <input type="text" id="loginUser" placeholder="Usuário" class="w-full mb-3">
-  <input type="password" id="loginPass" placeholder="Senha" class="w-full mb-4">
-  <button onclick="fazerLogin()" class="btn-primary w-full py-3 text-lg">Entrar</button>
-  <p id="loginError" class="text-red-500 text-sm text-center mt-3 hidden">Usuário ou senha inválidos</p>
-  <p class="text-xs text-gray-400 text-center mt-4">Use: admin / 123</p>
-</div>
-
-<div id="painelContainer" style="display:none;" class="max-w-7xl mx-auto">
+<div id="painelContainer" class="max-w-7xl mx-auto">
   <!-- Header -->
   <div class="bg-white rounded-xl shadow-md p-4 flex justify-between items-center mb-6">
     <h1 class="text-2xl font-bold text-gray-800">Painel I Love Delicitas</h1>
-    <div class="flex gap-3">
-      <span id="supabaseStatus" class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">🔄 Conectando...</span>
-      <button onclick="logout()" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg transition">Sair</button>
-    </div>
+    <span id="supabaseStatus" class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">🔄 Conectando...</span>
   </div>
 
   <!-- Abas -->
@@ -91,7 +79,7 @@
 
 <script>
   // ============================================================
-  // CONFIGURAÇÃO DIRETA DO SUPABASE (não precisa de config.js)
+  // CONFIGURAÇÃO DIRETA DO SUPABASE
   // ============================================================
   const SUPABASE_URL = 'https://sikiufknmldvkcxcktsn.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpa2l1ZmtubWxkdmtjeGNrdHNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNjYzMzgsImV4cCI6MjA5Njg0MjMzOH0.WKh9GdL3yJxnQqGUhLIeJNOm-7NRhgaMXW8vlkmEb0I';
@@ -101,24 +89,11 @@
   let dados = { config: [], regras: [], produtos: [], faq: [], respostas: [] };
 
   // ============================================================
-  // LOGIN
+  // INICIALIZAÇÃO - CONECTA AO SUPABASE DIRETO
   // ============================================================
-  async function fazerLogin() {
-    const user = document.getElementById('loginUser').value.trim();
-    const pass = document.getElementById('loginPass').value.trim();
-    if (user !== 'admin' || pass !== '123') {
-      document.getElementById('loginError').classList.remove('hidden');
-      setTimeout(() => document.getElementById('loginError').classList.add('hidden'), 2000);
-      return;
-    }
-    // Login OK - mostra painel
-    document.getElementById('loginContainer').style.display = 'none';
-    document.getElementById('painelContainer').style.display = 'block';
-    
-    // Tenta conectar ao Supabase
+  async function inicializar() {
     try {
       supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      // Testa a conexão tentando buscar um registro qualquer
       const { error: testError } = await supabase.from('configuracoes').select('*').limit(1);
       if (testError) throw new Error(testError.message);
       supabaseConectado = true;
@@ -131,18 +106,9 @@
       document.getElementById('supabaseStatus').innerHTML = '❌ Falha na conexão com Supabase';
       document.getElementById('supabaseStatus').className = 'text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full';
       alert(`ERRO DE CONEXÃO: ${e.message}\n\nVerifique se as tabelas existem no Supabase. Execute os SQLs que eu forneci.`);
-      // Mostra mensagem de erro mas não quebra o painel
-      renderizarConfiguracoes();
-      renderizarRegras();
-      renderizarProdutos();
-      renderizarFaq();
-      renderizarRespostas();
     }
   }
 
-  // ============================================================
-  // CARREGAR DADOS DO SUPABASE
-  // ============================================================
   async function carregarTodosDados() {
     if (!supabaseConectado) return;
     try {
@@ -159,7 +125,6 @@
       dados.faq = f.data || [];
       dados.respostas = rs.data || [];
       
-      // Se alguma tabela estiver vazia, insere dados padrão automaticamente
       if (dados.config.length === 0) await inserirDadosPadrao();
       
       renderizarConfiguracoes();
@@ -173,31 +138,26 @@
     }
   }
 
-  // ============================================================
-  // INSERIR DADOS PADRÃO (se as tabelas estiverem vazias)
-  // ============================================================
   async function inserirDadosPadrao() {
-    console.log('Inserindo dados padrão no Supabase...');
+    console.log('Inserindo dados padrão...');
     try {
-      // Configurações padrão
       const configs = [
         { chave: 'logo_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo' },
         { chave: 'banner_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY' },
         { chave: 'titulo_hero', valor: 'A Celebração que o Seu Paladar Merece' },
-        { chave: 'subtitulo_hero', valor: 'Doces e salgados feitos com carinho artesanal para transformar seus momentos em memórias inesquecíveis.' },
-        { chave: 'texto_retirada', valor: '📦 Retirada no local ou frete por aplicativo (consultar valor)' },
-        { chave: 'texto_pagamento', valor: '💳 Pagamento: Pix ou cartão de crédito em até 3x' },
-        { chave: 'texto_fritura', valor: '🍟 Serviço de fritura no local incluso por até 4 horas de evento. Consulte valores.' },
+        { chave: 'subtitulo_hero', valor: 'Doces e salgados feitos com carinho artesanal.' },
+        { chave: 'texto_retirada', valor: '📦 Retirada no local ou frete por aplicativo' },
+        { chave: 'texto_pagamento', valor: '💳 Pagamento: Pix ou cartão em até 3x' },
+        { chave: 'texto_fritura', valor: '🍟 Fritura no local por até 4h' },
         { chave: 'telefone', valor: '5531999999999' },
         { chave: 'whatsapp_link', valor: 'https://wa.me/5531999999999' },
-        { chave: 'rodape_texto', valor: 'Elevando o padrão da gastronomia para festas em Belo Horizonte. Qualidade artesanal com a agilidade que você precisa.' },
-        { chave: 'rodape_copyright', valor: '© 2024 I Love Delicitas. Todos os direitos reservados.' }
+        { chave: 'rodape_texto', valor: 'Qualidade artesanal em BH' },
+        { chave: 'rodape_copyright', valor: '© 2024 I Love Delicitas' }
       ];
       for (let cfg of configs) {
         await supabase.from('configuracoes').upsert(cfg, { onConflict: 'chave' });
       }
       
-      // Regras padrão
       const regras = [
         { tipo_evento: 'adulto', salgados_por_pessoa: 12, doces_por_pessoa: 6 },
         { tipo_evento: 'infantil', salgados_por_pessoa: 10, doces_por_pessoa: 6 },
@@ -207,69 +167,49 @@
         await supabase.from('regras_calculadora').upsert(reg, { onConflict: 'tipo_evento' });
       }
       
-      // Produtos padrão
-      const produtos = [
-        { nome: 'Coxinha de Frango', preco: 90, categoria: 'Fritos', unidade: 'Cento', descricao: 'Clássica massa de batata com frango desfiado.', imagem: 'https://via.placeholder.com/300x200' },
-        { nome: 'Bolinha de Queijo', preco: 90, categoria: 'Fritos', unidade: 'Cento', descricao: 'Massa cremosa com mussarela.', imagem: 'https://via.placeholder.com/300x200' }
-      ];
-      for (let prod of produtos) {
-        await supabase.from('cardapio').insert(prod);
-      }
-      
-      // Respostas padrão
       const respostas = [
         { palavra_chave: 'prazo', resposta: 'Mínimo 72 horas. Grandes eventos: 15 dias.' },
         { palavra_chave: 'pagamento', resposta: 'Pix ou cartão em até 3x.' },
         { palavra_chave: 'entrega', resposta: 'Retirada no local ou frete por aplicativo.' },
-        { palavra_chave: 'fritura', resposta: 'Fritura no local por até 4h. Consulte valores.' },
-        { palavra_chave: 'calcular', resposta: 'Use a calculadora do site. Depois me pergunte o valor total pelo WhatsApp.' }
+        { palavra_chave: 'fritura', resposta: 'Fritura no local por até 4h.' },
+        { palavra_chave: 'calcular', resposta: 'Use a calculadora do site.' }
       ];
       for (let resp of respostas) {
         await supabase.from('respostas_delinha').upsert(resp, { onConflict: 'palavra_chave' });
       }
       
-      // FAQ padrão
       const faqs = [
-        { pergunta: 'Qual o prazo mínimo para encomendar?', resposta: 'Para garantir a frescura e qualidade artesanal, solicitamos um prazo de pelo menos 72 horas para pedidos de catálogo.', ordem: 1 },
-        { pergunta: 'Como funciona o pagamento?', resposta: 'Aceitamos Pix, Cartão de Crédito (até 3 vezes) e boleto sob consulta.', ordem: 2 },
-        { pergunta: 'Vocês entregam em toda a cidade?', resposta: 'Sim! Entregamos em toda Belo Horizonte e região metropolitana.', ordem: 3 }
+        { pergunta: 'Qual o prazo mínimo?', resposta: '72 horas.', ordem: 1 },
+        { pergunta: 'Aceitam cartão?', resposta: 'Sim, em até 3x.', ordem: 2 }
       ];
       for (let faqItem of faqs) {
         await supabase.from('faq').insert(faqItem);
       }
       
-      console.log('Dados padrão inseridos com sucesso!');
+      console.log('Dados padrão inseridos!');
     } catch(e) {
       console.error('Erro ao inserir dados padrão:', e);
     }
   }
 
-  // ============================================================
-  // RENDERIZAÇÕES
-  // ============================================================
   function renderizarConfiguracoes() {
     const container = document.getElementById('configList');
     const campos = [
-      { chave: 'logo_url', label: '🖼️ URL da Logo (imagem de perfil)' },
-      { chave: 'banner_url', label: '🎨 URL do Banner (fundo do hero)' },
-      { chave: 'titulo_hero', label: '📝 Título principal do site' },
-      { chave: 'subtitulo_hero', label: '📝 Subtítulo do site' },
-      { chave: 'texto_retirada', label: '🚚 Texto sobre retirada/frete' },
-      { chave: 'texto_pagamento', label: '💳 Texto sobre pagamento' },
-      { chave: 'texto_fritura', label: '🍟 Texto sobre fritura' },
-      { chave: 'telefone', label: '📞 Telefone (com DDD, sem +55)' },
-      { chave: 'whatsapp_link', label: '📱 Link do WhatsApp' },
-      { chave: 'rodape_texto', label: '📄 Texto do rodapé' },
+      { chave: 'logo_url', label: '🖼️ URL da Logo' },
+      { chave: 'banner_url', label: '🎨 URL do Banner' },
+      { chave: 'titulo_hero', label: '📝 Título principal' },
+      { chave: 'subtitulo_hero', label: '📝 Subtítulo' },
+      { chave: 'texto_retirada', label: '🚚 Retirada/Frete' },
+      { chave: 'texto_pagamento', label: '💳 Pagamento' },
+      { chave: 'texto_fritura', label: '🍟 Fritura' },
+      { chave: 'telefone', label: '📞 Telefone' },
+      { chave: 'whatsapp_link', label: '📱 Link WhatsApp' },
+      { chave: 'rodape_texto', label: '📄 Rodapé' },
       { chave: 'rodape_copyright', label: '©️ Copyright' }
     ];
     container.innerHTML = campos.map(campo => {
       const item = dados.config.find(c => c.chave === campo.chave);
-      return `
-        <div>
-          <label class="block font-semibold text-sm mb-1">${campo.label}</label>
-          <input type="text" id="cfg_${campo.chave}" value="${escapeHtml(item?.valor || '')}" class="w-full">
-        </div>
-      `;
+      return `<div><label class="block font-semibold text-sm mb-1">${campo.label}</label><input type="text" id="cfg_${campo.chave}" value="${escapeHtml(item?.valor || '')}" class="w-full"></div>`;
     }).join('');
   }
 
@@ -283,14 +223,8 @@
       <div class="border rounded-lg p-3">
         <label class="font-bold capitalize">${r.tipo_evento}</label>
         <div class="flex gap-3 mt-2">
-          <div class="flex-1">
-            <label class="text-xs text-gray-500">Salgados por pessoa</label>
-            <input type="number" id="reg_${r.tipo_evento}_s" value="${r.salgados_por_pessoa}" class="w-full">
-          </div>
-          <div class="flex-1">
-            <label class="text-xs text-gray-500">Doces por pessoa</label>
-            <input type="number" id="reg_${r.tipo_evento}_d" value="${r.doces_por_pessoa}" class="w-full">
-          </div>
+          <div class="flex-1"><label class="text-xs text-gray-500">Salgados/pessoa</label><input type="number" id="reg_${r.tipo_evento}_s" value="${r.salgados_por_pessoa}" class="w-full"></div>
+          <div class="flex-1"><label class="text-xs text-gray-500">Doces/pessoa</label><input type="number" id="reg_${r.tipo_evento}_d" value="${r.doces_por_pessoa}" class="w-full"></div>
         </div>
       </div>
     `).join('');
@@ -299,26 +233,13 @@
   function renderizarProdutos() {
     const container = document.getElementById('produtosList');
     if (!dados.produtos.length) {
-      container.innerHTML = '<div class="text-gray-400 text-center py-4">Nenhum produto cadastrado. Clique em "Adicionar Produto".</div>';
+      container.innerHTML = '<div class="text-gray-400 text-center py-4">Nenhum produto. Clique em "Adicionar".</div>';
       return;
     }
     container.innerHTML = dados.produtos.map(p => `
       <div class="flex justify-between items-center border-b py-3 hover:bg-gray-50 px-2 rounded">
-        <div class="flex-1">
-          <div class="flex items-center gap-3">
-            ${p.imagem ? `<img src="${p.imagem}" class="w-10 h-10 object-cover rounded" onerror="this.src='https://via.placeholder.com/40'">` : ''}
-            <div>
-              <span class="font-bold">${escapeHtml(p.nome)}</span>
-              <span class="text-sm text-gray-500 ml-2">R$ ${p.preco} - ${p.categoria}</span>
-              ${p.unidade ? `<span class="text-xs text-gray-400 ml-2">${escapeHtml(p.unidade)}</span>` : ''}
-            </div>
-          </div>
-          ${p.descricao ? `<p class="text-sm text-gray-500 mt-1 ml-12">${escapeHtml(p.descricao)}</p>` : ''}
-        </div>
-        <div class="flex gap-2">
-          <button onclick='editarProduto(${p.id})' class="text-blue-600 hover:text-blue-800 text-sm px-2 py-1">✏️ Editar</button>
-          <button onclick='excluirProduto(${p.id})' class="text-red-600 hover:text-red-800 text-sm px-2 py-1">🗑️ Excluir</button>
-        </div>
+        <div><span class="font-bold">${escapeHtml(p.nome)}</span> - R$ ${p.preco} - ${p.categoria}</div>
+        <div><button onclick='editarProduto(${p.id})' class="text-blue-600 mr-2">✏️ Editar</button><button onclick='excluirProduto(${p.id})' class="text-red-600">🗑️ Excluir</button></div>
       </div>
     `).join('');
   }
@@ -326,19 +247,13 @@
   function renderizarFaq() {
     const container = document.getElementById('faqList');
     if (!dados.faq.length) {
-      container.innerHTML = '<div class="text-gray-400 text-center py-4">Nenhuma FAQ cadastrada. Clique em "Adicionar FAQ".</div>';
+      container.innerHTML = '<div class="text-gray-400 text-center py-4">Nenhuma FAQ.</div>';
       return;
     }
     container.innerHTML = dados.faq.map(f => `
       <div class="flex justify-between items-center border-b py-3 hover:bg-gray-50 px-2 rounded">
-        <div class="flex-1">
-          <span class="font-bold">❓ ${escapeHtml(f.pergunta)}</span>
-          <p class="text-sm text-gray-500 mt-1">${escapeHtml(f.resposta)}</p>
-        </div>
-        <div class="flex gap-2">
-          <button onclick='editarFaq(${f.id})' class="text-blue-600 hover:text-blue-800 text-sm px-2 py-1">✏️ Editar</button>
-          <button onclick='excluirFaq(${f.id})' class="text-red-600 hover:text-red-800 text-sm px-2 py-1">🗑️ Excluir</button>
-        </div>
+        <div><span class="font-bold">${escapeHtml(f.pergunta)}</span><br><span class="text-sm text-gray-500">${escapeHtml(f.resposta)}</span></div>
+        <div><button onclick='editarFaq(${f.id})' class="text-blue-600 mr-2">✏️ Editar</button><button onclick='excluirFaq(${f.id})' class="text-red-600">🗑️ Excluir</button></div>
       </div>
     `).join('');
   }
@@ -346,13 +261,13 @@
   function renderizarRespostas() {
     const container = document.getElementById('respostasList');
     if (!dados.respostas.length) {
-      container.innerHTML = '<div class="text-gray-400 text-center py-4">Nenhuma resposta cadastrada.</div>';
+      container.innerHTML = '<div class="text-gray-400 text-center py-4">Nenhuma resposta.</div>';
       return;
     }
     container.innerHTML = dados.respostas.map(r => `
       <div class="border rounded-lg p-3">
-        <label class="font-semibold block mb-1">🔑 Palavra-chave: <span class="text-primary">${escapeHtml(r.palavra_chave)}</span></label>
-        <textarea id="resp_${r.palavra_chave}" class="w-full" rows="2">${escapeHtml(r.resposta)}</textarea>
+        <label class="font-semibold">Palavra-chave: ${escapeHtml(r.palavra_chave)}</label>
+        <textarea id="resp_${r.palavra_chave}" class="w-full mt-1" rows="2">${escapeHtml(r.resposta)}</textarea>
       </div>
     `).join('');
   }
@@ -361,13 +276,13 @@
   // FUNÇÕES DE SALVAMENTO
   // ============================================================
   async function salvarConfiguracoes() {
-    if (!supabaseConectado) { alert("⚠️ Supabase não conectado. Verifique sua conexão."); return; }
+    if (!supabaseConectado) { alert("⚠️ Supabase não conectado."); return; }
     const campos = ['logo_url','banner_url','titulo_hero','subtitulo_hero','texto_retirada','texto_pagamento','texto_fritura','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
     for (let chave of campos) {
       const valor = document.getElementById(`cfg_${chave}`).value;
       await supabase.from('configuracoes').upsert({ chave, valor }, { onConflict: 'chave' });
     }
-    alert("✅ Configurações salvas com sucesso!");
+    alert("✅ Configurações salvas!");
     await carregarTodosDados();
   }
 
@@ -388,23 +303,21 @@
       const novoTexto = document.getElementById(`resp_${r.palavra_chave}`).value;
       await supabase.from('respostas_delinha').upsert({ palavra_chave: r.palavra_chave, resposta: novoTexto }, { onConflict: 'palavra_chave' });
     }
-    alert("✅ Respostas da Delinha salvas!");
+    alert("✅ Respostas salvas!");
     await carregarTodosDados();
   }
 
   // ============================================================
-  // CRUD DO CARDÁPIO
+  // CRUD
   // ============================================================
   async function novoProduto() {
     if (!supabaseConectado) { alert("⚠️ Supabase não conectado."); return; }
-    const nome = prompt("Nome do produto");
-    if (!nome) return;
-    const preco = parseFloat(prompt("Preço (R$)"));
-    if (isNaN(preco)) return;
-    const categoria = prompt("Categoria (Fritos/Assados/Lanches/Doces)", "Fritos");
-    const unidade = prompt("Unidade (ex: Cento)", "Cento");
-    const descricao = prompt("Descrição curta", "");
-    const imagem = prompt("URL da imagem (deixe em branco para placeholder)", "https://via.placeholder.com/300x200");
+    const nome = prompt("Nome do produto"); if (!nome) return;
+    const preco = parseFloat(prompt("Preço")); if (isNaN(preco)) return;
+    const categoria = prompt("Categoria", "Fritos");
+    const unidade = prompt("Unidade", "Cento");
+    const descricao = prompt("Descrição", "");
+    const imagem = prompt("URL da imagem", "https://via.placeholder.com/300x200");
     await supabase.from('cardapio').insert([{ nome, preco, categoria, unidade, descricao, imagem }]);
     await carregarTodosDados();
   }
@@ -413,40 +326,28 @@
     if (!supabaseConectado) { alert("⚠️ Supabase não conectado."); return; }
     const p = dados.produtos.find(x => x.id == id);
     if (!p) return;
-    const nome = prompt("Nome", p.nome);
-    const preco = parseFloat(prompt("Preço", p.preco));
-    const categoria = prompt("Categoria", p.categoria);
-    const unidade = prompt("Unidade", p.unidade);
-    const descricao = prompt("Descrição", p.descricao);
-    const imagem = prompt("URL da imagem", p.imagem);
-    const atualizado = {};
-    if (nome) atualizado.nome = nome;
-    if (!isNaN(preco)) atualizado.preco = preco;
-    if (categoria) atualizado.categoria = categoria;
-    if (unidade) atualizado.unidade = unidade;
-    if (descricao) atualizado.descricao = descricao;
-    if (imagem) atualizado.imagem = imagem;
-    await supabase.from('cardapio').update(atualizado).eq('id', id);
+    const nome = prompt("Nome", p.nome); if (nome) p.nome = nome;
+    const preco = parseFloat(prompt("Preço", p.preco)); if (!isNaN(preco)) p.preco = preco;
+    const categoria = prompt("Categoria", p.categoria); if (categoria) p.categoria = categoria;
+    const unidade = prompt("Unidade", p.unidade); if (unidade) p.unidade = unidade;
+    const descricao = prompt("Descrição", p.descricao); if (descricao) p.descricao = descricao;
+    const imagem = prompt("URL da imagem", p.imagem); if (imagem) p.imagem = imagem;
+    await supabase.from('cardapio').update(p).eq('id', id);
     await carregarTodosDados();
   }
 
   async function excluirProduto(id) {
     if (!supabaseConectado) { alert("⚠️ Supabase não conectado."); return; }
-    if (confirm("Excluir permanentemente este produto?")) {
+    if (confirm("Excluir?")) {
       await supabase.from('cardapio').delete().eq('id', id);
       await carregarTodosDados();
     }
   }
 
-  // ============================================================
-  // CRUD DO FAQ
-  // ============================================================
   async function novoFaq() {
     if (!supabaseConectado) { alert("⚠️ Supabase não conectado."); return; }
-    const pergunta = prompt("Pergunta");
-    if (!pergunta) return;
-    const resposta = prompt("Resposta");
-    if (!resposta) return;
+    const pergunta = prompt("Pergunta"); if (!pergunta) return;
+    const resposta = prompt("Resposta"); if (!resposta) return;
     await supabase.from('faq').insert([{ pergunta, resposta, ordem: dados.faq.length + 1 }]);
     await carregarTodosDados();
   }
@@ -455,33 +356,18 @@
     if (!supabaseConectado) { alert("⚠️ Supabase não conectado."); return; }
     const f = dados.faq.find(x => x.id == id);
     if (!f) return;
-    const pergunta = prompt("Pergunta", f.pergunta);
-    const resposta = prompt("Resposta", f.resposta);
-    if (pergunta && resposta) {
-      await supabase.from('faq').update({ pergunta, resposta }).eq('id', id);
-      await carregarTodosDados();
-    }
+    const pergunta = prompt("Pergunta", f.pergunta); if (pergunta) f.pergunta = pergunta;
+    const resposta = prompt("Resposta", f.resposta); if (resposta) f.resposta = resposta;
+    await supabase.from('faq').update(f).eq('id', id);
+    await carregarTodosDados();
   }
 
   async function excluirFaq(id) {
     if (!supabaseConectado) { alert("⚠️ Supabase não conectado."); return; }
-    if (confirm("Excluir esta FAQ?")) {
+    if (confirm("Excluir FAQ?")) {
       await supabase.from('faq').delete().eq('id', id);
       await carregarTodosDados();
     }
-  }
-
-  // ============================================================
-  // UTILITÁRIOS
-  // ============================================================
-  function escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
-    });
   }
 
   function mostrarAba(aba) {
@@ -490,27 +376,17 @@
       const div = document.getElementById(`aba${a.charAt(0).toUpperCase() + a.slice(1)}`);
       const btn = document.getElementById(`btn${a.charAt(0).toUpperCase() + a.slice(1)}`);
       if (div) div.classList.add('hidden');
-      if (btn) {
-        btn.classList.remove('tab-active');
-        btn.classList.add('tab-inactive');
-      }
+      if (btn) { btn.classList.remove('tab-active'); btn.classList.add('tab-inactive'); }
     }
-    const abaDiv = document.getElementById(`aba${aba.charAt(0).toUpperCase() + aba.slice(1)}`);
-    const abaBtn = document.getElementById(`btn${aba.charAt(0).toUpperCase() + aba.slice(1)}`);
-    if (abaDiv) abaDiv.classList.remove('hidden');
-    if (abaBtn) {
-      abaBtn.classList.remove('tab-inactive');
-      abaBtn.classList.add('tab-active');
-    }
+    document.getElementById(`aba${aba.charAt(0).toUpperCase() + aba.slice(1)}`).classList.remove('hidden');
+    document.getElementById(`btn${aba.charAt(0).toUpperCase() + aba.slice(1)}`).classList.remove('tab-inactive');
+    document.getElementById(`btn${aba.charAt(0).toUpperCase() + aba.slice(1)}`).classList.add('tab-active');
   }
 
-  function logout() {
-    document.getElementById('loginContainer').style.display = 'block';
-    document.getElementById('painelContainer').style.display = 'none';
-    document.getElementById('loginUser').value = '';
-    document.getElementById('loginPass').value = '';
-    supabaseConectado = false;
-  }
+  function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;')); }
+
+  // INICIALIZA
+  inicializar();
 </script>
 </body>
 </html>
