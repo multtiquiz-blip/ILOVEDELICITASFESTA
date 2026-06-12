@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Admin - I Love Delicitas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>body { background: #f3f4f6; }</style>
+</head>
+<body class="p-4 md:p-8">
+
+<div id="loginScreen" class="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8 mt-20">
+  <h2 class="text-2xl font-bold text-center mb-6">Login Admin</h2>
+  <input type="email" id="loginEmail" placeholder="Email" class="w-full border rounded-lg p-3 mb-3 focus:ring-2 focus:ring-red-500">
+  <input type="password" id="loginPassword" placeholder="Senha" class="w-full border rounded-lg p-3 mb-4 focus:ring-2 focus:ring-red-500">
+  <button onclick="loginComSupabase()" class="w-full bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700">Entrar</button>
+  <p id="loginError" class="text-red-500 text-sm text-center mt-3 hidden">Email ou senha inválidos</p>
+</div>
+
+<div id="adminPanel" style="display:none;" class="max-w-7xl mx-auto">
+  <div class="bg-white rounded-xl shadow-md p-4 flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Painel I Love Delicitas</h1>
+    <button onclick="logout()" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg">Sair</button>
+  </div>
+
+  <!-- Abas -->
+  <div class="flex flex-wrap gap-2 mb-6">
+    <button onclick="showTab('config')" id="tabConfig" class="bg-red-600 text-white px-4 py-2 rounded-lg font-semibold">Configurações</button>
+    <button onclick="showTab('regras')" id="tabRegras" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-semibold">Calculadora</button>
+    <button onclick="showTab('cardapio')" id="tabCardapio" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-semibold">Cardápio</button>
+    <button onclick="showTab('faq')" id="tabFaq" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-semibold">FAQ</button>
+    <button onclick="showTab('respostas')" id="tabRespostas" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-semibold">Delinha</button>
+  </div>
+
+  <!-- Configurações -->
+  <div id="tabConfigContent" class="bg-white rounded-xl shadow-md p-6">
+    <h2 class="text-xl font-bold mb-4">⚙️ Configurações do Site</h2>
+    <div id="configList" class="space-y-3 max-h-96 overflow-y-auto"></div>
+    <button onclick="saveConfig()" class="mt-4 bg-green-600 text-white px-4 py-2 rounded-lg">Salvar Configurações</button>
+  </div>
+
+  <!-- Regras -->
+  <div id="tabRegrasContent" class="bg-white rounded-xl shadow-md p-6 hidden">
+    <h2 class="text-xl font-bold mb-4">📊 Regras da Calculadora</h2>
+    <div id="rulesList" class="space-y-3"></div>
+    <button onclick="saveRules()" class="mt-4 bg-green-600 text-white px-4 py-2 rounded-lg">Salvar Regras</button>
+  </div>
+
+  <!-- Cardápio -->
+  <div id="tabCardapioContent" class="bg-white rounded-xl shadow-md p-6 hidden">
+    <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">🍔 Cardápio</h2><button onclick="addProduct()" class="bg-blue-600 text-white px-3 py-1 rounded-lg">+ Adicionar</button></div>
+    <div id="productsList" class="space-y-2 max-h-96 overflow-y-auto"></div>
+  </div>
+
+  <!-- FAQ -->
+  <div id="tabFaqContent" class="bg-white rounded-xl shadow-md p-6 hidden">
+    <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">❓ FAQ</h2><button onclick="addFaq()" class="bg-blue-600 text-white px-3 py-1 rounded-lg">+ Adicionar</button></div>
+    <div id="faqList" class="space-y-2 max-h-96 overflow-y-auto"></div>
+  </div>
+
+  <!-- Respostas Delinha -->
+  <div id="tabRespostasContent" class="bg-white rounded-xl shadow-md p-6 hidden">
+    <h2 class="text-xl font-bold mb-4">💬 Respostas da Delinha</h2>
+    <div id="respostasList" class="space-y-3"></div>
+    <button onclick="saveRespostas()" class="mt-4 bg-green-600 text-white px-4 py-2 rounded-lg">Salvar Respostas</button>
+  </div>
+</div>
+
+<script>
+  // Configuração do Supabase
+  const SUPABASE_URL = 'https://sikiufknmldvkcxcktsn.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpa2l1ZmtubWxkdmtjeGNrdHNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNjYzMzgsImV4cCI6MjA5Njg0MjMzOH0.WKh9GdL3yJxnQqGUhLIeJNOm-7NRhgaMXW8vlkmEb0I';
+  
+  let supabase;
+  let currentSession = null;
+  let dados = { config: [], rules: [], products: [], faq: [], respostas: [] };
+
+  async function loginComSupabase() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+    if (!email || !password) {
+      alert("Preencha email e senha");
+      return;
+    }
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      document.getElementById('loginError').classList.remove('hidden');
+      setTimeout(() => document.getElementById('loginError').classList.add('hidden'), 2000);
+      return;
+    }
+    currentSession = data.session;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    await carregarTodosDados();
+  }
+
+  async function carregarTodosDados() {
+    try {
+      const [c, r, p, f, rs] = await Promise.all([
+        supabase.from('configuracoes').select('*'),
+        supabase.from('regras_calculadora').select('*'),
+        supabase.from('cardapio').select('*').order('id'),
+        supabase.from('faq').select('*').order('ordem'),
+        supabase.from('respostas_delinha').select('*')
+      ]);
+      dados.config = c.data || [];
+      dados.rules = r.data || [];
+      dados.products = p.data || [];
+      dados.faq = f.data || [];
+      dados.respostas = rs.data || [];
+      renderizarConfiguracoes();
+      renderizarRegras();
+      renderizarProdutos();
+      renderizarFaq();
+      renderizarRespostas();
+    } catch(e) { alert("Erro ao carregar: "+e.message); }
+  }
+
+  function renderizarConfiguracoes() {
+    const campos = ['logo_url','banner_url','titulo_hero','subtitulo_hero','texto_retirada','texto_pagamento','texto_fritura','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
+    const container = document.getElementById('configList');
+    container.innerHTML = campos.map(chave => {
+      const item = dados.config.find(c => c.chave === chave);
+      return `<div><label class="font-semibold text-sm">${chave}</label><input type="text" id="cfg_${chave}" value="${item?.valor || ''}" class="w-full border rounded p-2 text-sm"></div>`;
+    }).join('');
+  }
+
+  async function saveConfig() {
+    const campos = ['logo_url','banner_url','titulo_hero','subtitulo_hero','texto_retirada','texto_pagamento','texto_fritura','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
+    for (let chave of campos) {
+      const valor = document.getElementById(`cfg_${chave}`).value;
+      await supabase.from('configuracoes').upsert({ chave, valor }, { onConflict: 'chave' });
+    }
+    alert("Configurações salvas!");
+  }
+
+  function renderizarRegras() {
+    const container = document.getElementById('rulesList');
+    container.innerHTML = dados.rules.map(r => `
+      <div class="border p-3 rounded">
+        <label class="font-bold">${r.tipo_evento.toUpperCase()}</label>
+        <div class="flex gap-2 mt-2">
+          <div class="flex-1"><label class="text-xs">Salgados/pessoa</label><input type="number" id="reg_${r.tipo_evento}_s" value="${r.salgados_por_pessoa}" class="w-full border rounded p-1"></div>
+          <div class="flex-1"><label class="text-xs">Doces/pessoa</label><input type="number" id="reg_${r.tipo_evento}_d" value="${r.doces_por_pessoa}" class="w-full border rounded p-1"></div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function saveRules() {
+    for (let r of dados.rules) {
+      const s = document.getElementById(`reg_${r.tipo_evento}_s`).value;
+      const d = document.getElementById(`reg_${r.tipo_evento}_d`).value;
+      await supabase.from('regras_calculadora').upsert({ tipo_evento: r.tipo_evento, salgados_por_pessoa: parseInt(s), doces_por_pessoa: parseInt(d) }, { onConflict: 'tipo_evento' });
+    }
+    alert("Regras salvas!");
+  }
+
+  function renderizarProdutos() {
+    const container = document.getElementById('productsList');
+    if (dados.products.length === 0) { container.innerHTML = '<div class="text-gray-400 text-center py-4">Nenhum produto</div>'; return; }
+    container.innerHTML = dados.products.map(p => `
+      <div class="flex justify-between items-center border-b py-2">
+        <div><strong>${p.nome}</strong> - R$ ${p.preco} - ${p.categoria}</div>
+        <div><button onclick="editProduct(${p.id})" class="text-blue-600 mr-2 text-sm">Editar</button><button onclick="deleteProduct(${p.id})" class="text-red-600 text-sm">Excluir</button></div>
+      </div>
+    `).join('');
+  }
+
+  async function addProduct() {
+    const nome = prompt("Nome do produto");
+    if (!nome) return;
+    const preco = parseFloat(prompt("Preço"));
+    if (isNaN(preco)) return;
+    const categoria = prompt("Categoria (Fritos/Assados/Lanches/Doces)", "Fritos");
+    const unidade = prompt("Unidade", "Cento");
+    const descricao = prompt("Descrição", "");
+    const imagem = prompt("URL da imagem", "https://via.placeholder.com/300x200");
+    await supabase.from('cardapio').insert([{ nome, preco, categoria, unidade, descricao, imagem }]);
+    await carregarTodosDados();
+  }
+
+  async function editProduct(id) {
+    const p = dados.products.find(x => x.id == id);
+    if (!p) return;
+    const nome = prompt("Nome", p.nome); if (nome) p.nome = nome;
+    const preco = parseFloat(prompt("Preço", p.preco)); if (!isNaN(preco)) p.preco = preco;
+    const categoria = prompt("Categoria", p.categoria); if (categoria) p.categoria = categoria;
+    const unidade = prompt("Unidade", p.unidade); if (unidade) p.unidade = unidade;
+    const descricao = prompt("Descrição", p.descricao); if (descricao) p.descricao = descricao;
+    const imagem = prompt("URL da imagem", p.imagem); if (imagem) p.imagem = imagem;
+    await supabase.from('cardapio').update(p).eq('id', id);
+    await carregarTodosDados();
+  }
+
+  async function deleteProduct(id) {
+    if (confirm("Excluir permanentemente?")) {
+      await supabase.from('cardapio').delete().eq('id', id);
+      await carregarTodosDados();
+    }
+  }
+
+  function renderizarFaq() {
+    const container = document.getElementById('faqList');
+    if (dados.faq.length === 0) { container.innerHTML = '<div class="text-gray-400 text-center py-4">Nenhuma FAQ</div>'; return; }
+    container.innerHTML = dados.faq.map(f => `
+      <div class="flex justify-between items-center border-b py-2">
+        <div><strong>${f.pergunta}</strong><br><span class="text-sm text-gray-500">${f.resposta.substring(0, 60)}...</span></div>
+        <div><button onclick="editFaq(${f.id})" class="text-blue-600 mr-2 text-sm">Editar</button><button onclick="deleteFaq(${f.id})" class="text-red-600 text-sm">Excluir</button></div>
+      </div>
+    `).join('');
+  }
+
+  async function addFaq() {
+    const pergunta = prompt("Pergunta"); if (!pergunta) return;
+    const resposta = prompt("Resposta"); if (!resposta) return;
+    await supabase.from('faq').insert([{ pergunta, resposta, ordem: dados.faq.length + 1 }]);
+    await carregarTodosDados();
+  }
+
+  async function editFaq(id) {
+    const f = dados.faq.find(x => x.id == id);
+    if (!f) return;
+    const pergunta = prompt("Pergunta", f.pergunta); if (pergunta) f.pergunta = pergunta;
+    const resposta = prompt("Resposta", f.resposta); if (resposta) f.resposta = resposta;
+    await supabase.from('faq').update(f).eq('id', id);
+    await carregarTodosDados();
+  }
+
+  async function deleteFaq(id) {
+    if (confirm("Excluir FAQ?")) {
+      await supabase.from('faq').delete().eq('id', id);
+      await carregarTodosDados();
+    }
+  }
+
+  function renderizarRespostas() {
+    const container = document.getElementById('respostasList');
+    container.innerHTML = dados.respostas.map(r => `
+      <div class="border p-3 rounded">
+        <label class="font-semibold">Palavra-chave: ${r.palavra_chave}</label>
+        <textarea id="resp_${r.palavra_chave}" class="w-full border rounded p-2 mt-1" rows="2">${r.resposta}</textarea>
+      </div>
+    `).join('');
+  }
+
+  async function saveRespostas() {
+    for (let r of dados.respostas) {
+      const nova = document.getElementById(`resp_${r.palavra_chave}`).value;
+      await supabase.from('respostas_delinha').upsert({ palavra_chave: r.palavra_chave, resposta: nova }, { onConflict: 'palavra_chave' });
+    }
+    alert("Respostas salvas!");
+  }
+
+  function showTab(tab) {
+    const tabs = ['config', 'regras', 'cardapio', 'faq', 'respostas'];
+    for (let t of tabs) {
+      document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}Content`).classList.add('hidden');
+      document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.remove('bg-red-600', 'text-white');
+      document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.add('bg-gray-200', 'text-gray-800');
+    }
+    document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}Content`).classList.remove('hidden');
+    document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.remove('bg-gray-200', 'text-gray-800');
+    document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('bg-red-600', 'text-white');
+  }
+
+  async function logout() {
+    await supabase.auth.signOut();
+    document.getElementById('loginScreen').style.display = 'block';
+    document.getElementById('adminPanel').style.display = 'none';
+    currentSession = null;
+  }
+</script>
+</body>
+</html>
