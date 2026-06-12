@@ -2,241 +2,514 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel Admin - I Love Delicitas</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="config.js"></script>
+  <style>
+    body { background: #f3f4f6; font-family: system-ui, -apple-system, sans-serif; }
+    .card { background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1.5rem; margin-bottom: 1.5rem; }
+    .tab-active { background-color: #ae2f34 !important; color: white !important; }
+    .tab-inactive { background-color: #e5e7eb !important; color: #374151 !important; }
+    .btn-primary { background-color: #ae2f34; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: all 0.2s; }
+    .btn-primary:hover { background-color: #8b2327; }
+    .btn-success { background-color: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; }
+    .btn-success:hover { background-color: #059669; }
+    input, textarea, select { border: 1px solid #d1d5db; border-radius: 0.5rem; padding: 0.5rem; width: 100%; }
+    input:focus, textarea:focus, select:focus { outline: none; ring: 2px solid #ae2f34; border-color: #ae2f34; }
+  </style>
 </head>
-<body class="bg-gray-100 p-6">
+<body class="p-4 md:p-8">
 
-<!-- TELA DE LOGIN SIMPLES -->
-<div id="loginScreen" class="max-w-md mx-auto bg-white rounded-xl shadow-md p-8 mt-20">
-  <h2 class="text-2xl font-bold mb-4">Login Admin</h2>
-  <input type="text" id="user" placeholder="Usuário" class="w-full border p-2 mb-3 rounded">
-  <input type="password" id="pass" placeholder="Senha" class="w-full border p-2 mb-4 rounded">
-  <button onclick="login()" class="bg-red-600 text-white w-full py-2 rounded-full">Entrar</button>
-  <p id="loginError" class="text-red-500 text-sm mt-2 hidden">Usuário ou senha inválidos</p>
-  <p class="text-xs text-gray-400 mt-4">Use: admin / 123</p>
+<div id="loginContainer" class="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8 mt-20">
+  <h2 class="text-2xl font-bold text-center mb-6">Login Admin</h2>
+  <input type="text" id="loginUser" placeholder="Usuário" class="w-full mb-3">
+  <input type="password" id="loginPass" placeholder="Senha" class="w-full mb-4">
+  <button onclick="fazerLogin()" class="btn-primary w-full py-3 text-lg">Entrar</button>
+  <p id="loginError" class="text-red-500 text-sm text-center mt-3 hidden">Usuário ou senha inválidos</p>
+  <p class="text-xs text-gray-400 text-center mt-4">Use: admin / 123</p>
 </div>
 
-<!-- PAINEL (aparece após login) -->
-<div id="adminPanel" style="display:none;" class="max-w-7xl mx-auto">
-  <div class="bg-white p-4 rounded-xl shadow flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold">Painel I Love Delicitas</h1>
-    <button onclick="logout()" class="bg-gray-300 px-4 py-2 rounded">Sair</button>
+<div id="painelContainer" style="display:none;" class="max-w-7xl mx-auto">
+  <!-- Header -->
+  <div class="bg-white rounded-xl shadow-md p-4 flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-800">Painel I Love Delicitas</h1>
+    <div class="flex gap-3">
+      <span id="supabaseStatus" class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">🔄 Conectando...</span>
+      <button onclick="logout()" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg transition">Sair</button>
+    </div>
   </div>
 
-  <div class="grid md:grid-cols-2 gap-6">
-    <div class="bg-white p-4 rounded-xl shadow">
-      <h2 class="text-xl font-bold mb-4">⚙️ Configurações</h2>
-      <div id="configList" class="space-y-3"></div>
-      <button onclick="salvarConfiguracoes()" class="bg-green-600 text-white px-4 py-2 rounded mt-3">Salvar</button>
+  <!-- Abas -->
+  <div class="flex flex-wrap gap-2 mb-6">
+    <button onclick="mostrarAba('config')" id="btnConfig" class="tab-active px-4 py-2 rounded-lg font-semibold transition">⚙️ Configurações</button>
+    <button onclick="mostrarAba('regras')" id="btnRegras" class="tab-inactive px-4 py-2 rounded-lg font-semibold transition">📊 Calculadora</button>
+    <button onclick="mostrarAba('cardapio')" id="btnCardapio" class="tab-inactive px-4 py-2 rounded-lg font-semibold transition">🍔 Cardápio</button>
+    <button onclick="mostrarAba('faq')" id="btnFaq" class="tab-inactive px-4 py-2 rounded-lg font-semibold transition">❓ FAQ</button>
+    <button onclick="mostrarAba('respostas')" id="btnRespostas" class="tab-inactive px-4 py-2 rounded-lg font-semibold transition">💬 Delinha</button>
+  </div>
+
+  <!-- Aba Configurações -->
+  <div id="abaConfig" class="card">
+    <h2 class="text-xl font-bold mb-4 border-b pb-2">⚙️ Configurações do Site</h2>
+    <div id="configList" class="space-y-3 max-h-96 overflow-y-auto"></div>
+    <button onclick="salvarConfiguracoes()" class="btn-success w-full mt-4">💾 Salvar Configurações</button>
+  </div>
+
+  <!-- Aba Regras da Calculadora -->
+  <div id="abaRegras" class="card hidden">
+    <h2 class="text-xl font-bold mb-4 border-b pb-2">📊 Regras da Calculadora</h2>
+    <div id="regrasList" class="space-y-3"></div>
+    <button onclick="salvarRegras()" class="btn-success w-full mt-4">💾 Salvar Regras</button>
+  </div>
+
+  <!-- Aba Cardápio -->
+  <div id="abaCardapio" class="card hidden">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold">🍔 Cardápio</h2>
+      <button onclick="novoProduto()" class="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700">+ Adicionar Produto</button>
     </div>
-    <div class="bg-white p-4 rounded-xl shadow">
-      <h2 class="text-xl font-bold mb-4">📊 Regras da Calculadora</h2>
-      <div id="regrasList" class="space-y-3"></div>
-      <button onclick="salvarRegras()" class="bg-green-600 text-white px-4 py-2 rounded mt-3">Salvar</button>
+    <div id="produtosList" class="space-y-2 max-h-96 overflow-y-auto"></div>
+  </div>
+
+  <!-- Aba FAQ -->
+  <div id="abaFaq" class="card hidden">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold">❓ Perguntas Frequentes</h2>
+      <button onclick="novoFaq()" class="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700">+ Adicionar FAQ</button>
     </div>
-    <div class="bg-white p-4 rounded-xl shadow md:col-span-2">
-      <h2 class="text-xl font-bold mb-4">🍔 Cardápio</h2>
-      <button onclick="novoProduto()" class="bg-blue-600 text-white px-3 py-1 rounded mb-3">+ Adicionar</button>
-      <div id="produtosList" class="space-y-2 max-h-96 overflow-y-auto"></div>
-    </div>
-    <div class="bg-white p-4 rounded-xl shadow md:col-span-2">
-      <h2 class="text-xl font-bold mb-4">❓ FAQ</h2>
-      <button onclick="novoFaq()" class="bg-blue-600 text-white px-3 py-1 rounded mb-3">+ Adicionar</button>
-      <div id="faqList" class="space-y-2 max-h-96 overflow-y-auto"></div>
-    </div>
-    <div class="bg-white p-4 rounded-xl shadow md:col-span-2">
-      <h2 class="text-xl font-bold mb-4">💬 Respostas da Delinha</h2>
-      <div id="respostasList" class="space-y-3"></div>
-      <button onclick="salvarRespostas()" class="bg-green-600 text-white px-4 py-2 rounded mt-3">Salvar</button>
-    </div>
+    <div id="faqList" class="space-y-2 max-h-96 overflow-y-auto"></div>
+  </div>
+
+  <!-- Aba Respostas da Delinha -->
+  <div id="abaRespostas" class="card hidden">
+    <h2 class="text-xl font-bold mb-4 border-b pb-2">💬 Respostas da Delinha (Chat)</h2>
+    <div id="respostasList" class="space-y-3"></div>
+    <button onclick="salvarRespostas()" class="btn-success w-full mt-4">💾 Salvar Respostas</button>
   </div>
 </div>
 
 <script>
+  // ============================================================
+  // CONFIGURAÇÃO DIRETA DO SUPABASE (não precisa de config.js)
+  // ============================================================
+  const SUPABASE_URL = 'https://sikiufknmldvkcxcktsn.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpa2l1ZmtubWxkdmtjeGNrdHNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNjYzMzgsImV4cCI6MjA5Njg0MjMzOH0.WKh9GdL3yJxnQqGUhLIeJNOm-7NRhgaMXW8vlkmEb0I';
+  
   let supabase;
+  let supabaseConectado = false;
   let dados = { config: [], regras: [], produtos: [], faq: [], respostas: [] };
 
-  async function login() {
-    const user = document.getElementById('user').value.trim();
-    const pass = document.getElementById('pass').value.trim();
+  // ============================================================
+  // LOGIN
+  // ============================================================
+  async function fazerLogin() {
+    const user = document.getElementById('loginUser').value.trim();
+    const pass = document.getElementById('loginPass').value.trim();
     if (user !== 'admin' || pass !== '123') {
       document.getElementById('loginError').classList.remove('hidden');
       setTimeout(() => document.getElementById('loginError').classList.add('hidden'), 2000);
       return;
     }
-    // Login OK
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('adminPanel').style.display = 'block';
+    // Login OK - mostra painel
+    document.getElementById('loginContainer').style.display = 'none';
+    document.getElementById('painelContainer').style.display = 'block';
     
-    // Inicializa Supabase
-    if (typeof SUPABASE_CONFIG === 'undefined') {
-      alert("ERRO: config.js não carregou. O painel não vai funcionar. Verifique se o arquivo config.js existe no servidor.");
-      return;
-    }
-    supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
-    await carregarTodosDados();
-  }
-
-  async function carregarTodosDados() {
+    // Tenta conectar ao Supabase
     try {
-      const { data: c } = await supabase.from('configuracoes').select('*');
-      const { data: r } = await supabase.from('regras_calculadora').select('*');
-      const { data: p } = await supabase.from('cardapio').select('*').order('id');
-      const { data: f } = await supabase.from('faq').select('*').order('ordem');
-      const { data: rs } = await supabase.from('respostas_delinha').select('*');
-      dados.config = c || []; dados.regras = r || []; dados.produtos = p || []; dados.faq = f || []; dados.respostas = rs || [];
-      renderizarConfiguracoes(); renderizarRegras(); renderizarProdutos(); renderizarFaq(); renderizarRespostas();
-    } catch(e) { alert("Erro ao carregar dados: "+e.message); }
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      // Testa a conexão tentando buscar um registro qualquer
+      const { error: testError } = await supabase.from('configuracoes').select('*').limit(1);
+      if (testError) throw new Error(testError.message);
+      supabaseConectado = true;
+      document.getElementById('supabaseStatus').innerHTML = '✅ Conectado ao Supabase';
+      document.getElementById('supabaseStatus').className = 'text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full';
+      await carregarTodosDados();
+    } catch(e) {
+      console.error('Erro ao conectar Supabase:', e);
+      supabaseConectado = false;
+      document.getElementById('supabaseStatus').innerHTML = '❌ Falha na conexão com Supabase';
+      document.getElementById('supabaseStatus').className = 'text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full';
+      alert(`ERRO DE CONEXÃO: ${e.message}\n\nVerifique se as tabelas existem no Supabase. Execute os SQLs que eu forneci.`);
+      // Mostra mensagem de erro mas não quebra o painel
+      renderizarConfiguracoes();
+      renderizarRegras();
+      renderizarProdutos();
+      renderizarFaq();
+      renderizarRespostas();
+    }
   }
 
+  // ============================================================
+  // CARREGAR DADOS DO SUPABASE
+  // ============================================================
+  async function carregarTodosDados() {
+    if (!supabaseConectado) return;
+    try {
+      const [c, r, p, f, rs] = await Promise.all([
+        supabase.from('configuracoes').select('*'),
+        supabase.from('regras_calculadora').select('*'),
+        supabase.from('cardapio').select('*').order('id'),
+        supabase.from('faq').select('*').order('ordem'),
+        supabase.from('respostas_delinha').select('*')
+      ]);
+      dados.config = c.data || [];
+      dados.regras = r.data || [];
+      dados.produtos = p.data || [];
+      dados.faq = f.data || [];
+      dados.respostas = rs.data || [];
+      
+      // Se alguma tabela estiver vazia, insere dados padrão automaticamente
+      if (dados.config.length === 0) await inserirDadosPadrao();
+      
+      renderizarConfiguracoes();
+      renderizarRegras();
+      renderizarProdutos();
+      renderizarFaq();
+      renderizarRespostas();
+    } catch(e) {
+      console.error('Erro ao carregar dados:', e);
+      alert('Erro ao carregar dados do Supabase: ' + e.message);
+    }
+  }
+
+  // ============================================================
+  // INSERIR DADOS PADRÃO (se as tabelas estiverem vazias)
+  // ============================================================
+  async function inserirDadosPadrao() {
+    console.log('Inserindo dados padrão no Supabase...');
+    try {
+      // Configurações padrão
+      const configs = [
+        { chave: 'logo_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo' },
+        { chave: 'banner_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY' },
+        { chave: 'titulo_hero', valor: 'A Celebração que o Seu Paladar Merece' },
+        { chave: 'subtitulo_hero', valor: 'Doces e salgados feitos com carinho artesanal para transformar seus momentos em memórias inesquecíveis.' },
+        { chave: 'texto_retirada', valor: '📦 Retirada no local ou frete por aplicativo (consultar valor)' },
+        { chave: 'texto_pagamento', valor: '💳 Pagamento: Pix ou cartão de crédito em até 3x' },
+        { chave: 'texto_fritura', valor: '🍟 Serviço de fritura no local incluso por até 4 horas de evento. Consulte valores.' },
+        { chave: 'telefone', valor: '5531999999999' },
+        { chave: 'whatsapp_link', valor: 'https://wa.me/5531999999999' },
+        { chave: 'rodape_texto', valor: 'Elevando o padrão da gastronomia para festas em Belo Horizonte. Qualidade artesanal com a agilidade que você precisa.' },
+        { chave: 'rodape_copyright', valor: '© 2024 I Love Delicitas. Todos os direitos reservados.' }
+      ];
+      for (let cfg of configs) {
+        await supabase.from('configuracoes').upsert(cfg, { onConflict: 'chave' });
+      }
+      
+      // Regras padrão
+      const regras = [
+        { tipo_evento: 'adulto', salgados_por_pessoa: 12, doces_por_pessoa: 6 },
+        { tipo_evento: 'infantil', salgados_por_pessoa: 10, doces_por_pessoa: 6 },
+        { tipo_evento: 'corporativo', salgados_por_pessoa: 8, doces_por_pessoa: 4 }
+      ];
+      for (let reg of regras) {
+        await supabase.from('regras_calculadora').upsert(reg, { onConflict: 'tipo_evento' });
+      }
+      
+      // Produtos padrão
+      const produtos = [
+        { nome: 'Coxinha de Frango', preco: 90, categoria: 'Fritos', unidade: 'Cento', descricao: 'Clássica massa de batata com frango desfiado.', imagem: 'https://via.placeholder.com/300x200' },
+        { nome: 'Bolinha de Queijo', preco: 90, categoria: 'Fritos', unidade: 'Cento', descricao: 'Massa cremosa com mussarela.', imagem: 'https://via.placeholder.com/300x200' }
+      ];
+      for (let prod of produtos) {
+        await supabase.from('cardapio').insert(prod);
+      }
+      
+      // Respostas padrão
+      const respostas = [
+        { palavra_chave: 'prazo', resposta: 'Mínimo 72 horas. Grandes eventos: 15 dias.' },
+        { palavra_chave: 'pagamento', resposta: 'Pix ou cartão em até 3x.' },
+        { palavra_chave: 'entrega', resposta: 'Retirada no local ou frete por aplicativo.' },
+        { palavra_chave: 'fritura', resposta: 'Fritura no local por até 4h. Consulte valores.' },
+        { palavra_chave: 'calcular', resposta: 'Use a calculadora do site. Depois me pergunte o valor total pelo WhatsApp.' }
+      ];
+      for (let resp of respostas) {
+        await supabase.from('respostas_delinha').upsert(resp, { onConflict: 'palavra_chave' });
+      }
+      
+      // FAQ padrão
+      const faqs = [
+        { pergunta: 'Qual o prazo mínimo para encomendar?', resposta: 'Para garantir a frescura e qualidade artesanal, solicitamos um prazo de pelo menos 72 horas para pedidos de catálogo.', ordem: 1 },
+        { pergunta: 'Como funciona o pagamento?', resposta: 'Aceitamos Pix, Cartão de Crédito (até 3 vezes) e boleto sob consulta.', ordem: 2 },
+        { pergunta: 'Vocês entregam em toda a cidade?', resposta: 'Sim! Entregamos em toda Belo Horizonte e região metropolitana.', ordem: 3 }
+      ];
+      for (let faqItem of faqs) {
+        await supabase.from('faq').insert(faqItem);
+      }
+      
+      console.log('Dados padrão inseridos com sucesso!');
+    } catch(e) {
+      console.error('Erro ao inserir dados padrão:', e);
+    }
+  }
+
+  // ============================================================
+  // RENDERIZAÇÕES
+  // ============================================================
   function renderizarConfiguracoes() {
     const container = document.getElementById('configList');
-    const chaves = ['titulo_hero','subtitulo_hero','texto_retirada','texto_pagamento','texto_fritura','telefone','whatsapp_link','logo_url','banner_url','rodape_texto','rodape_copyright'];
-    container.innerHTML = chaves.map(k => {
-      const item = dados.config.find(c => c.chave === k);
-      return `<div><label class="block font-semibold">${k}</label><input type="text" id="cfg_${k}" value="${item?.valor || ''}" class="w-full border p-1 rounded"></div>`;
+    const campos = [
+      { chave: 'logo_url', label: '🖼️ URL da Logo (imagem de perfil)' },
+      { chave: 'banner_url', label: '🎨 URL do Banner (fundo do hero)' },
+      { chave: 'titulo_hero', label: '📝 Título principal do site' },
+      { chave: 'subtitulo_hero', label: '📝 Subtítulo do site' },
+      { chave: 'texto_retirada', label: '🚚 Texto sobre retirada/frete' },
+      { chave: 'texto_pagamento', label: '💳 Texto sobre pagamento' },
+      { chave: 'texto_fritura', label: '🍟 Texto sobre fritura' },
+      { chave: 'telefone', label: '📞 Telefone (com DDD, sem +55)' },
+      { chave: 'whatsapp_link', label: '📱 Link do WhatsApp' },
+      { chave: 'rodape_texto', label: '📄 Texto do rodapé' },
+      { chave: 'rodape_copyright', label: '©️ Copyright' }
+    ];
+    container.innerHTML = campos.map(campo => {
+      const item = dados.config.find(c => c.chave === campo.chave);
+      return `
+        <div>
+          <label class="block font-semibold text-sm mb-1">${campo.label}</label>
+          <input type="text" id="cfg_${campo.chave}" value="${escapeHtml(item?.valor || '')}" class="w-full">
+        </div>
+      `;
     }).join('');
-  }
-
-  async function salvarConfiguracoes() {
-    const chaves = ['titulo_hero','subtitulo_hero','texto_retirada','texto_pagamento','texto_fritura','telefone','whatsapp_link','logo_url','banner_url','rodape_texto','rodape_copyright'];
-    for (let k of chaves) {
-      const val = document.getElementById(`cfg_${k}`).value;
-      await supabase.from('configuracoes').upsert({ chave: k, valor: val }, { onConflict: 'chave' });
-    }
-    alert("Configurações salvas!");
   }
 
   function renderizarRegras() {
     const container = document.getElementById('regrasList');
+    if (!dados.regras.length) {
+      container.innerHTML = '<div class="text-gray-400 text-center py-4">Nenhuma regra cadastrada.</div>';
+      return;
+    }
     container.innerHTML = dados.regras.map(r => `
-      <div class="border p-2 rounded">
-        <label class="font-semibold">${r.tipo_evento}</label>
-        <div class="flex gap-2 mt-1">
-          <input type="number" id="reg_${r.tipo_evento}_s" value="${r.salgados_por_pessoa}" class="w-1/2 border p-1 rounded" placeholder="Salgados/pessoa">
-          <input type="number" id="reg_${r.tipo_evento}_d" value="${r.doces_por_pessoa}" class="w-1/2 border p-1 rounded" placeholder="Doces/pessoa">
+      <div class="border rounded-lg p-3">
+        <label class="font-bold capitalize">${r.tipo_evento}</label>
+        <div class="flex gap-3 mt-2">
+          <div class="flex-1">
+            <label class="text-xs text-gray-500">Salgados por pessoa</label>
+            <input type="number" id="reg_${r.tipo_evento}_s" value="${r.salgados_por_pessoa}" class="w-full">
+          </div>
+          <div class="flex-1">
+            <label class="text-xs text-gray-500">Doces por pessoa</label>
+            <input type="number" id="reg_${r.tipo_evento}_d" value="${r.doces_por_pessoa}" class="w-full">
+          </div>
         </div>
       </div>
     `).join('');
   }
 
+  function renderizarProdutos() {
+    const container = document.getElementById('produtosList');
+    if (!dados.produtos.length) {
+      container.innerHTML = '<div class="text-gray-400 text-center py-4">Nenhum produto cadastrado. Clique em "Adicionar Produto".</div>';
+      return;
+    }
+    container.innerHTML = dados.produtos.map(p => `
+      <div class="flex justify-between items-center border-b py-3 hover:bg-gray-50 px-2 rounded">
+        <div class="flex-1">
+          <div class="flex items-center gap-3">
+            ${p.imagem ? `<img src="${p.imagem}" class="w-10 h-10 object-cover rounded" onerror="this.src='https://via.placeholder.com/40'">` : ''}
+            <div>
+              <span class="font-bold">${escapeHtml(p.nome)}</span>
+              <span class="text-sm text-gray-500 ml-2">R$ ${p.preco} - ${p.categoria}</span>
+              ${p.unidade ? `<span class="text-xs text-gray-400 ml-2">${escapeHtml(p.unidade)}</span>` : ''}
+            </div>
+          </div>
+          ${p.descricao ? `<p class="text-sm text-gray-500 mt-1 ml-12">${escapeHtml(p.descricao)}</p>` : ''}
+        </div>
+        <div class="flex gap-2">
+          <button onclick='editarProduto(${p.id})' class="text-blue-600 hover:text-blue-800 text-sm px-2 py-1">✏️ Editar</button>
+          <button onclick='excluirProduto(${p.id})' class="text-red-600 hover:text-red-800 text-sm px-2 py-1">🗑️ Excluir</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderizarFaq() {
+    const container = document.getElementById('faqList');
+    if (!dados.faq.length) {
+      container.innerHTML = '<div class="text-gray-400 text-center py-4">Nenhuma FAQ cadastrada. Clique em "Adicionar FAQ".</div>';
+      return;
+    }
+    container.innerHTML = dados.faq.map(f => `
+      <div class="flex justify-between items-center border-b py-3 hover:bg-gray-50 px-2 rounded">
+        <div class="flex-1">
+          <span class="font-bold">❓ ${escapeHtml(f.pergunta)}</span>
+          <p class="text-sm text-gray-500 mt-1">${escapeHtml(f.resposta)}</p>
+        </div>
+        <div class="flex gap-2">
+          <button onclick='editarFaq(${f.id})' class="text-blue-600 hover:text-blue-800 text-sm px-2 py-1">✏️ Editar</button>
+          <button onclick='excluirFaq(${f.id})' class="text-red-600 hover:text-red-800 text-sm px-2 py-1">🗑️ Excluir</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderizarRespostas() {
+    const container = document.getElementById('respostasList');
+    if (!dados.respostas.length) {
+      container.innerHTML = '<div class="text-gray-400 text-center py-4">Nenhuma resposta cadastrada.</div>';
+      return;
+    }
+    container.innerHTML = dados.respostas.map(r => `
+      <div class="border rounded-lg p-3">
+        <label class="font-semibold block mb-1">🔑 Palavra-chave: <span class="text-primary">${escapeHtml(r.palavra_chave)}</span></label>
+        <textarea id="resp_${r.palavra_chave}" class="w-full" rows="2">${escapeHtml(r.resposta)}</textarea>
+      </div>
+    `).join('');
+  }
+
+  // ============================================================
+  // FUNÇÕES DE SALVAMENTO
+  // ============================================================
+  async function salvarConfiguracoes() {
+    if (!supabaseConectado) { alert("⚠️ Supabase não conectado. Verifique sua conexão."); return; }
+    const campos = ['logo_url','banner_url','titulo_hero','subtitulo_hero','texto_retirada','texto_pagamento','texto_fritura','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
+    for (let chave of campos) {
+      const valor = document.getElementById(`cfg_${chave}`).value;
+      await supabase.from('configuracoes').upsert({ chave, valor }, { onConflict: 'chave' });
+    }
+    alert("✅ Configurações salvas com sucesso!");
+    await carregarTodosDados();
+  }
+
   async function salvarRegras() {
+    if (!supabaseConectado) { alert("⚠️ Supabase não conectado."); return; }
     for (let r of dados.regras) {
       const s = document.getElementById(`reg_${r.tipo_evento}_s`).value;
       const d = document.getElementById(`reg_${r.tipo_evento}_d`).value;
       await supabase.from('regras_calculadora').upsert({ tipo_evento: r.tipo_evento, salgados_por_pessoa: parseInt(s), doces_por_pessoa: parseInt(d) }, { onConflict: 'tipo_evento' });
     }
-    alert("Regras salvas!");
-  }
-
-  function renderizarProdutos() {
-    const container = document.getElementById('produtosList');
-    container.innerHTML = dados.produtos.map(p => `
-      <div class="flex justify-between items-center border-b py-2">
-        <div><strong>${p.nome}</strong> - R$ ${p.preco} - ${p.categoria}</div>
-        <div><button onclick="editarProduto(${p.id})" class="text-blue-600 mr-2">Editar</button><button onclick="excluirProduto(${p.id})" class="text-red-600">Excluir</button></div>
-      </div>
-    `).join('');
-  }
-
-  function novoProduto() {
-    const nome = prompt("Nome do produto");
-    if (!nome) return;
-    const preco = parseFloat(prompt("Preço"));
-    if (isNaN(preco)) return;
-    const categoria = prompt("Categoria (Fritos/Assados/Lanches/Doces)", "Fritos");
-    const unidade = prompt("Unidade (ex: Cento)", "Cento");
-    const descricao = prompt("Descrição curta");
-    const imagem = prompt("URL da imagem", "https://via.placeholder.com/300x200");
-    supabase.from('cardapio').insert([{ nome, preco, categoria, unidade, descricao, imagem }]).then(() => carregarTodosDados());
-  }
-
-  async function editarProduto(id) {
-    const p = dados.produtos.find(x => x.id == id);
-    if (!p) return;
-    const novoNome = prompt("Nome", p.nome);
-    const novoPreco = parseFloat(prompt("Preço", p.preco));
-    const novaCat = prompt("Categoria", p.categoria);
-    const novaUnidade = prompt("Unidade", p.unidade);
-    const novaDesc = prompt("Descrição", p.descricao);
-    const novaImg = prompt("URL da imagem", p.imagem);
-    if (novoNome) p.nome = novoNome;
-    if (!isNaN(novoPreco)) p.preco = novoPreco;
-    if (novaCat) p.categoria = novaCat;
-    if (novaUnidade) p.unidade = novaUnidade;
-    if (novaDesc) p.descricao = novaDesc;
-    if (novaImg) p.imagem = novaImg;
-    await supabase.from('cardapio').update(p).eq('id', id);
-    carregarTodosDados();
-  }
-
-  async function excluirProduto(id) {
-    if (confirm("Excluir permanentemente?")) {
-      await supabase.from('cardapio').delete().eq('id', id);
-      carregarTodosDados();
-    }
-  }
-
-  function renderizarFaq() {
-    const container = document.getElementById('faqList');
-    container.innerHTML = dados.faq.map(f => `
-      <div class="flex justify-between items-center border-b py-2">
-        <div><strong>${f.pergunta}</strong><br><span class="text-sm">${f.resposta.substring(0, 60)}...</span></div>
-        <div><button onclick="editarFaq(${f.id})" class="text-blue-600 mr-2">Editar</button><button onclick="excluirFaq(${f.id})" class="text-red-600">Excluir</button></div>
-      </div>
-    `).join('');
-  }
-
-  function novoFaq() {
-    const pergunta = prompt("Pergunta");
-    if (!pergunta) return;
-    const resposta = prompt("Resposta");
-    if (!resposta) return;
-    supabase.from('faq').insert([{ pergunta, resposta, ordem: dados.faq.length + 1 }]).then(() => carregarTodosDados());
-  }
-
-  async function editarFaq(id) {
-    const f = dados.faq.find(x => x.id == id);
-    if (!f) return;
-    const novaPerg = prompt("Pergunta", f.pergunta);
-    const novaResp = prompt("Resposta", f.resposta);
-    if (novaPerg) f.pergunta = novaPerg;
-    if (novaResp) f.resposta = novaResp;
-    await supabase.from('faq').update(f).eq('id', id);
-    carregarTodosDados();
-  }
-
-  async function excluirFaq(id) {
-    if (confirm("Excluir FAQ?")) {
-      await supabase.from('faq').delete().eq('id', id);
-      carregarTodosDados();
-    }
-  }
-
-  function renderizarRespostas() {
-    const container = document.getElementById('respostasList');
-    container.innerHTML = dados.respostas.map(r => `
-      <div class="border p-2 rounded">
-        <label class="font-semibold">Palavra-chave: ${r.palavra_chave}</label>
-        <textarea id="resp_${r.palavra_chave}" class="w-full border p-1 rounded mt-1" rows="2">${r.resposta}</textarea>
-      </div>
-    `).join('');
+    alert("✅ Regras salvas!");
+    await carregarTodosDados();
   }
 
   async function salvarRespostas() {
+    if (!supabaseConectado) { alert("⚠️ Supabase não conectado."); return; }
     for (let r of dados.respostas) {
       const novoTexto = document.getElementById(`resp_${r.palavra_chave}`).value;
       await supabase.from('respostas_delinha').upsert({ palavra_chave: r.palavra_chave, resposta: novoTexto }, { onConflict: 'palavra_chave' });
     }
-    alert("Respostas salvas!");
+    alert("✅ Respostas da Delinha salvas!");
+    await carregarTodosDados();
+  }
+
+  // ============================================================
+  // CRUD DO CARDÁPIO
+  // ============================================================
+  async function novoProduto() {
+    if (!supabaseConectado) { alert("⚠️ Supabase não conectado."); return; }
+    const nome = prompt("Nome do produto");
+    if (!nome) return;
+    const preco = parseFloat(prompt("Preço (R$)"));
+    if (isNaN(preco)) return;
+    const categoria = prompt("Categoria (Fritos/Assados/Lanches/Doces)", "Fritos");
+    const unidade = prompt("Unidade (ex: Cento)", "Cento");
+    const descricao = prompt("Descrição curta", "");
+    const imagem = prompt("URL da imagem (deixe em branco para placeholder)", "https://via.placeholder.com/300x200");
+    await supabase.from('cardapio').insert([{ nome, preco, categoria, unidade, descricao, imagem }]);
+    await carregarTodosDados();
+  }
+
+  async function editarProduto(id) {
+    if (!supabaseConectado) { alert("⚠️ Supabase não conectado."); return; }
+    const p = dados.produtos.find(x => x.id == id);
+    if (!p) return;
+    const nome = prompt("Nome", p.nome);
+    const preco = parseFloat(prompt("Preço", p.preco));
+    const categoria = prompt("Categoria", p.categoria);
+    const unidade = prompt("Unidade", p.unidade);
+    const descricao = prompt("Descrição", p.descricao);
+    const imagem = prompt("URL da imagem", p.imagem);
+    const atualizado = {};
+    if (nome) atualizado.nome = nome;
+    if (!isNaN(preco)) atualizado.preco = preco;
+    if (categoria) atualizado.categoria = categoria;
+    if (unidade) atualizado.unidade = unidade;
+    if (descricao) atualizado.descricao = descricao;
+    if (imagem) atualizado.imagem = imagem;
+    await supabase.from('cardapio').update(atualizado).eq('id', id);
+    await carregarTodosDados();
+  }
+
+  async function excluirProduto(id) {
+    if (!supabaseConectado) { alert("⚠️ Supabase não conectado."); return; }
+    if (confirm("Excluir permanentemente este produto?")) {
+      await supabase.from('cardapio').delete().eq('id', id);
+      await carregarTodosDados();
+    }
+  }
+
+  // ============================================================
+  // CRUD DO FAQ
+  // ============================================================
+  async function novoFaq() {
+    if (!supabaseConectado) { alert("⚠️ Supabase não conectado."); return; }
+    const pergunta = prompt("Pergunta");
+    if (!pergunta) return;
+    const resposta = prompt("Resposta");
+    if (!resposta) return;
+    await supabase.from('faq').insert([{ pergunta, resposta, ordem: dados.faq.length + 1 }]);
+    await carregarTodosDados();
+  }
+
+  async function editarFaq(id) {
+    if (!supabaseConectado) { alert("⚠️ Supabase não conectado."); return; }
+    const f = dados.faq.find(x => x.id == id);
+    if (!f) return;
+    const pergunta = prompt("Pergunta", f.pergunta);
+    const resposta = prompt("Resposta", f.resposta);
+    if (pergunta && resposta) {
+      await supabase.from('faq').update({ pergunta, resposta }).eq('id', id);
+      await carregarTodosDados();
+    }
+  }
+
+  async function excluirFaq(id) {
+    if (!supabaseConectado) { alert("⚠️ Supabase não conectado."); return; }
+    if (confirm("Excluir esta FAQ?")) {
+      await supabase.from('faq').delete().eq('id', id);
+      await carregarTodosDados();
+    }
+  }
+
+  // ============================================================
+  // UTILITÁRIOS
+  // ============================================================
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  function mostrarAba(aba) {
+    const abas = ['config', 'regras', 'cardapio', 'faq', 'respostas'];
+    for (let a of abas) {
+      const div = document.getElementById(`aba${a.charAt(0).toUpperCase() + a.slice(1)}`);
+      const btn = document.getElementById(`btn${a.charAt(0).toUpperCase() + a.slice(1)}`);
+      if (div) div.classList.add('hidden');
+      if (btn) {
+        btn.classList.remove('tab-active');
+        btn.classList.add('tab-inactive');
+      }
+    }
+    const abaDiv = document.getElementById(`aba${aba.charAt(0).toUpperCase() + aba.slice(1)}`);
+    const abaBtn = document.getElementById(`btn${aba.charAt(0).toUpperCase() + aba.slice(1)}`);
+    if (abaDiv) abaDiv.classList.remove('hidden');
+    if (abaBtn) {
+      abaBtn.classList.remove('tab-inactive');
+      abaBtn.classList.add('tab-active');
+    }
   }
 
   function logout() {
-    document.getElementById('loginScreen').style.display = 'block';
-    document.getElementById('adminPanel').style.display = 'none';
+    document.getElementById('loginContainer').style.display = 'block';
+    document.getElementById('painelContainer').style.display = 'none';
+    document.getElementById('loginUser').value = '';
+    document.getElementById('loginPass').value = '';
+    supabaseConectado = false;
   }
 </script>
 </body>
