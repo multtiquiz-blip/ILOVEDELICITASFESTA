@@ -172,7 +172,7 @@
               <div class="space-y-5 relative z-10">
                 <div class="flex justify-between items-center border-b border-white/20 pb-3"><span class="flex items-center gap-3 text-sm font-medium"><span class="material-symbols-outlined opacity-80">tapas</span> Salgados</span><span class="font-bold text-xl" id="res-salgados">600 un.</span></div>
                 <div class="flex justify-between items-center border-b border-white/20 pb-3"><span class="flex items-center gap-3 text-sm font-medium"><span class="material-symbols-outlined opacity-80">bakery_dining</span> Doces</span><span class="font-bold text-xl" id="res-doces">250 un.</span></div>
-                <div class="flex justify-between items-center border-b border-white/20 pb-3"><span class="flex items-center gap-3 text-sm font-medium"><span class="material-symbols-outlined opacity-80">cake</span> Bolo</span><span class="font-bold text-xl" id="res-bolo">5.0 kg</span></div>
+                <!-- REMOVIDO O BOLO -->
               </div>
             </div>
             <div class="mt-10"><button class="w-full bg-white text-primary py-4 rounded-lg font-bold hover:scale-[1.02] transition-transform shadow-lg active:scale-95" onclick="applyCalcToQuote()">Adicionar Recomendação à Sacola</button></div>
@@ -209,9 +209,9 @@
       <div class="text-center mb-16"><span class="text-primary font-bold text-xs uppercase tracking-[0.2em] mb-4 block">Dúvidas Frequentes</span><h2 class="font-headline text-3xl font-bold text-on-surface">Como Funciona a Delinha</h2></div>
       <div class="space-y-4">
         <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Qual o prazo mínimo para encomendar?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Para garantir a frescura e qualidade artesanal, solicitamos um prazo de pelo menos <strong>72 horas</strong> para pedidos de catálogo. Para grandes eventos, recomendamos reservar com 15 dias de antecedência.</div></details>
-        <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Como funciona o pagamento?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Aceitamos <strong>Pix, Cartão de Crédito (até 12x)</strong> e Boleto sob consulta. Para reservas de datas futuras, trabalhamos com 50% de sinal e o restante na entrega.</div></details>
-        <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Vocês entregam em toda a cidade?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Sim! Entregamos em toda Belo Horizonte e região metropolitana com frota climatizada. O frete é calculado com base no seu CEP.</div></details>
-        <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Central de Atendimento<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 border-t border-outline-variant/10"><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4"><div class="flex items-center gap-3 bg-surface-container-low p-3 rounded-lg border border-outline-variant/20"><span class="material-symbols-outlined text-primary">whatsapp</span><div><p class="text-[10px] uppercase font-bold text-outline">Fale Conosco</p><p class="text-sm text-on-surface font-semibold">(31) 99999-9999</p></div></div><div class="flex items-center gap-3 bg-surface-container-low p-3 rounded-lg border border-outline-variant/20"><span class="material-symbols-outlined text-primary">schedule</span><div><p class="text-[10px] uppercase font-bold text-outline">Horário</p><p class="text-sm text-on-surface font-semibold">Seg à Sáb, 08h às 19h</p></div></div></div></div></details>
+        <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Como funciona o pagamento?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Aceitamos <strong>Pix e cartão de crédito em até 3 vezes</strong>. Consulte condições especiais.</div></details>
+        <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Como é feita a entrega?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">O cliente retira no nosso local ou contrata um entregador por aplicativo (Uber, 99, etc.). Não temos frota própria.</div></details>
+        <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Serviço de fritura no local<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 border-t border-outline-variant/10"><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4"><div class="flex items-center gap-3 bg-surface-container-low p-3 rounded-lg border border-outline-variant/20"><span class="material-symbols-outlined text-primary">restaurant</span><div><p class="text-[10px] uppercase font-bold text-outline">Fritura no local</p><p class="text-sm text-on-surface font-semibold">Até 4 horas de evento. Consulte valores.</p></div></div><div class="flex items-center gap-3 bg-surface-container-low p-3 rounded-lg border border-outline-variant/20"><span class="material-symbols-outlined text-primary">schedule</span><div><p class="text-[10px] uppercase font-bold text-outline">Horário</p><p class="text-sm text-on-surface font-semibold">Seg à Sáb, 08h às 19h</p></div></div></div></div></details>
       </div>
     </div>
   </section>
@@ -220,7 +220,7 @@
 <!-- ==================== RODAPÉ ==================== -->
 <footer class="bg-inverse-surface text-inverse-on-surface py-20">
   <div class="max-w-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-16">
-    <div class="col-span-1 md:col-span-1"><img class="h-16 mb-8 brightness-0 invert object-contain" src="https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo"><p class="opacity-70 text-sm leading-relaxed max-w-xs">Elevando o padrão da gastronomia para festas em Belo Horizonte. Qualidade artesanal com a agilidade que você precisa.</p></div>
+    <div class="col-span-1 md:col-span-1"><img class="h-16 mb-8 brightness-0 invert object-contain" src="https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo"><p class="opacity-70 text-sm leading-relaxed max-w-xs">Gastronomia artesanal para festas em Belo Horizonte. Fritura no local, retirada ou frete por aplicativo.</p></div>
     <div><h4 class="font-bold text-sm uppercase tracking-widest mb-8 text-primary-fixed">Navegação</h4><ul class="space-y-4 text-sm font-medium"><li><a class="opacity-70 hover:opacity-100 transition-opacity" href="#">Início</a></li><li><a class="opacity-70 hover:opacity-100 transition-opacity" href="#cardapio">Nosso Cardápio</a></li><li><a class="opacity-70 hover:opacity-100 transition-opacity" href="#calculadora">Calculadora de Festa</a></li><li><a class="opacity-70 hover:opacity-100 transition-opacity" href="#faq">Dúvidas Frequentes</a></li></ul></div>
     <div><h4 class="font-bold text-sm uppercase tracking-widest mb-8 text-primary-fixed">Suporte</h4><ul class="space-y-4 text-sm font-medium"><li><span class="opacity-70">BH e Região Metropolitana</span></li><li><a class="opacity-70 hover:opacity-100 transition-opacity" href="mailto:contato@ilovedelicitas.com.br">contato@ilovedelicitas.com.br</a></li><li><a class="opacity-70 hover:opacity-100 transition-opacity" href="tel:+5531999999999">(31) 99999-9999</a></li></ul></div>
     <div><h4 class="font-bold text-sm uppercase tracking-widest mb-8 text-primary-fixed">Acompanhe</h4><div class="flex gap-4"><a class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary transition-colors" href="#"><span class="material-symbols-outlined text-[20px] icon-fill">photo_camera</span></a><a class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary transition-colors" href="#"><span class="material-symbols-outlined text-[20px] icon-fill">thumb_up</span></a></div><p class="mt-8 text-[11px] opacity-40">© 2024 I Love Delicitas. Todos os direitos reservados.</p></div>
@@ -309,7 +309,7 @@
     });
   }
 
-  // ==================== FUNÇÕES DA CALCULADORA ====================
+  // ==================== FUNÇÕES DA CALCULADORA (SEM BOLO) ====================
   function setCalcVar(key, val) {
     calcState[key] = val;
     if (key === 'type') {
@@ -333,20 +333,17 @@
 
   function updateCalculator() {
     const guests = calcState.guests;
-    let sPer = 12, dPer = 5, bPer = 100;
+    let sPer = 12, dPer = 5;
     if (calcState.type === 'kids') { sPer = 10; dPer = 7; }
     if (calcState.type === 'corp') { sPer = 8; dPer = 3; }
     if (calcState.duration === 'long') { sPer *= 1.4; dPer *= 1.2; }
     if (calcState.meal) { sPer *= 0.7; }
     const totalS = Math.round(guests * sPer);
     const totalD = Math.round(guests * dPer);
-    const totalB = (guests * bPer / 1000).toFixed(1);
     const salgadosEl = document.getElementById('res-salgados');
     const docesEl = document.getElementById('res-doces');
-    const boloEl = document.getElementById('res-bolo');
     if (salgadosEl) salgadosEl.textContent = `${totalS} un.`;
     if (docesEl) docesEl.textContent = `${totalD} un.`;
-    if (boloEl) boloEl.textContent = `${totalB} kg`;
     const card = document.getElementById('calc-result-card');
     if (card) {
       card.classList.remove('animate-pulse-fast');
