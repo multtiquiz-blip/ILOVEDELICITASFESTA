@@ -1,64 +1,65 @@
 <!DOCTYPE html>
 <html class="scroll-smooth" lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>I Love Delicitas - Salgados e Doces Artesanais para Festas e Eventos</title>
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com" rel="preconnect">
-<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<!-- Material Symbols -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-<!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script>
-  tailwind.config = {
-    darkMode: "class",
-    theme: {
-      extend: {
-        colors: {
-          "primary": "#ae2f34",
-          "primary-container": "#ae2f34",
-          "background": "#fff8f7",
-          "surface": "#fff8f7",
-          "surface-container-low": "#f9f2f1",
-          "surface-container-highest": "#e8e1e0",
-          "on-surface": "#1d1b1b",
-          "on-surface-variant": "#584140",
-          "outline-variant": "#e0bfbd",
-          "inverse-surface": "#33302f",
-          "inverse-on-surface": "#f6efee",
-          "primary-fixed": "#ffdad8",
-          "on-primary": "#ffffff",
-          "error": "#ba1a1a",
-        },
-        borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
-        spacing: { "margin-mobile": "16px", "margin-desktop": "64px", "gutter": "24px", "section-padding": "80px" },
-        fontFamily: { "headline": ["Be Vietnam Pro", "sans-serif"], "body": ["Plus Jakarta Sans", "sans-serif"] },
-        animation: { float: "float 3s ease-in-out infinite", "pulse-fast": "pulse-fast 0.3s ease-in-out", "slide-in": "slide-in 0.4s ease-out" },
-        keyframes: {
-          float: { "0%,100%": { transform: "translateY(0)" }, "50%": { transform: "translateY(-5px)" } },
-          "pulse-fast": { "0%": { transform: "scale(1)" }, "50%": { transform: "scale(1.02)" }, "100%": { transform: "scale(1)" } },
-          "slide-in": { "0%": { transform: "translateX(100%)" }, "100%": { transform: "translateX(0)" } }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>I Love Delicitas - Salgados e Doces Artesanais para Festas e Eventos</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#ae2f34",
+            "primary-container": "#ae2f34",
+            "background": "#fff8f7",
+            "surface": "#fff8f7",
+            "surface-container-low": "#f9f2f1",
+            "surface-container-highest": "#e8e1e0",
+            "on-surface": "#1d1b1b",
+            "on-surface-variant": "#584140",
+            "outline-variant": "#e0bfbd",
+            "inverse-surface": "#33302f",
+            "inverse-on-surface": "#f6efee",
+            "primary-fixed": "#ffdad8",
+            "on-primary": "#ffffff",
+            "error": "#ba1a1a",
+          },
+          borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+          spacing: { "margin-mobile": "16px", "margin-desktop": "64px", "gutter": "24px", "section-padding": "80px" },
+          fontFamily: { "headline": ["Be Vietnam Pro", "sans-serif"], "body": ["Plus Jakarta Sans", "sans-serif"] },
+          animation: { float: "float 3s ease-in-out infinite", "pulse-fast": "pulse-fast 0.3s ease-in-out", "slide-in": "slide-in 0.4s ease-out" },
+          keyframes: {
+            float: { "0%,100%": { transform: "translateY(0)" }, "50%": { transform: "translateY(-5px)" } },
+            "pulse-fast": { "0%": { transform: "scale(1)" }, "50%": { transform: "scale(1.02)" }, "100%": { transform: "scale(1)" } },
+            "slide-in": { "0%": { transform: "translateX(100%)" }, "100%": { transform: "translateX(0)" } }
+          }
         }
       }
     }
-  }
-</script>
-<style>
-  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-  .icon-fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-  .hide-scrollbar::-webkit-scrollbar { display: none; }
-  .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-  .header-scrolled { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); background-color: rgba(255, 248, 247, 0.95); }
-  .modal-backdrop { background-color: rgba(29, 27, 27, 0.6); backdrop-filter: blur(4px); }
-  .calculator-card { background: linear-gradient(135deg, #ae2f34 0%, #8d151f 100%); }
-</style>
+  </script>
+  <style>
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .icon-fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .header-scrolled { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); background-color: rgba(255, 248, 247, 0.95); }
+    .modal-backdrop { background-color: rgba(29, 27, 27, 0.6); backdrop-filter: blur(4px); }
+    .calculator-card { background: linear-gradient(135deg, #ae2f34 0%, #8d151f 100%); }
+    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  </style>
 </head>
 <body class="bg-background text-on-background font-body antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
 
-<!-- Drawer (Sacola de Orçamento) -->
+<!-- ==================== DRAWER (CARRINHO LATERAL) ==================== -->
 <div class="fixed inset-y-0 right-0 w-full md:w-96 bg-surface z-[60] shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col" id="quote-drawer">
   <div class="p-6 border-b border-outline-variant flex items-center justify-between bg-primary text-on-primary">
     <h3 class="font-headline font-semibold text-xl">Meu Orçamento</h3>
@@ -78,7 +79,7 @@
   </div>
 </div>
 
-<!-- Modal de captura de lead -->
+<!-- ==================== MODAL DE CAPTURA DE LEAD ==================== -->
 <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 modal-backdrop" id="lead-modal">
   <div class="bg-surface w-full max-w-md rounded-xl shadow-2xl overflow-hidden animate-slide-in">
     <div class="p-6 bg-surface-container-highest flex justify-between items-center border-b border-outline-variant/30">
@@ -98,10 +99,12 @@
   </div>
 </div>
 
-<!-- Header -->
+<!-- ==================== HEADER ==================== -->
 <header class="bg-surface/80 backdrop-blur-md top-0 sticky z-50 transition-all duration-300 border-b border-outline-variant/10" id="main-header">
   <div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-max mx-auto">
-    <a class="flex-shrink-0 hover:scale-105 transition-all duration-300" href="#"><img alt="I Love Delicitas Logo" class="h-12 md:h-16 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo"></a>
+    <a class="flex-shrink-0 hover:scale-105 transition-all duration-300" href="#">
+      <img alt="I Love Delicitas Logo" class="h-12 md:h-16 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo">
+    </a>
     <nav class="hidden lg:flex items-center gap-8">
       <a class="text-sm font-semibold text-primary border-b-2 border-primary pb-1" href="#">Início</a>
       <a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors" href="#cardapio">Cardápio</a>
@@ -119,7 +122,7 @@
 </header>
 
 <main>
-  <!-- Hero -->
+  <!-- ==================== HERO ==================== -->
   <section class="relative w-full min-h-[600px] flex items-center overflow-hidden bg-surface-container-high">
     <div class="absolute inset-0 w-full h-full">
       <div class="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent z-10"></div>
@@ -138,7 +141,7 @@
     </div>
   </section>
 
-  <!-- Calculadora -->
+  <!-- ==================== CALCULADORA ==================== -->
   <section class="py-section-padding px-margin-mobile md:px-margin-desktop bg-surface-container-low" id="calculadora">
     <div class="max-w-max mx-auto">
       <div class="text-center mb-16">
@@ -183,7 +186,7 @@
     </div>
   </section>
 
-  <!-- Catálogo -->
+  <!-- ==================== CARDÁPIO (CATÁLOGO) ==================== -->
   <section class="py-section-padding px-margin-mobile md:px-margin-desktop" id="cardapio">
     <div class="max-w-max mx-auto">
       <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
@@ -200,7 +203,7 @@
     </div>
   </section>
 
-  <!-- FAQ -->
+  <!-- ==================== FAQ ==================== -->
   <section class="py-section-padding px-margin-mobile md:px-margin-desktop bg-surface-container-low" id="faq">
     <div class="max-w-3xl mx-auto">
       <div class="text-center mb-16"><span class="text-primary font-bold text-xs uppercase tracking-[0.2em] mb-4 block">Dúvidas Frequentes</span><h2 class="font-headline text-3xl font-bold text-on-surface">Como Funciona a Delinha</h2></div>
@@ -214,6 +217,7 @@
   </section>
 </main>
 
+<!-- ==================== RODAPÉ ==================== -->
 <footer class="bg-inverse-surface text-inverse-on-surface py-20">
   <div class="max-w-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-16">
     <div class="col-span-1 md:col-span-1"><img class="h-16 mb-8 brightness-0 invert object-contain" src="https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo"><p class="opacity-70 text-sm leading-relaxed max-w-xs">Elevando o padrão da gastronomia para festas em Belo Horizonte. Qualidade artesanal com a agilidade que você precisa.</p></div>
@@ -224,64 +228,46 @@
 </footer>
 
 <script>
-  // ---------- ESTADO GLOBAL ----------
+  // ==================== ESTADO GLOBAL ====================
   let cart = [];
   let calcState = { type: 'adult', meal: false, guests: 50, duration: 'med' };
 
-  // ---------- CATÁLOGO COMPLETO ----------
+  // ==================== DADOS DO CARDÁPIO ====================
   const CATALOG_DATA = [
-    { name: 'Coxinha de Frango', price: 90, cat: 'Fritos', unit: 'Cento (100 un.)', desc: 'Clássica massa de batata com frango desfiado temperado.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY' },
-    { name: 'Bolinha de Queijo', price: 90, cat: 'Fritos', unit: 'Cento (100 un.)', desc: 'Massa cremosa recheada com mussarela selecionada.', img: 'https://lh3.googleusercontent.com/aida/ADBb0ug3bpYC-14I1zO_V97PZ7Fim7BL0amfHX29RlVcu_yRoGkDYHJ6_a6VyX1aTBGbgIUVAV81BgXI_QR7AOMINpO8jDZV2BP8rLuWLJg2s1D0ksCnhzV_WitKxREq6N2SNyOUKF6jZ542g0MldwI4Y5SUhR9JtLWAWOy5HW9qUJ9cOUse400WRjrgjmh6gZfWTwkg2taQPrkh596wdx8ZTysbCSGrM0dpYMpOVmvmc5K_o5bYIOCxpUBkczA' },
-    { name: 'Risole de Carne', price: 90, cat: 'Fritos', unit: 'Cento (100 un.)', desc: 'Recheio de carne bovina moída com temperos da casa.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uhwURqBjCY-ysz5Do_AYSGrA2SS77pSEf8y8fW3b57ktXyrZTXNgm5oMnObhrKY7g3oFBY_G8ZkuLbjg-fI84iGllruOF5_EvdjBKY3fPVhB2mBq0AXhGxKA4yjK8SVjId21wxUxNeUJNPoV4UMiOMOzGVnHFhGMY5uFuUf_r--E37whcipdnJnPycipYUUVVYQhlHlZz_jFowD5MEmcUXVx6avhQV_i08nG0nKBx-DeQTv2kq9USniFeoR' },
-    { name: 'Bolinha Presunto e Queijo', price: 90, cat: 'Fritos', unit: 'Cento (100 un.)', desc: 'Combinação perfeita de presunto e queijo derretido.', img: 'https://lh3.googleusercontent.com/aida/ADBb0ujIoGjcTUfESCmAjnBwBtv2V2QMjDI7aHmMDjkHO2Ec9i8u4otaWDq1saiK-vkKofwaEx_lk4Fx1jhHHoMxbAolITSKHLP4OfMMaozYNCxjJDNcaCkznGxIp78Es9uNAL_oZ4hwTwF7odzCMrcayduggGmJ7nyFlVDIrBKh3OmTUsIY1dVBgkV4ajGbnerExLvB8ThYnyPdtcPb6g2953qYlzjo-sgl0xGi-8axaBBUBDasHCrTfMyfMcc' },
-    { name: 'Pastel de Calabresa', price: 90, cat: 'Fritos', unit: 'Cento (100 un.)', desc: 'Calabresa moída com toque especial de ervas.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uhoAPdXxn2heAYFv0TTRroX115rnEcWjsxhnaIjeYF5NK2THaLYXeVT7qtAQvY-Gs_nucdZkI_dMxUQLZLkZQ_iKGvZFQBUvlxedlFBL7Twzh72BRZyVs93M_D8nHk1hG57B0cg8wK0qbJRikZiQTBzStrwXe5QKZekuVCvJCxHEt42gNUrRw0lX34q4oxO8XWkmIcafJ2UjElH-e2qjlcIQC7ZGQn6cNROrcXObIjSbIUjYd9E3VWV7Pk' },
-    { name: 'Pastel de Milho', price: 90, cat: 'Fritos', unit: 'Cento (100 un.)', desc: 'Recheio suave de milho verde selecionado.', img: 'https://lh3.googleusercontent.com/aida/ADBb0ujdQf6etdUVjy-AH23W66Tc1tvz0bvfa6gb0Orn1z8y1KpigHM3I68khjZiHdTKg0d1wpmaTWRCIPQBFVaZcONyEWFH2TkzAXNRp7HtviU5AUH7CXfLMECE8neNkl0z1fr9IW9D1iRP_jaHhCc5eKdHP0T3w6-6PVS09d9UXgkAn_mLKaGhPKK7udIZQo8Ji8lm8UkZGaxZFSCYVI0I8h7bLrPgLO9j0e8luAwUyKGnu4_qX-EiTCZhpKk' },
-    { name: 'Mini Quibe', price: 90, cat: 'Fritos', unit: 'Cento (100 un.)', desc: 'Trigo de alta qualidade com carne e hortelã fresca.', img: 'https://lh3.googleusercontent.com/aida/ADBb0ug7Z_3vibGIQV_ru4AAVLufkJJ-djoHVkFvjdaZWAtTC2N12hBnIB3MOc6174Q6zxwXHV9EOdewI2HytnaZUa8l3UvPnfE3Ok4B1iaw3con5ZjyAekTsXe_mcJvOkVbASDr8bIG7sZ0Svq5ykPm2nXwFAy5hk1Lq5rsrWXN-_1fpcK2WK50ITfXpCk7ObdZIGdV2DoPia8n6ecQg8hS7pp9wL-_Wnv6bQGiyTQtojIDIQt-xQvJgQMNLGvK' },
-    { name: 'Medalhão de Salsicha', price: 90, cat: 'Fritos', unit: 'Cento (100 un.)', desc: 'Salsicha premium envolta em massa crocante.', img: 'https://lh3.googleusercontent.com/aida/ADBb0ujLO2kxjAyLn3v3hrOZQvnDzje_IJTjN4fvzAkBmXm2uv-Q5rX-ehwh6ifZ_19G-N_diIEQFPwQVs7eA6CmXbM1zp9AE8JUmxoP32uvt-LS6cqVrnzZWqV-BgUsjji6-jQobHxoqpD2bPaGTzdP_fHlU6O-qqUtKErk85v2pePx8MYVPCGKtuSGpcMYbUZ8yjKGqNyNUQbqniIOMcBwkjRBkoipBjkJySwMJAtuYrrAy3LEQ1KQP61K_3vd' },
-    { name: 'Empada de Frango', price: 125, cat: 'Assados', unit: 'Cento (100 un.)', desc: 'Massa podre tradicional com recheio cremoso.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uhT2DFMiIXo6dcHOIcwQwDtF6mfpRyzpE11jeulvjnvTlOakapO0gakJcbbqreE5pU72soB7JqUQNbsSv29wTcVLnN0SGQEQd1-rLUTOR0QAFTVz8HTbf3Ps8MIlqOcdD1i1S65--wsG3StcT42EXTnNXAcg7pdCqBcgrd55i3auNqOSP69WnPWr8wdCz6g5ZRUYilMYUz94tGN9hgEJD9fsdgSwiJ4woAVMJbJyXhAT5DNh8N9mZrEQQTu' },
-    { name: 'Empada de Queijo', price: 125, cat: 'Assados', unit: 'Cento (100 un.)', desc: 'Deliciosa massa amanteigada com queijo.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uhT2DFMiIXo6dcHOIcwQwDtF6mfpRyzpE11jeulvjnvTlOakapO0gakJcbbqreE5pU72soB7JqUQNbsSv29wTcVLnN0SGQEQd1-rLUTOR0QAFTVz8HTbf3Ps8MIlqOcdD1i1S65--wsG3StcT42EXTnNXAcg7pdCqBcgrd55i3auNqOSP69WnPWr8wdCz6g5ZRUYilMYUz94tGN9hgEJD9fsdgSwiJ4woAVMJbJyXhAT5DNh8N9mZrEQQTu' },
-    { name: 'Empada de Presunto', price: 125, cat: 'Assados', unit: 'Cento (100 un.)', desc: 'Sabor suave e textura que derrete na boca.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uhT2DFMiIXo6dcHOIcwQwDtF6mfpRyzpE11jeulvjnvTlOakapO0gakJcbbqreE5pU72soB7JqUQNbsSv29wTcVLnN0SGQEQd1-rLUTOR0QAFTVz8HTbf3Ps8MIlqOcdD1i1S65--wsG3StcT42EXTnNXAcg7pdCqBcgrd55i3auNqOSP69WnPWr8wdCz6g5ZRUYilMYUz94tGN9hgEJD9fsdgSwiJ4woAVMJbJyXhAT5DNh8N9mZrEQQTu' },
-    { name: 'Empada de Palmito', price: 125, cat: 'Assados', unit: 'Cento (100 un.)', desc: 'Recheio de palmito especial e cremoso.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uhT2DFMiIXo6dcHOIcwQwDtF6mfpRyzpE11jeulvjnvTlOakapO0gakJcbbqreE5pU72soB7JqUQNbsSv29wTcVLnN0SGQEQd1-rLUTOR0QAFTVz8HTbf3Ps8MIlqOcdD1i1S65--wsG3StcT42EXTnNXAcg7pdCqBcgrd55i3auNqOSP69WnPWr8wdCz6g5ZRUYilMYUz94tGN9hgEJD9fsdgSwiJ4woAVMJbJyXhAT5DNh8N9mZrEQQTu' },
-    { name: 'Mini Esfirra Assada', price: 125, cat: 'Assados', unit: 'Cento (100 un.)', desc: 'Massa leve e fofinha com carne temperada.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uhwURqBjCY-ysz5Do_AYSGrA2SS77pSEf8y8fW3b57ktXyrZTXNgm5oMnObhrKY7g3oFBY_G8ZkuLbjg-fI84iGllruOF5_EvdjBKY3fPVhB2mBq0AXhGxKA4yjK8SVjId21wxUxNeUJNPoV4UMiOMOzGVnHFhGMY5uFuUf_r--E37whcipdnJnPycipYUUVVYQhlHlZz_jFowD5MEmcUXVx6avhQV_i08nG0nKBx-DeQTv2kq9USniFeoR' },
-    { name: 'Mini Marta Rocha', price: 125, cat: 'Assados', unit: 'Cento (100 un.)', desc: 'Salgado assado especial da casa.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uhwURqBjCY-ysz5Do_AYSGrA2SS77pSEf8y8fW3b57ktXyrZTXNgm5oMnObhrKY7g3oFBY_G8ZkuLbjg-fI84iGllruOF5_EvdjBKY3fPVhB2mBq0AXhGxKA4yjK8SVjId21wxUxNeUJNPoV4UMiOMOzGVnHFhGMY5uFuUf_r--E37whcipdnJnPycipYUUVVYQhlHlZz_jFowD5MEmcUXVx6avhQV_i08nG0nKBx-DeQTv2kq9USniFeoR' },
-    { name: 'Mini Pão de Frango', price: 125, cat: 'Assados', unit: 'Cento (100 un.)', desc: 'Pãozinho caseiro recheado com frango cremoso.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uiTjpuUGiUIi_uCtbInbHa6-OALQ8nSTKnuFumYRZw7yLtq6OfxIyFXowUf71zPpKSzY52QjbdLaTxonk2FhbThmuz0R7mO6bCmzudODEvNr8oZhYSQBpoduFHJqw9O0zkMBhPNk6n1ku0kxQsdvPrj7fVQ0wrlXt1_bns0KurekpWreBzryrqGdPakbp2RNfh1_wdhTjry-5PI93R9yFmd2Cj0qh67tvOMx_dhvZBRvThZvQU77eUXufwP' },
-    { name: 'Mini Pão Batata Calabresa', price: 125, cat: 'Assados', unit: 'Cento (100 un.)', desc: 'Massa de batata com calabresa e cebola.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uiTjpuUGiUIi_uCtbInbHa6-OALQ8nSTKnuFumYRZw7yLtq6OfxIyFXowUf71zPpKSzY52QjbdLaTxonk2FhbThmuz0R7mO6bCmzudODEvNr8oZhYSQBpoduFHJqw9O0zkMBhPNk6n1ku0kxQsdvPrj7fVQ0wrlXt1_bns0KurekpWreBzryrqGdPakbp2RNfh1_wdhTjry-5PI93R9yFmd2Cj0qh67tvOMx_dhvZBRvThZvQU77eUXufwP' },
-    { name: 'Mini X-Burguer', price: 4.90, cat: 'Lanches', unit: 'Unidade (Mín. 10)', desc: 'Hambúrguer artesanal e queijo no mini pão.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uj8bACtDY9tmuQoPWVGx-rmuGRTnMXEkySN8z2R-afFNDg67Ad8mvBnAJxMSFyyU20NOKikNSUOOjb3vbYx3-bwm6m1HR7rYoFuF8xYfvSU62bZGy9ywURwsPOjNrfGT4RCzMrvkqMJinTMv-_D_D_8Ntjf0iiYeApA2tKlhggOhmS2q_aWv5KsGBCM2-so__FnhsPi8LTDSUFgjexZC3vm5TWkS1GM4_7WjX_XCc7AAx9LZVbUK-k68xT5' },
-    { name: 'Mini X-Calabresa', price: 4.90, cat: 'Lanches', unit: 'Unidade (Mín. 10)', desc: 'Fatias de calabresa acebolada e queijo.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uj8bACtDY9tmuQoPWVGx-rmuGRTnMXEkySN8z2R-afFNDg67Ad8mvBnAJxMSFyyU20NOKikNSUOOjb3vbYx3-bwm6m1HR7rYoFuF8xYfvSU62bZGy9ywURwsPOjNrfGT4RCzMrvkqMJinTMv-_D_D_8Ntjf0iiYeApA2tKlhggOhmS2q_aWv5KsGBCM2-so__FnhsPi8LTDSUFgjexZC3vm5TWkS1GM4_7WjX_XCc7AAx9LZVbUK-k68xT5' },
-    { name: 'Mini X-Salada', price: 4.90, cat: 'Lanches', unit: 'Unidade (Mín. 10)', desc: 'Mini burguer com queijo, alface e tomate.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uj8bACtDY9tmuQoPWVGx-rmuGRTnMXEkySN8z2R-afFNDg67Ad8mvBnAJxMSFyyU20NOKikNSUOOjb3vbYx3-bwm6m1HR7rYoFuF8xYfvSU62bZGy9ywURwsPOjNrfGT4RCzMrvkqMJinTMv-_D_D_8Ntjf0iiYeApA2tKlhggOhmS2q_aWv5KsGBCM2-so__FnhsPi8LTDSUFgjexZC3vm5TWkS1GM4_7WjX_XCc7AAx9LZVbUK-k68xT5' },
-    { name: 'Mini X-Frango', price: 4.90, cat: 'Lanches', unit: 'Unidade (Mín. 10)', desc: 'Frango grelhado suculento com queijo.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uj8bACtDY9tmuQoPWVGx-rmuGRTnMXEkySN8z2R-afFNDg67Ad8mvBnAJxMSFyyU20NOKikNSUOOjb3vbYx3-bwm6m1HR7rYoFuF8xYfvSU62bZGy9ywURwsPOjNrfGT4RCzMrvkqMJinTMv-_D_D_8Ntjf0iiYeApA2tKlhggOhmS2q_aWv5KsGBCM2-so__FnhsPi8LTDSUFgjexZC3vm5TWkS1GM4_7WjX_XCc7AAx9LZVbUK-k68xT5' },
-    { name: 'Brigadeiro Chocolate', price: 140, cat: 'Doces', unit: 'Cento (100 un.)', desc: 'O clássico preferido de chocolate belga.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
-    { name: 'Brigadeiro Branco', price: 140, cat: 'Doces', unit: 'Cento (100 un.)', desc: 'Doçura suave do leite condensado puro.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
-    { name: 'Olho de Sogra', price: 140, cat: 'Doces', unit: 'Cento (100 un.)', desc: 'Ameixa selecionada com beijinho de coco.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
-    { name: 'Cajuzinho', price: 140, cat: 'Doces', unit: 'Cento (100 un.)', desc: 'Amendoim torrado com toque de cacau.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
-    { name: 'Casadinho', price: 140, cat: 'Doces', unit: 'Cento (100 un.)', desc: 'União do brigadeiro preto e branco.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
-    { name: 'Beijinho de Coco', price: 140, cat: 'Doces', unit: 'Cento (100 un.)', desc: 'Coco ralado fresco e leite condensado.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
-    { name: 'Mini Tortinhas Mousse', price: 150, cat: 'Doces', unit: 'Cento (100 un.)', desc: 'Tortinhas crocantes com mousse aerada.', img: 'https://lh3.googleusercontent.com/aida/ADBb0ujZQMZLaX69NTcOe1py-xglNJfMNYr5zqp67pQvxEPC-EpjA41VGwb2-9XQJnOIw_gw97-58WMBBfkNxKJ2r8vacVDQMS8ztfzytTPJjSuYO7lrF0suO6UpO0s95rcDkuC55cEVHLm6yJe8BVTCo2aVQ8btD8RHtGHrJhwWmoCNPOGntCaeT-Mm5KfvFW4sgfmKY0jnXPVIn7M9-6dUll82gUq17qVeL14rexObBIzhdBJ1gThY4DCScMQ' },
-    { name: 'Mini Trufas Gourmet', price: 250, cat: 'Doces', unit: 'Cento (100 un.)', desc: 'Trufas artesanais com chocolate nobre.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' }
+    { name: 'Coxinha de Frango', price: 90, cat: 'Fritos', unit: 'Cento (100 un.)', description: 'Clássica massa de batata com frango desfiado temperado.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY' },
+    { name: 'Bolinha de Queijo', price: 90, cat: 'Fritos', unit: 'Cento (100 un.)', description: 'Massa cremosa recheada com mussarela selecionada.', img: 'https://lh3.googleusercontent.com/aida/ADBb0ug3bpYC-14I1zO_V97PZ7Fim7BL0amfHX29RlVcu_yRoGkDYHJ6_a6VyX1aTBGbgIUVAV81BgXI_QR7AOMINpO8jDZV2BP8rLuWLJg2s1D0ksCnhzV_WitKxREq6N2SNyOUKF6jZ542g0MldwI4Y5SUhR9JtLWAWOy5HW9qUJ9cOUse400WRjrgjmh6gZfWTwkg2taQPrkh596wdx8ZTysbCSGrM0dpYMpOVmvmc5K_o5bYIOCxpUBkczA' },
+    { name: 'Risole de Carne', price: 90, cat: 'Fritos', unit: 'Cento (100 un.)', description: 'Recheio de carne bovina moída com temperos da casa.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uhwURqBjCY-ysz5Do_AYSGrA2SS77pSEf8y8fW3b57ktXyrZTXNgm5oMnObhrKY7g3oFBY_G8ZkuLbjg-fI84iGllruOF5_EvdjBKY3fPVhB2mBq0AXhGxKA4yjK8SVjId21wxUxNeUJNPoV4UMiOMOzGVnHFhGMY5uFuUf_r--E37whcipdnJnPycipYUUVVYQhlHlZz_jFowD5MEmcUXVx6avhQV_i08nG0nKBx-DeQTv2kq9USniFeoR' },
+    { name: 'Bolinha Presunto e Queijo', price: 90, cat: 'Fritos', unit: 'Cento (100 un.)', description: 'Combinação perfeita de presunto e queijo derretido.', img: 'https://lh3.googleusercontent.com/aida/ADBb0ujIoGjcTUfESCmAjnBwBtv2V2QMjDI7aHmMDjkHO2Ec9i8u4otaWDq1saiK-vkKofwaEx_lk4Fx1jhHHoMxbAolITSKHLP4OfMMaozYNCxjJDNcaCkznGxIp78Es9uNAL_oZ4hwTwF7odzCMrcayduggGmJ7nyFlVDIrBKh3OmTUsIY1dVBgkV4ajGbnerExLvB8ThYnyPdtcPb6g2953qYlzjo-sgl0xGi-8axaBBUBDasHCrTfMyfMcc' },
+    { name: 'Pastel de Calabresa', price: 90, cat: 'Fritos', unit: 'Cento (100 un.)', description: 'Calabresa moída com toque especial de ervas.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uhoAPdXxn2heAYFv0TTRroX115rnEcWjsxhnaIjeYF5NK2THaLYXeVT7qtAQvY-Gs_nucdZkI_dMxUQLZLkZQ_iKGvZFQBUvlxedlFBL7Twzh72BRZyVs93M_D8nHk1hG57B0cg8wK0qbJRikZiQTBzStrwXe5QKZekuVCvJCxHEt42gNUrRw0lX34q4oxO8XWkmIcafJ2UjElH-e2qjlcIQC7ZGQn6cNROrcXObIjSbIUjYd9E3VWV7Pk' },
+    { name: 'Pastel de Milho', price: 90, cat: 'Fritos', unit: 'Cento (100 un.)', description: 'Recheio suave de milho verde selecionado.', img: 'https://lh3.googleusercontent.com/aida/ADBb0ujdQf6etdUVjy-AH23W66Tc1tvz0bvfa6gb0Orn1z8y1KpigHM3I68khjZiHdTKg0d1wpmaTWRCIPQBFVaZcONyEWFH2TkzAXNRp7HtviU5AUH7CXfLMECE8neNkl0z1fr9IW9D1iRP_jaHhCc5eKdHP0T3w6-6PVS09d9UXgkAn_mLKaGhPKK7udIZQo8Ji8lm8UkZGaxZFSCYVI0I8h7bLrPgLO9j0e8luAwUyKGnu4_qX-EiTCZhpKk' },
+    { name: 'Mini Quibe', price: 90, cat: 'Fritos', unit: 'Cento (100 un.)', description: 'Trigo de alta qualidade com carne e hortelã fresca.', img: 'https://lh3.googleusercontent.com/aida/ADBb0ug7Z_3vibGIQV_ru4AAVLufkJJ-djoHVkFvjdaZWAtTC2N12hBnIB3MOc6174Q6zxwXHV9EOdewI2HytnaZUa8l3UvPnfE3Ok4B1iaw3con5ZjyAekTsXe_mcJvOkVbASDr8bIG7sZ0Svq5ykPm2nXwFAy5hk1Lq5rsrWXN-_1fpcK2WK50ITfXpCk7ObdZIGdV2DoPia8n6ecQg8hS7pp9wL-_Wnv6bQGiyTQtojIDIQt-xQvJgQMNLGvK' },
+    { name: 'Medalhão de Salsicha', price: 90, cat: 'Fritos', unit: 'Cento (100 un.)', description: 'Salsicha premium envolta em massa crocante.', img: 'https://lh3.googleusercontent.com/aida/ADBb0ujLO2kxjAyLn3v3hrOZQvnDzje_IJTjN4fvzAkBmXm2uv-Q5rX-ehwh6ifZ_19G-N_diIEQFPwQVs7eA6CmXbM1zp9AE8JUmxoP32uvt-LS6cqVrnzZWqV-BgUsjji6-jQobHxoqpD2bPaGTzdP_fHlU6O-qqUtKErk85v2pePx8MYVPCGKtuSGpcMYbUZ8yjKGqNyNUQbqniIOMcBwkjRBkoipBjkJySwMJAtuYrrAy3LEQ1KQP61K_3vd' },
+    { name: 'Empada de Frango', price: 125, cat: 'Assados', unit: 'Cento (100 un.)', description: 'Massa podre tradicional com recheio cremoso.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uhT2DFMiIXo6dcHOIcwQwDtF6mfpRyzpE11jeulvjnvTlOakapO0gakJcbbqreE5pU72soB7JqUQNbsSv29wTcVLnN0SGQEQd1-rLUTOR0QAFTVz8HTbf3Ps8MIlqOcdD1i1S65--wsG3StcT42EXTnNXAcg7pdCqBcgrd55i3auNqOSP69WnPWr8wdCz6g5ZRUYilMYUz94tGN9hgEJD9fsdgSwiJ4woAVMJbJyXhAT5DNh8N9mZrEQQTu' },
+    { name: 'Empada de Queijo', price: 125, cat: 'Assados', unit: 'Cento (100 un.)', description: 'Deliciosa massa amanteigada com queijo.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uhT2DFMiIXo6dcHOIcwQwDtF6mfpRyzpE11jeulvjnvTlOakapO0gakJcbbqreE5pU72soB7JqUQNbsSv29wTcVLnN0SGQEQd1-rLUTOR0QAFTVz8HTbf3Ps8MIlqOcdD1i1S65--wsG3StcT42EXTnNXAcg7pdCqBcgrd55i3auNqOSP69WnPWr8wdCz6g5ZRUYilMYUz94tGN9hgEJD9fsdgSwiJ4woAVMJbJyXhAT5DNh8N9mZrEQQTu' },
+    { name: 'Empada de Presunto', price: 125, cat: 'Assados', unit: 'Cento (100 un.)', description: 'Sabor suave e textura que derrete na boca.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uhT2DFMiIXo6dcHOIcwQwDtF6mfpRyzpE11jeulvjnvTlOakapO0gakJcbbqreE5pU72soB7JqUQNbsSv29wTcVLnN0SGQEQd1-rLUTOR0QAFTVz8HTbf3Ps8MIlqOcdD1i1S65--wsG3StcT42EXTnNXAcg7pdCqBcgrd55i3auNqOSP69WnPWr8wdCz6g5ZRUYilMYUz94tGN9hgEJD9fsdgSwiJ4woAVMJbJyXhAT5DNh8N9mZrEQQTu' },
+    { name: 'Empada de Palmito', price: 125, cat: 'Assados', unit: 'Cento (100 un.)', description: 'Recheio de palmito especial e cremoso.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uhT2DFMiIXo6dcHOIcwQwDtF6mfpRyzpE11jeulvjnvTlOakapO0gakJcbbqreE5pU72soB7JqUQNbsSv29wTcVLnN0SGQEQd1-rLUTOR0QAFTVz8HTbf3Ps8MIlqOcdD1i1S65--wsG3StcT42EXTnNXAcg7pdCqBcgrd55i3auNqOSP69WnPWr8wdCz6g5ZRUYilMYUz94tGN9hgEJD9fsdgSwiJ4woAVMJbJyXhAT5DNh8N9mZrEQQTu' },
+    { name: 'Mini Esfirra Assada', price: 125, cat: 'Assados', unit: 'Cento (100 un.)', description: 'Massa leve e fofinha com carne temperada.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uhwURqBjCY-ysz5Do_AYSGrA2SS77pSEf8y8fW3b57ktXyrZTXNgm5oMnObhrKY7g3oFBY_G8ZkuLbjg-fI84iGllruOF5_EvdjBKY3fPVhB2mBq0AXhGxKA4yjK8SVjId21wxUxNeUJNPoV4UMiOMOzGVnHFhGMY5uFuUf_r--E37whcipdnJnPycipYUUVVYQhlHlZz_jFowD5MEmcUXVx6avhQV_i08nG0nKBx-DeQTv2kq9USniFeoR' },
+    { name: 'Mini Marta Rocha', price: 125, cat: 'Assados', unit: 'Cento (100 un.)', description: 'Salgado assado especial da casa.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uhwURqBjCY-ysz5Do_AYSGrA2SS77pSEf8y8fW3b57ktXyrZTXNgm5oMnObhrKY7g3oFBY_G8ZkuLbjg-fI84iGllruOF5_EvdjBKY3fPVhB2mBq0AXhGxKA4yjK8SVjId21wxUxNeUJNPoV4UMiOMOzGVnHFhGMY5uFuUf_r--E37whcipdnJnPycipYUUVVYQhlHlZz_jFowD5MEmcUXVx6avhQV_i08nG0nKBx-DeQTv2kq9USniFeoR' },
+    { name: 'Mini Pão de Frango', price: 125, cat: 'Assados', unit: 'Cento (100 un.)', description: 'Pãozinho caseiro recheado com frango cremoso.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uiTjpuUGiUIi_uCtbInbHa6-OALQ8nSTKnuFumYRZw7yLtq6OfxIyFXowUf71zPpKSzY52QjbdLaTxonk2FhbThmuz0R7mO6bCmzudODEvNr8oZhYSQBpoduFHJqw9O0zkMBhPNk6n1ku0kxQsdvPrj7fVQ0wrlXt1_bns0KurekpWreBzryrqGdPakbp2RNfh1_wdhTjry-5PI93R9yFmd2Cj0qh67tvOMx_dhvZBRvThZvQU77eUXufwP' },
+    { name: 'Mini Pão Batata Calabresa', price: 125, cat: 'Assados', unit: 'Cento (100 un.)', description: 'Massa de batata com calabresa e cebola.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uiTjpuUGiUIi_uCtbInbHa6-OALQ8nSTKnuFumYRZw7yLtq6OfxIyFXowUf71zPpKSzY52QjbdLaTxonk2FhbThmuz0R7mO6bCmzudODEvNr8oZhYSQBpoduFHJqw9O0zkMBhPNk6n1ku0kxQsdvPrj7fVQ0wrlXt1_bns0KurekpWreBzryrqGdPakbp2RNfh1_wdhTjry-5PI93R9yFmd2Cj0qh67tvOMx_dhvZBRvThZvQU77eUXufwP' },
+    { name: 'Mini X-Burguer', price: 4.90, cat: 'Lanches', unit: 'Unidade (Mín. 10)', description: 'Hambúrguer artesanal e queijo no mini pão.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uj8bACtDY9tmuQoPWVGx-rmuGRTnMXEkySN8z2R-afFNDg67Ad8mvBnAJxMSFyyU20NOKikNSUOOjb3vbYx3-bwm6m1HR7rYoFuF8xYfvSU62bZGy9ywURwsPOjNrfGT4RCzMrvkqMJinTMv-_D_D_8Ntjf0iiYeApA2tKlhggOhmS2q_aWv5KsGBCM2-so__FnhsPi8LTDSUFgjexZC3vm5TWkS1GM4_7WjX_XCc7AAx9LZVbUK-k68xT5' },
+    { name: 'Mini X-Calabresa', price: 4.90, cat: 'Lanches', unit: 'Unidade (Mín. 10)', description: 'Fatias de calabresa acebolada e queijo.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uj8bACtDY9tmuQoPWVGx-rmuGRTnMXEkySN8z2R-afFNDg67Ad8mvBnAJxMSFyyU20NOKikNSUOOjb3vbYx3-bwm6m1HR7rYoFuF8xYfvSU62bZGy9ywURwsPOjNrfGT4RCzMrvkqMJinTMv-_D_D_8Ntjf0iiYeApA2tKlhggOhmS2q_aWv5KsGBCM2-so__FnhsPi8LTDSUFgjexZC3vm5TWkS1GM4_7WjX_XCc7AAx9LZVbUK-k68xT5' },
+    { name: 'Mini X-Salada', price: 4.90, cat: 'Lanches', unit: 'Unidade (Mín. 10)', description: 'Mini burguer com queijo, alface e tomate.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uj8bACtDY9tmuQoPWVGx-rmuGRTnMXEkySN8z2R-afFNDg67Ad8mvBnAJxMSFyyU20NOKikNSUOOjb3vbYx3-bwm6m1HR7rYoFuF8xYfvSU62bZGy9ywURwsPOjNrfGT4RCzMrvkqMJinTMv-_D_D_8Ntjf0iiYeApA2tKlhggOhmS2q_aWv5KsGBCM2-so__FnhsPi8LTDSUFgjexZC3vm5TWkS1GM4_7WjX_XCc7AAx9LZVbUK-k68xT5' },
+    { name: 'Mini X-Frango', price: 4.90, cat: 'Lanches', unit: 'Unidade (Mín. 10)', description: 'Frango grelhado suculento com queijo.', img: 'https://lh3.googleusercontent.com/aida/ADBb0uj8bACtDY9tmuQoPWVGx-rmuGRTnMXEkySN8z2R-afFNDg67Ad8mvBnAJxMSFyyU20NOKikNSUOOjb3vbYx3-bwm6m1HR7rYoFuF8xYfvSU62bZGy9ywURwsPOjNrfGT4RCzMrvkqMJinTMv-_D_D_8Ntjf0iiYeApA2tKlhggOhmS2q_aWv5KsGBCM2-so__FnhsPi8LTDSUFgjexZC3vm5TWkS1GM4_7WjX_XCc7AAx9LZVbUK-k68xT5' },
+    { name: 'Brigadeiro Chocolate', price: 140, cat: 'Doces', unit: 'Cento (100 un.)', description: 'O clássico preferido de chocolate belga.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
+    { name: 'Brigadeiro Branco', price: 140, cat: 'Doces', unit: 'Cento (100 un.)', description: 'Doçura suave do leite condensado puro.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
+    { name: 'Olho de Sogra', price: 140, cat: 'Doces', unit: 'Cento (100 un.)', description: 'Ameixa selecionada com beijinho de coco.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
+    { name: 'Cajuzinho', price: 140, cat: 'Doces', unit: 'Cento (100 un.)', description: 'Amendoim torrado com toque de cacau.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
+    { name: 'Casadinho', price: 140, cat: 'Doces', unit: 'Cento (100 un.)', description: 'União do brigadeiro preto e branco.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
+    { name: 'Beijinho de Coco', price: 140, cat: 'Doces', unit: 'Cento (100 un.)', description: 'Coco ralado fresco e leite condensado.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
+    { name: 'Mini Tortinhas Mousse', price: 150, cat: 'Doces', unit: 'Cento (100 un.)', description: 'Tortinhas crocantes com mousse aerada.', img: 'https://lh3.googleusercontent.com/aida/ADBb0ujZQMZLaX69NTcOe1py-xglNJfMNYr5zqp67pQvxEPC-EpjA41VGwb2-9XQJnOIw_gw97-58WMBBfkNxKJ2r8vacVDQMS8ztfzytTPJjSuYO7lrF0suO6UpO0s95rcDkuC55cEVHLm6yJe8BVTCo2aVQ8btD8RHtGHrJhwWmoCNPOGntCaeT-Mm5KfvFW4sgfmKY0jnXPVIn7M9-6dUll82gUq17qVeL14rexObBIzhdBJ1gThY4DCScMQ' },
+    { name: 'Mini Trufas Gourmet', price: 250, cat: 'Doces', unit: 'Cento (100 un.)', description: 'Trufas artesanais com chocolate nobre.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' }
   ];
 
-  // ---------- INICIALIZAÇÃO ----------
-  document.addEventListener('DOMContentLoaded', () => {
-    renderCatalog('Todos');
-    updateCalculator();
-
-    const range = document.getElementById('guest-range');
-    const display = document.getElementById('guest-val');
-    range.addEventListener('input', (e) => {
-      display.textContent = e.target.value;
-      calcState.guests = parseInt(e.target.value);
-      updateCalculator();
-    });
-
-    const durationSelect = document.getElementById('calc-duration');
-    durationSelect.addEventListener('change', (e) => {
-      calcState.duration = e.target.value;
-      updateCalculator();
-    });
-  });
-
-  function renderCatalog(filter) {
+  // ==================== FUNÇÕES DO CARDÁPIO ====================
+  function renderCatalog(filter = 'Todos') {
     const grid = document.getElementById('catalog-grid');
+    if (!grid) return;
     grid.innerHTML = '';
     const filtered = filter === 'Todos' ? CATALOG_DATA : CATALOG_DATA.filter(item => item.cat === filter);
     filtered.forEach(item => {
@@ -289,7 +275,7 @@
       div.className = "bg-surface rounded-xl border border-outline-variant overflow-hidden group hover:shadow-2xl transition-all duration-500 hover:-translate-y-1";
       div.innerHTML = `
         <div class="h-56 overflow-hidden relative">
-          <img src="${item.img}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+          <img src="${item.img || 'https://via.placeholder.com/300x200?text=Sem+Imagem'}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="${item.name}">
           <span class="absolute top-4 left-4 bg-primary text-white text-[10px] px-3 py-1 rounded-full uppercase font-bold tracking-widest shadow-lg">${item.cat}</span>
         </div>
         <div class="p-6">
@@ -297,10 +283,10 @@
             <h3 class="font-bold text-on-surface text-lg">${item.name}</h3>
             <span class="text-primary font-bold text-lg">R$ ${item.price.toFixed(2)}</span>
           </div>
-          <p class="text-xs text-on-surface-variant mb-6 line-clamp-2 leading-relaxed italic">${item.desc}</p>
+          <p class="text-xs text-on-surface-variant mb-6 line-clamp-2 leading-relaxed italic">${item.description || ''}</p>
           <div class="flex items-center justify-between border-t border-outline-variant/30 pt-4">
             <span class="text-[10px] text-outline font-semibold uppercase tracking-tight">${item.unit}</span>
-            <button onclick="addToCart('${item.name}', ${item.price}, '${item.cat}')" class="w-12 h-12 bg-primary-container/20 text-primary rounded-lg flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all shadow-sm active:scale-90">
+            <button onclick="addToCart('${item.name.replace(/'/g, "\\'")}', ${item.price}, '${item.cat}')" class="w-12 h-12 bg-primary-container/20 text-primary rounded-lg flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all shadow-sm active:scale-90">
               <span class="material-symbols-outlined">add_shopping_cart</span>
             </button>
           </div>
@@ -323,19 +309,24 @@
     });
   }
 
+  // ==================== FUNÇÕES DA CALCULADORA ====================
   function setCalcVar(key, val) {
     calcState[key] = val;
     if (key === 'type') {
       ['kids', 'adult', 'corp'].forEach(t => {
         const btn = document.getElementById(`btn-${t}`);
-        if (t === val) { btn.classList.add('border-2', 'border-primary', 'bg-primary/5'); btn.classList.remove('border-outline-variant'); }
-        else { btn.classList.remove('border-2', 'border-primary', 'bg-primary/5'); btn.classList.add('border-outline-variant'); }
+        if (btn) {
+          if (t === val) { btn.classList.add('border-2', 'border-primary', 'bg-primary/5'); btn.classList.remove('border-outline-variant'); }
+          else { btn.classList.remove('border-2', 'border-primary', 'bg-primary/5'); btn.classList.add('border-outline-variant'); }
+        }
       });
     }
     if (key === 'meal') {
       const btnY = document.getElementById('btn-meal-yes'), btnN = document.getElementById('btn-meal-no');
-      if (val) { btnY.classList.add('border-2', 'border-primary', 'bg-primary/5'); btnN.classList.remove('border-2', 'border-primary', 'bg-primary/5'); }
-      else { btnN.classList.add('border-2', 'border-primary', 'bg-primary/5'); btnY.classList.remove('border-2', 'border-primary', 'bg-primary/5'); }
+      if (btnY && btnN) {
+        if (val) { btnY.classList.add('border-2', 'border-primary', 'bg-primary/5'); btnN.classList.remove('border-2', 'border-primary', 'bg-primary/5'); }
+        else { btnN.classList.add('border-2', 'border-primary', 'bg-primary/5'); btnY.classList.remove('border-2', 'border-primary', 'bg-primary/5'); }
+      }
     }
     updateCalculator();
   }
@@ -350,13 +341,18 @@
     const totalS = Math.round(guests * sPer);
     const totalD = Math.round(guests * dPer);
     const totalB = (guests * bPer / 1000).toFixed(1);
-    document.getElementById('res-salgados').textContent = `${totalS} un.`;
-    document.getElementById('res-doces').textContent = `${totalD} un.`;
-    document.getElementById('res-bolo').textContent = `${totalB} kg`;
+    const salgadosEl = document.getElementById('res-salgados');
+    const docesEl = document.getElementById('res-doces');
+    const boloEl = document.getElementById('res-bolo');
+    if (salgadosEl) salgadosEl.textContent = `${totalS} un.`;
+    if (docesEl) docesEl.textContent = `${totalD} un.`;
+    if (boloEl) boloEl.textContent = `${totalB} kg`;
     const card = document.getElementById('calc-result-card');
-    card.classList.remove('animate-pulse-fast');
-    void card.offsetWidth;
-    card.classList.add('animate-pulse-fast');
+    if (card) {
+      card.classList.remove('animate-pulse-fast');
+      void card.offsetWidth;
+      card.classList.add('animate-pulse-fast');
+    }
     showDelinha();
   }
 
@@ -364,12 +360,15 @@
     const delinha = document.getElementById('delinha-trigger');
     const bubble = document.getElementById('delinha-bubble');
     const actions = document.getElementById('delinha-actions');
-    delinha.style.opacity = '1';
-    const typeMap = { adult: 'Adulto', kids: 'Infantil', corp: 'Corporativo' };
-    bubble.innerHTML = `Oi! Estimei sua festa <strong>${typeMap[calcState.type]}</strong> para <strong>${calcState.guests}</strong> convidados. Essa configuração é o ponto ideal entre fartura e desperdício zero! ✨`;
-    actions.innerHTML = `<button onclick="applyCalcToQuote()" class="text-[10px] font-bold bg-primary text-on-primary px-4 py-2 rounded-lg hover:shadow-md transition-all">Aceitar Recomendação</button><button onclick="scrollToCatalog()" class="text-[10px] font-bold bg-white text-on-surface-variant border border-outline-variant px-4 py-2 rounded-lg hover:border-primary transition-all">Personalizar Sabores</button>`;
+    if (delinha && bubble && actions) {
+      delinha.style.opacity = '1';
+      const typeMap = { adult: 'Adulto', kids: 'Infantil', corp: 'Corporativo' };
+      bubble.innerHTML = `Oi! Estimei sua festa <strong>${typeMap[calcState.type]}</strong> para <strong>${calcState.guests}</strong> convidados. Essa configuração é o ponto ideal entre fartura e desperdício zero! ✨`;
+      actions.innerHTML = `<button onclick="applyCalcToQuote()" class="text-[10px] font-bold bg-primary text-on-primary px-4 py-2 rounded-lg hover:shadow-md transition-all">Aceitar Recomendação</button><button onclick="scrollToCatalog()" class="text-[10px] font-bold bg-white text-on-surface-variant border border-outline-variant px-4 py-2 rounded-lg hover:border-primary transition-all">Personalizar Sabores</button>`;
+    }
   }
 
+  // ==================== FUNÇÕES DO CARRINHO ====================
   function addToCart(name, price, category) {
     cart.push({ name, price, category });
     updateCartUI();
@@ -388,6 +387,7 @@
     const container = document.getElementById('cart-items');
     const badge = document.getElementById('cart-badge');
     const totalDisplay = document.getElementById('cart-total');
+    if (!container || !badge || !totalDisplay) return;
     if (cart.length === 0) {
       container.innerHTML = '<div class="text-center py-10 text-on-surface-variant italic">Sua sacola está vazia.</div>';
       badge.classList.add('hidden');
@@ -405,26 +405,64 @@
   }
 
   function removeItem(idx) { cart.splice(idx, 1); updateCartUI(); }
-  function toggleDrawer(forceOpen = false) { const drw = document.getElementById('quote-drawer'); if (forceOpen) drw.classList.remove('translate-x-full'); else drw.classList.toggle('translate-x-full'); }
-  function openLeadModal() { document.getElementById('lead-modal').classList.remove('hidden'); document.getElementById('lead-modal').classList.add('flex'); document.getElementById('modal-guests').value = calcState.guests; }
-  function closeLeadModal() { document.getElementById('lead-modal').classList.add('hidden'); document.getElementById('lead-modal').classList.remove('flex'); }
+  function toggleDrawer(forceOpen = false) { const drw = document.getElementById('quote-drawer'); if (drw) { if (forceOpen) drw.classList.remove('translate-x-full'); else drw.classList.toggle('translate-x-full'); } }
+  function openLeadModal() { 
+    const modal = document.getElementById('lead-modal');
+    const guestsInput = document.getElementById('modal-guests');
+    if (modal && guestsInput) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      guestsInput.value = calcState.guests;
+    }
+  }
+  function closeLeadModal() { const modal = document.getElementById('lead-modal'); if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); } }
   function notify(msg) { const toast = document.createElement('div'); toast.className = "fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] bg-primary text-on-primary px-8 py-4 rounded-lg text-sm font-bold shadow-2xl animate-slide-in border border-white/20"; toast.textContent = msg; document.body.appendChild(toast); setTimeout(() => toast.remove(), 2500); }
-  function scrollToCatalog() { document.getElementById('cardapio').scrollIntoView({ behavior: 'smooth' }); }
+  function scrollToCatalog() { const section = document.getElementById('cardapio'); if (section) section.scrollIntoView({ behavior: 'smooth' }); }
   function openChat() { alert("Delinha: Oii! Estou pronta para te ajudar. Alguma dúvida sobre sabores ou entrega?"); }
 
-  document.getElementById('lead-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const data = new FormData(e.target);
-    const name = data.get('name');
-    const summary = `Orçamento para ${name}: Festa ${calcState.type}, ${data.get('guests')} convidados.`;
-    const cartText = cart.length > 0 ? cart.map(i => `${i.name} (R$${i.price.toFixed(2)})`).join(', ') : 'Recomendação inteligente';
-    const total = document.getElementById('cart-total').textContent;
-    const text = encodeURIComponent(`Olá Delinha! Me chamo ${name}. Gostaria de fechar meu pedido!\n\n${summary}\n\nSacola: ${cartText}\nTotal: ${total}`);
-    window.open(`https://wa.me/5531999999999?text=${text}`, '_blank');
-    closeLeadModal();
+  // ==================== INICIALIZAÇÃO E EVENTOS ====================
+  document.addEventListener('DOMContentLoaded', () => {
+    renderCatalog('Todos');
+    updateCalculator();
+
+    const range = document.getElementById('guest-range');
+    const display = document.getElementById('guest-val');
+    if (range && display) {
+      range.addEventListener('input', (e) => {
+        display.textContent = e.target.value;
+        calcState.guests = parseInt(e.target.value);
+        updateCalculator();
+      });
+    }
+
+    const durationSelect = document.getElementById('calc-duration');
+    if (durationSelect) {
+      durationSelect.addEventListener('change', (e) => {
+        calcState.duration = e.target.value;
+        updateCalculator();
+      });
+    }
+
+    const leadForm = document.getElementById('lead-form');
+    if (leadForm) {
+      leadForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const data = new FormData(e.target);
+        const name = data.get('name');
+        const summary = `Orçamento para ${name}: Festa ${calcState.type}, ${data.get('guests')} convidados.`;
+        const cartText = cart.length > 0 ? cart.map(i => `${i.name} (R$${i.price.toFixed(2)})`).join(', ') : 'Recomendação inteligente';
+        const total = document.getElementById('cart-total')?.textContent || 'R$ 0,00';
+        const text = encodeURIComponent(`Olá Delinha! Me chamo ${name}. Gostaria de fechar meu pedido!\n\n${summary}\n\nSacola: ${cartText}\nTotal: ${total}`);
+        window.open(`https://wa.me/5531999999999?text=${text}`, '_blank');
+        closeLeadModal();
+      });
+    }
   });
 
-  window.addEventListener('scroll', () => { const header = document.getElementById('main-header'); if (window.scrollY > 20) header.classList.add('header-scrolled'); else header.classList.remove('header-scrolled'); });
+  window.addEventListener('scroll', () => { 
+    const header = document.getElementById('main-header'); 
+    if (header) { if (window.scrollY > 20) header.classList.add('header-scrolled'); else header.classList.remove('header-scrolled'); }
+  });
 </script>
 </body>
 </html>
