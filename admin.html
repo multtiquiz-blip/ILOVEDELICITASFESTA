@@ -2,7 +2,6 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel Admin - I Love Delicitas</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -11,15 +10,17 @@
 </head>
 <body class="p-6">
 <div class="max-w-7xl mx-auto">
+  <!-- TELA DE LOGIN SIMPLES -->
   <div id="loginArea" class="bg-white rounded-2xl shadow-md max-w-md mx-auto mt-20 p-8">
-    <h2 class="text-2xl font-bold mb-4">Acesso Admin</h2>
-    <input type="text" id="adminEmail" placeholder="Email" class="w-full border p-2 mb-3 rounded">
-    <input type="password" id="adminPass" placeholder="Senha" class="w-full border p-2 mb-4 rounded">
+    <h2 class="text-2xl font-bold mb-4">Login Admin</h2>
+    <input type="text" id="userLogin" placeholder="Usuário" class="w-full border p-2 mb-3 rounded">
+    <input type="password" id="passLogin" placeholder="Senha" class="w-full border p-2 mb-4 rounded">
     <button onclick="fazerLogin()" class="bg-red-600 text-white w-full py-2 rounded-full">Entrar</button>
-    <p id="loginError" class="text-red-500 text-sm mt-2 hidden">Email ou senha inválidos</p>
-    <p class="text-xs text-gray-400 mt-4">Use: admin@ilovedelicitas.com / delinha123</p>
+    <p id="loginError" class="text-red-500 text-sm mt-2 hidden">Usuário ou senha errados</p>
+    <p class="text-xs text-gray-400 mt-4">Use: admin / 123</p>
   </div>
 
+  <!-- PAINEL (aparece após login) -->
   <div id="adminPanel" class="hidden">
     <div class="flex justify-between items-center mb-6 bg-white p-4 rounded-xl shadow">
       <h1 class="text-2xl font-bold">Painel de Controle</h1>
@@ -43,32 +44,26 @@
   let supabase;
   let configuracoes = [], regras = [], produtos = [], respostasChat = [];
 
-  async function fazerLogin() {
-    const email = document.getElementById('adminEmail').value.trim();
-    const pass = document.getElementById('adminPass').value.trim();
-    
-    // LOGIN SIMPLES E DIRETO (sem depender de Supabase)
-    if (email === 'admin@ilovedelicitas.com' && pass === 'delinha123') {
-      // Esconde tela de login e mostra painel
+  // LOGIN MUITO SIMPLES: usuário "admin" e senha "123"
+  function fazerLogin() {
+    const user = document.getElementById('userLogin').value.trim();
+    const pass = document.getElementById('passLogin').value.trim();
+    if (user === 'admin' && pass === '123') {
       document.getElementById('loginArea').style.display = 'none';
       document.getElementById('adminPanel').classList.remove('hidden');
-      
-      // Inicializa Supabase (se config.js estiver ok)
+      // Tenta conectar no Supabase (se config.js existir)
       try {
         if (typeof SUPABASE_CONFIG !== 'undefined') {
           supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
-          await carregarDados();
+          carregarDados();
         } else {
-          console.warn('Supabase não configurado. Use dados locais.');
-          alert('Aviso: arquivo config.js não encontrado. O painel funcionará apenas para visualização, sem salvar no banco.');
+          console.warn("config.js não encontrado. Use dados vazios.");
+          alert("Aviso: config.js não encontrado. Você não poderá salvar no banco, mas pode ver o painel.");
         }
-      } catch(e) {
-        console.error('Erro ao conectar Supabase:', e);
-        alert('Erro ao conectar com Supabase. Verifique o arquivo config.js.');
-      }
+      } catch(e) { console.error(e); alert("Erro ao conectar Supabase: " + e.message); }
     } else {
       document.getElementById('loginError').classList.remove('hidden');
-      setTimeout(() => document.getElementById('loginError').classList.add('hidden'), 3000);
+      setTimeout(() => document.getElementById('loginError').classList.add('hidden'), 2000);
     }
   }
 
@@ -80,34 +75,22 @@
       const { data: p } = await supabase.from('cardapio').select('*').order('id');
       const { data: rc } = await supabase.from('respostas_delinha').select('*');
       configuracoes = c || []; regras = r || []; produtos = p || []; respostasChat = rc || [];
-      renderizarConfiguracoes(); renderizarRegras(); renderizarProdutos(); renderizarRespostasChat();
-    } catch(e) { console.error(e); alert('Erro ao carregar dados do Supabase'); }
+    } catch(e) { console.error(e); alert("Erro ao carregar dados: "+e.message); }
+    renderizarConfiguracoes(); renderizarRegras(); renderizarProdutos(); renderizarRespostasChat();
   }
 
   function renderizarConfiguracoes() { const container = document.getElementById('configForm'); const campos = ['titulo_hero','subtitulo_hero','texto_retirada','texto_pagamento','texto_fritura','telefone','whatsapp_link','logo_url','banner_url']; container.innerHTML = campos.map(chave => { const item = configuracoes.find(c => c.chave === chave); return `<div><label class="block font-semibold">${chave}</label><input type="text" id="cfg_${chave}" value="${item?.valor || ''}" class="w-full border p-1 rounded"></div>`; }).join(''); }
-  
-  async function salvarConfiguracoes() { if (!supabase) { alert('Supabase não conectado'); return; } const campos = ['titulo_hero','subtitulo_hero','texto_retirada','texto_pagamento','texto_fritura','telefone','whatsapp_link','logo_url','banner_url']; for (let chave of campos) { const valor = document.getElementById(`cfg_${chave}`).value; await supabase.from('configuracoes').upsert({ chave, valor }, { onConflict: 'chave' }); } alert('Configurações salvas!'); }
-  
+  async function salvarConfiguracoes() { if (!supabase) { alert("Supabase não conectado. Salve config.js primeiro."); return; } const campos = ['titulo_hero','subtitulo_hero','texto_retirada','texto_pagamento','texto_fritura','telefone','whatsapp_link','logo_url','banner_url']; for (let chave of campos) { const valor = document.getElementById(`cfg_${chave}`).value; await supabase.from('configuracoes').upsert({ chave, valor }, { onConflict: 'chave' }); } alert('Configurações salvas!'); }
   function renderizarRegras() { const container = document.getElementById('regrasForm'); container.innerHTML = regras.map(r => `<div class="border p-2 rounded"><label class="font-semibold">${r.tipo_evento}</label><div class="flex gap-2 mt-1"><input type="number" id="reg_${r.tipo_evento}_s" value="${r.salgados_por_pessoa}" placeholder="Salgados/pessoa" class="w-1/2 border p-1 rounded"><input type="number" id="reg_${r.tipo_evento}_d" value="${r.doces_por_pessoa}" placeholder="Doces/pessoa" class="w-1/2 border p-1 rounded"></div></div>`).join(''); }
-  
-  async function salvarRegras() { if (!supabase) { alert('Supabase não conectado'); return; } for (let r of regras) { const s = document.getElementById(`reg_${r.tipo_evento}_s`).value; const d = document.getElementById(`reg_${r.tipo_evento}_d`).value; await supabase.from('regras_calculadora').upsert({ tipo_evento: r.tipo_evento, salgados_por_pessoa: parseInt(s), doces_por_pessoa: parseInt(d) }, { onConflict: 'tipo_evento' }); } alert('Regras salvas!'); }
-  
+  async function salvarRegras() { if (!supabase) { alert("Supabase não conectado"); return; } for (let r of regras) { const s = document.getElementById(`reg_${r.tipo_evento}_s`).value; const d = document.getElementById(`reg_${r.tipo_evento}_d`).value; await supabase.from('regras_calculadora').upsert({ tipo_evento: r.tipo_evento, salgados_por_pessoa: parseInt(s), doces_por_pessoa: parseInt(d) }, { onConflict: 'tipo_evento' }); } alert('Regras salvas!'); }
   function renderizarProdutos() { const container = document.getElementById('listaProdutos'); container.innerHTML = produtos.map(p => `<div class="flex justify-between items-center border-b py-2"><div><span class="font-bold">${p.nome}</span> - R$ ${p.preco} - ${p.categoria}</div><div><button onclick="editarProduto(${p.id})" class="text-blue-600 mr-2">Editar</button><button onclick="excluirProduto(${p.id})" class="text-red-600">Excluir</button></div></div>`).join(''); }
-  
   function abrirModalProduto(produto = null) { const modal = document.getElementById('produtoModal'); modal.classList.remove('hidden'); modal.classList.add('flex'); if (produto) { document.getElementById('modalTitle').innerText = 'Editar produto'; document.getElementById('produtoId').value = produto.id; document.getElementById('prodNome').value = produto.nome; document.getElementById('prodPreco').value = produto.preco; document.getElementById('prodCategoria').value = produto.categoria; document.getElementById('prodUnidade').value = produto.unidade || ''; document.getElementById('prodDescricao').value = produto.descricao || ''; document.getElementById('prodImagem').value = produto.imagem || ''; } else { document.getElementById('modalTitle').innerText = 'Novo produto'; document.getElementById('produtoId').value = ''; document.getElementById('prodNome').value = ''; document.getElementById('prodPreco').value = ''; document.getElementById('prodCategoria').value = 'Fritos'; document.getElementById('prodUnidade').value = ''; document.getElementById('prodDescricao').value = ''; document.getElementById('prodImagem').value = ''; } }
-  
   function fecharModalProduto() { const modal = document.getElementById('produtoModal'); modal.classList.add('hidden'); modal.classList.remove('flex'); }
-  
-  async function salvarProduto() { if (!supabase) { alert('Supabase não conectado'); return; } const id = document.getElementById('produtoId').value; const produto = { nome: document.getElementById('prodNome').value, preco: parseFloat(document.getElementById('prodPreco').value), categoria: document.getElementById('prodCategoria').value, unidade: document.getElementById('prodUnidade').value, descricao: document.getElementById('prodDescricao').value, imagem: document.getElementById('prodImagem').value }; if (!produto.nome || isNaN(produto.preco)) { alert('Nome e preço obrigatórios'); return; } if (id) await supabase.from('cardapio').update(produto).eq('id', id); else await supabase.from('cardapio').insert([produto]); fecharModalProduto(); await carregarDados(); }
-  
+  async function salvarProduto() { if (!supabase) { alert("Supabase não conectado"); return; } const id = document.getElementById('produtoId').value; const produto = { nome: document.getElementById('prodNome').value, preco: parseFloat(document.getElementById('prodPreco').value), categoria: document.getElementById('prodCategoria').value, unidade: document.getElementById('prodUnidade').value, descricao: document.getElementById('prodDescricao').value, imagem: document.getElementById('prodImagem').value }; if (!produto.nome || isNaN(produto.preco)) { alert('Nome e preço obrigatórios'); return; } if (id) await supabase.from('cardapio').update(produto).eq('id', id); else await supabase.from('cardapio').insert([produto]); fecharModalProduto(); await carregarDados(); }
   async function editarProduto(id) { const produto = produtos.find(p => p.id === id); if (produto) abrirModalProduto(produto); }
-  
   async function excluirProduto(id) { if (confirm('Excluir?')) { await supabase.from('cardapio').delete().eq('id', id); await carregarDados(); } }
-  
   function renderizarRespostasChat() { const container = document.getElementById('respostasChatForm'); container.innerHTML = respostasChat.map(r => `<div class="border p-2 rounded"><label class="font-semibold">Palavra-chave: ${r.palavra_chave}</label><textarea id="resp_${r.palavra_chave}" class="w-full border p-1 rounded mt-1" rows="2">${r.resposta}</textarea></div>`).join(''); }
-  
-  async function salvarRespostasChat() { if (!supabase) { alert('Supabase não conectado'); return; } for (let r of respostasChat) { const novaResp = document.getElementById(`resp_${r.palavra_chave}`).value; await supabase.from('respostas_delinha').upsert({ palavra_chave: r.palavra_chave, resposta: novaResp }, { onConflict: 'palavra_chave' }); } alert('Respostas salvas!'); }
-  
+  async function salvarRespostasChat() { if (!supabase) { alert("Supabase não conectado"); return; } for (let r of respostasChat) { const novaResp = document.getElementById(`resp_${r.palavra_chave}`).value; await supabase.from('respostas_delinha').upsert({ palavra_chave: r.palavra_chave, resposta: novaResp }, { onConflict: 'palavra_chave' }); } alert('Respostas salvas!'); }
   function logout() { document.getElementById('loginArea').style.display = 'block'; document.getElementById('adminPanel').classList.add('hidden'); }
 </script>
 </body>
