@@ -397,68 +397,68 @@
     function notify(msg) { let t = document.createElement('div'); t.className = "fixed bottom-8 left-1/2 -translate-x-1/2 bg-primary text-white px-6 py-3 rounded-full shadow-lg z-[100] animate-pulse"; t.innerText = msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2500); }
     function openChat() { document.getElementById('delinhaFloat').classList.remove('delinha-float-closed'); }
 
-    // ========== CHAT FLUTUANTE COM RESPOSTAS LOCAIS (OFFLINE) ==========
-    const RESPOSTAS_LOCAIS = {
-      prazo: "O prazo depende da quantidade: até 300 unidades → 72h; de 300 a 800 unidades → 7 dias; acima de 800 ou com fritura no local → 15 dias.",
-      fritura: "Você pode retirar os salgados já fritos ou congelados (mesmo preço). Fritura no local tem custo extra – consulte orçamento.",
-      entrega: "Não temos frota própria. Você retira no local ou contrata um entregador por aplicativo (Uber/99).",
-      pagamento: "Aceitamos Pix ou cartão de crédito em até 3 vezes. Sinal de 50% para reservar a data.",
-      cardapio: "Temos salgados (coxinha, bolinha, risole, empadas...), doces (brigadeiro, beijinho, mini tortinhas...) e mini lanches. Veja o cardápio completo no site.",
-      orcamento: "Os valores são consultados pelo WhatsApp. Clique no botão 'Solicitar Orçamento' ou me chame pelo WhatsApp.",
-      default: "Desculpe, não entendi. Pergunte sobre prazo, fritura, entrega, pagamento, cardápio ou orçamento. Ou fale conosco pelo WhatsApp (31) 99999-9999."
-    };
+    // ========== CHAT FLUTUANTE – INICIALIZAÇÃO CORRIGIDA ==========
+    document.addEventListener('DOMContentLoaded', function() {
+      const RESPOSTAS_LOCAIS = {
+        prazo: "O prazo depende da quantidade: até 300 unidades → 72h; de 300 a 800 unidades → 7 dias; acima de 800 ou com fritura no local → 15 dias.",
+        fritura: "Você pode retirar os salgados já fritos ou congelados (mesmo preço). Fritura no local tem custo extra – consulte orçamento.",
+        entrega: "Não temos frota própria. Você retira no local ou contrata um entregador por aplicativo (Uber/99).",
+        pagamento: "Aceitamos Pix ou cartão de crédito em até 3 vezes. Sinal de 50% para reservar a data.",
+        cardapio: "Temos salgados (coxinha, bolinha, risole, empadas...), doces (brigadeiro, beijinho, mini tortinhas...) e mini lanches. Veja o cardápio completo no site.",
+        orcamento: "Os valores são consultados pelo WhatsApp. Clique no botão 'Solicitar Orçamento' ou me chame pelo WhatsApp.",
+        default: "Desculpe, não entendi. Pergunte sobre prazo, fritura, entrega, pagamento, cardápio ou orçamento. Ou fale conosco pelo WhatsApp (31) 99999-9999."
+      };
 
-    function getRespostaLocal(mensagem) {
-      const msg = mensagem.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-      if (msg.includes('prazo') || msg.includes('minimo') || msg.includes('dias')) return RESPOSTAS_LOCAIS.prazo;
-      if (msg.includes('fritura') || msg.includes('fritar') || msg.includes('quentinho')) return RESPOSTAS_LOCAIS.fritura;
-      if (msg.includes('entrega') || msg.includes('entregam') || msg.includes('frete') || msg.includes('uber')) return RESPOSTAS_LOCAIS.entrega;
-      if (msg.includes('pagamento') || msg.includes('cartao') || msg.includes('pix') || msg.includes('parcelar')) return RESPOSTAS_LOCAIS.pagamento;
-      if (msg.includes('cardapio') || msg.includes('sabores') || msg.includes('produtos')) return RESPOSTAS_LOCAIS.cardapio;
-      if (msg.includes('orcamento') || msg.includes('preco') || msg.includes('quanto custa') || msg.includes('valor')) return RESPOSTAS_LOCAIS.orcamento;
-      return RESPOSTAS_LOCAIS.default;
-    }
+      function getRespostaLocal(mensagem) {
+        const msg = mensagem.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        if (msg.includes('prazo') || msg.includes('minimo') || msg.includes('dias')) return RESPOSTAS_LOCAIS.prazo;
+        if (msg.includes('fritura') || msg.includes('fritar') || msg.includes('quentinho')) return RESPOSTAS_LOCAIS.fritura;
+        if (msg.includes('entrega') || msg.includes('entregam') || msg.includes('frete') || msg.includes('uber')) return RESPOSTAS_LOCAIS.entrega;
+        if (msg.includes('pagamento') || msg.includes('cartao') || msg.includes('pix') || msg.includes('parcelar')) return RESPOSTAS_LOCAIS.pagamento;
+        if (msg.includes('cardapio') || msg.includes('sabores') || msg.includes('produtos')) return RESPOSTAS_LOCAIS.cardapio;
+        if (msg.includes('orcamento') || msg.includes('preco') || msg.includes('quanto custa') || msg.includes('valor')) return RESPOSTAS_LOCAIS.orcamento;
+        return RESPOSTAS_LOCAIS.default;
+      }
 
-    const messagesDiv = document.getElementById('delinhaFloatMessages');
-    const inputChat = document.getElementById('delinhaFloatInput');
-    const sendBtnChat = document.getElementById('delinhaFloatSendBtn');
+      const messagesDiv = document.getElementById('delinhaFloatMessages');
+      const inputChat = document.getElementById('delinhaFloatInput');
+      const sendBtnChat = document.getElementById('delinhaFloatSendBtn');
 
-    function addFloatMessage(text, isUser) {
-      const div = document.createElement('div');
-      div.className = `delinha-float-message ${isUser ? 'delinha-float-user' : 'delinha-float-bot'}`;
-      const bubble = document.createElement('div');
-      bubble.className = 'delinha-float-bubble';
-      bubble.innerText = text;
-      div.appendChild(bubble);
-      messagesDiv.appendChild(div);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
+      function addFloatMessage(text, isUser) {
+        const div = document.createElement('div');
+        div.className = `delinha-float-message ${isUser ? 'delinha-float-user' : 'delinha-float-bot'}`;
+        const bubble = document.createElement('div');
+        bubble.className = 'delinha-float-bubble';
+        bubble.innerText = text;
+        div.appendChild(bubble);
+        messagesDiv.appendChild(div);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
 
-    function sendFloatMessage() {
-      const userText = inputChat.value.trim();
-      if (!userText) return;
-      addFloatMessage(userText, true);
-      inputChat.value = '';
-      const resposta = getRespostaLocal(userText);
-      setTimeout(() => addFloatMessage(resposta, false), 200);
-    }
+      function sendFloatMessage() {
+        const userText = inputChat.value.trim();
+        if (!userText) return;
+        addFloatMessage(userText, true);
+        inputChat.value = '';
+        const resposta = getRespostaLocal(userText);
+        setTimeout(() => addFloatMessage(resposta, false), 200);
+      }
 
-    sendBtnChat.addEventListener('click', sendFloatMessage);
-    inputChat.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') sendFloatMessage();
-    });
+      sendBtnChat.addEventListener('click', sendFloatMessage);
+      inputChat.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendFloatMessage();
+      });
 
-    let minimized = false;
-    const toggleBtn = document.getElementById('delinhaFloatToggle');
-    const widget = document.getElementById('delinhaFloat');
-    toggleBtn.addEventListener('click', () => {
-      minimized = !minimized;
-      widget.classList.toggle('delinha-float-closed', minimized);
-      toggleBtn.innerText = minimized ? '▲' : '▼';
-    });
+      let minimized = false;
+      const toggleBtn = document.getElementById('delinhaFloatToggle');
+      const widget = document.getElementById('delinhaFloat');
+      toggleBtn.addEventListener('click', () => {
+        minimized = !minimized;
+        widget.classList.toggle('delinha-float-closed', minimized);
+        toggleBtn.innerText = minimized ? '▲' : '▼';
+      });
 
-    // ========== INICIALIZAÇÃO ==========
-    document.addEventListener('DOMContentLoaded', () => {
+      // ========== INICIALIZAÇÃO GERAL ==========
       carregarConfiguracoes();
       carregarCardapio();
       const range = document.getElementById('guest-range'), display = document.getElementById('guest-val'), dur = document.getElementById('calc-duration');
@@ -468,6 +468,7 @@
         e.preventDefault(); let data = new FormData(e.target); let name = data.get('name'); let summary = `Orçamento para ${name}: ${calcState.type}, ${data.get('guests')} convidados.`; let cartText = cart.map(i => i.name).join(', ') || 'Recomendação'; let total = document.getElementById('cart-total')?.textContent; let text = encodeURIComponent(`Olá Delinha! ${summary}\nSacola: ${cartText}\nTotal: ${total}\nWhatsApp: ${data.get('whatsapp')}\nData: ${data.get('date')}`); window.open(`https://wa.me/5531999999999?text=${text}`, '_blank'); closeLeadModal();
       });
     });
+
     window.addEventListener('scroll', () => { let h = document.getElementById('main-header'); if(h) window.scrollY > 20 ? h.classList.add('header-scrolled') : h.classList.remove('header-scrolled'); });
   </script>
 </body>
