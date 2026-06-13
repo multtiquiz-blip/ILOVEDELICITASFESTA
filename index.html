@@ -57,7 +57,7 @@
     .calculator-card { background: linear-gradient(135deg, #ae2f34 0%, #8d151f 100%); }
     .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
-    /* ========== ESTILOS DO WIDGET IA MISTRAL ========== */
+    /* ========== ESTILOS DO WIDGET IA ========== */
     .delinha-ia-widget {
       position: fixed;
       bottom: 20px;
@@ -267,7 +267,7 @@
     </div>
   </footer>
 
-  <!-- CHAT IA MISTRAL (widget flutuante) -->
+  <!-- CHAT IA (widget flutuante) -->
   <div class="delinha-ia-widget" id="delinhaIaWidget">
     <div class="delinha-ia-header" id="delinhaIaHeader">
       <h3><span>🤖</span> Delinha IA (Assistente)</h3>
@@ -282,10 +282,9 @@
     </div>
   </div>
 
-  <!-- Script do Chat IA (executado após o widget) -->
+  <!-- Script do Chat IA (agora chamando NOSSA API) -->
   <script>
     (function() {
-      const MISTRAL_API_KEY = "zenWbc5hjQOrmcJtC990Sh31ae5V5UM4";
       const SYSTEM_PROMPT = `Você é a Delinha, assistente virtual da I Love Delicitas.
 REGRAS:
 - Responda SOMENTE com as informações abaixo. NUNCA invente.
@@ -336,30 +335,20 @@ Se a pergunta não for sobre isso, responda: "Fale com atendente pelo WhatsApp."
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
         try {
-          const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
+          // Agora chamamos nosso endpoint seguro no Vercel
+          const response = await fetch('/api/chat', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${MISTRAL_API_KEY}`
-            },
-            body: JSON.stringify({
-              model: "mistral-tiny",
-              messages: [
-                { role: "system", content: SYSTEM_PROMPT },
-                { role: "user", content: userText }
-              ],
-              temperature: 0.2,
-              max_tokens: 200
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: userText })
           });
           if (!response.ok) throw new Error();
           const data = await response.json();
-          const reply = data.choices[0].message.content;
+          const reply = data.reply;
           messagesDiv.removeChild(typingDiv);
           addMessage(reply, false);
         } catch (e) {
           messagesDiv.removeChild(typingDiv);
-          addMessage("Desculpe, estou com problemas. Fale conosco pelo WhatsApp (31) 99572-2258.", false);
+          addMessage("Desculpe, estou com problemas. Fale conosco pelo WhatsApp (31) 99999-9999.", false);
         }
       }
 
