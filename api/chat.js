@@ -5,8 +5,11 @@ export default async function handler(req, res) {
 
   const userMessage = req.body.message || '';
 
-  // Substitua pela sua chave real da Mistral (use variável de ambiente)
   const apiKey = process.env.MISTRAL_API_KEY;
+
+  if (!apiKey) {
+    return res.status(500).json({ error: 'Chave da Mistral não configurada' });
+  }
 
   try {
     const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
@@ -16,10 +19,8 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'mistral-tiny', // ou 'mistral-small', 'mistral-medium'
-        messages: [
-          { role: 'user', content: userMessage }
-        ]
+        model: 'mistral-tiny',
+        messages: [{ role: 'user', content: userMessage }]
       })
     });
 
@@ -28,7 +29,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ reply });
   } catch (error) {
-    console.error('Erro ao chamar Mistral:', error);
-    return res.status(500).json({ error: 'Erro interno no servidor' });
+    console.error('Erro:', error);
+    return res.status(500).json({ error: 'Erro ao chamar Mistral' });
   }
 }
