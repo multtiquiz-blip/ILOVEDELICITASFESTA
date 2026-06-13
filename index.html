@@ -58,6 +58,108 @@
     .modal-backdrop { background-color: rgba(29, 27, 27, 0.6); backdrop-filter: blur(4px); }
     .calculator-card { background: linear-gradient(135deg, #ae2f34 0%, #8d151f 100%); }
     .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+    /* ========== ESTILOS DO WIDGET IA MISTRAL ========== */
+    .delinha-ia-widget {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 360px;
+      max-width: calc(100vw - 40px);
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
+      border: 1px solid #e0bfbd;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 1000;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
+    .delinha-ia-header {
+      background: #ae2f34;
+      color: white;
+      padding: 0.75rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    .delinha-ia-header h3 {
+      font-size: 1rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .delinha-ia-messages {
+      height: 350px;
+      overflow-y: auto;
+      padding: 0.75rem;
+      background: #fefaf9;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .delinha-ia-message {
+      display: flex;
+      max-width: 85%;
+    }
+    .delinha-ia-user {
+      justify-content: flex-end;
+      align-self: flex-end;
+    }
+    .delinha-ia-bot {
+      justify-content: flex-start;
+    }
+    .delinha-ia-bubble {
+      padding: 0.5rem 0.75rem;
+      border-radius: 1rem;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+    .delinha-ia-user .delinha-ia-bubble {
+      background: #ae2f34;
+      color: white;
+      border-bottom-right-radius: 0.2rem;
+    }
+    .delinha-ia-bot .delinha-ia-bubble {
+      background: #f0eae9;
+      color: #1d1b1b;
+      border-bottom-left-radius: 0.2rem;
+    }
+    .delinha-ia-input-area {
+      display: flex;
+      padding: 0.75rem;
+      border-top: 1px solid #e0bfbd;
+      background: white;
+      gap: 0.5rem;
+    }
+    .delinha-ia-input-area input {
+      flex: 1;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #e0bfbd;
+      border-radius: 2rem;
+      outline: none;
+      font-family: inherit;
+    }
+    .delinha-ia-input-area button {
+      background: #ae2f34;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .delinha-ia-closed .delinha-ia-messages,
+    .delinha-ia-closed .delinha-ia-input-area {
+      display: none;
+    }
+    @media (max-width: 500px) {
+      .delinha-ia-widget { width: 300px; bottom: 10px; right: 10px; }
+      .delinha-ia-messages { height: 300px; }
+    }
   </style>
 </head>
 <body class="bg-background text-on-background font-body antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
@@ -167,122 +269,18 @@
     </div>
   </footer>
 
-  <!-- CHAT FLUTUANTE COM RESPOSTAS LOCAIS (OFFLINE) -->
-  <style>
-    .delinha-float {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 360px;
-      max-width: calc(100vw - 40px);
-      background: white;
-      border-radius: 1rem;
-      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
-      border: 1px solid #e0bfbd;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      z-index: 1000;
-      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-      transition: all 0.3s ease;
-    }
-    .delinha-float-header {
-      background: #ae2f34;
-      color: white;
-      padding: 0.75rem 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-    }
-    .delinha-float-header h3 {
-      font-size: 1rem;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .delinha-float-messages {
-      height: 350px;
-      overflow-y: auto;
-      padding: 0.75rem;
-      background: #fefaf9;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .delinha-float-message {
-      display: flex;
-      max-width: 85%;
-    }
-    .delinha-float-user {
-      justify-content: flex-end;
-      align-self: flex-end;
-    }
-    .delinha-float-bot {
-      justify-content: flex-start;
-    }
-    .delinha-float-bubble {
-      padding: 0.5rem 0.75rem;
-      border-radius: 1rem;
-      font-size: 0.85rem;
-      line-height: 1.4;
-    }
-    .delinha-float-user .delinha-float-bubble {
-      background: #ae2f34;
-      color: white;
-      border-bottom-right-radius: 0.2rem;
-    }
-    .delinha-float-bot .delinha-float-bubble {
-      background: #f0eae9;
-      color: #1d1b1b;
-      border-bottom-left-radius: 0.2rem;
-    }
-    .delinha-float-input {
-      display: flex;
-      padding: 0.75rem;
-      border-top: 1px solid #e0bfbd;
-      background: white;
-      gap: 0.5rem;
-    }
-    .delinha-float-input input {
-      flex: 1;
-      padding: 0.5rem 0.75rem;
-      border: 1px solid #e0bfbd;
-      border-radius: 2rem;
-      outline: none;
-      font-family: inherit;
-    }
-    .delinha-float-input button {
-      background: #ae2f34;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 2rem;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .delinha-float-closed .delinha-float-messages,
-    .delinha-float-closed .delinha-float-input {
-      display: none;
-    }
-    @media (max-width: 500px) {
-      .delinha-float { width: 300px; bottom: 10px; right: 10px; }
-      .delinha-float-messages { height: 300px; }
-    }
-  </style>
-
-  <div class="delinha-float" id="delinhaFloat">
-    <div class="delinha-float-header" id="delinhaFloatHeader">
-      <h3><span>🤖</span> Delinha - Assistente</h3>
-      <span id="delinhaFloatToggle">▼</span>
+  <!-- CHAT IA MISTRAL (widget flutuante) -->
+  <div class="delinha-ia-widget" id="delinhaIaWidget">
+    <div class="delinha-ia-header" id="delinhaIaHeader">
+      <h3><span>🤖</span> Delinha IA (Assistente)</h3>
+      <span id="deliniaIaToggle">▼</span>
     </div>
-    <div class="delinha-float-messages" id="delinhaFloatMessages">
-      <div class="delinha-float-message delinha-float-bot"><div class="delinha-float-bubble">Olá! Sou a Delinha. Como posso ajudar você hoje? 🎉</div></div>
+    <div class="delinha-ia-messages" id="delinhaIaMessages">
+      <div class="delinha-ia-message delinha-ia-bot"><div class="delinha-ia-bubble">Olá! Sou a Delinha com inteligência artificial. Como posso ajudar você hoje? 🎉</div></div>
     </div>
-    <div class="delinha-float-input">
-      <input type="text" id="delinhaFloatInput" placeholder="Digite sua pergunta...">
-      <button id="delinhaFloatSendBtn">Enviar</button>
+    <div class="delinha-ia-input-area">
+      <input type="text" id="delinhaIaInput" placeholder="Digite sua pergunta...">
+      <button id="delinhaIaSendBtn">Enviar</button>
     </div>
   </div>
 
@@ -395,71 +393,105 @@
     function openLeadModal() { let m = document.getElementById('lead-modal'); m.classList.remove('hidden'); m.classList.add('flex'); document.getElementById('modal-guests').value = calcState.guests; }
     function closeLeadModal() { let m = document.getElementById('lead-modal'); m.classList.add('hidden'); m.classList.remove('flex'); }
     function notify(msg) { let t = document.createElement('div'); t.className = "fixed bottom-8 left-1/2 -translate-x-1/2 bg-primary text-white px-6 py-3 rounded-full shadow-lg z-[100] animate-pulse"; t.innerText = msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2500); }
-    function openChat() { document.getElementById('delinhaFloat').classList.remove('delinha-float-closed'); }
+    function openChat() { document.getElementById('delinhaIaWidget').classList.remove('delinha-ia-closed'); }
 
-    // ========== INICIALIZAÇÃO GERAL (CHAT + SITE) ==========
-    document.addEventListener('DOMContentLoaded', function() {
-      // ---- CHAT FLUTUANTE ----
-      const RESPOSTAS_LOCAIS = {
-        prazo: "O prazo depende da quantidade: até 300 unidades → 72h; de 300 a 800 unidades → 7 dias; acima de 800 ou com fritura no local → 15 dias.",
-        fritura: "Você pode retirar os salgados já fritos ou congelados (mesmo preço). Fritura no local tem custo extra – consulte orçamento.",
-        entrega: "Não temos frota própria. Você retira no local ou contrata um entregador por aplicativo (Uber/99).",
-        pagamento: "Aceitamos Pix ou cartão de crédito em até 3 vezes. Sinal de 50% para reservar a data.",
-        cardapio: "Temos salgados (coxinha, bolinha, risole, empadas...), doces (brigadeiro, beijinho, mini tortinhas...) e mini lanches. Veja o cardápio completo no site.",
-        orcamento: "Os valores são consultados pelo WhatsApp. Clique no botão 'Solicitar Orçamento' ou me chame pelo WhatsApp.",
-        default: "Desculpe, não entendi. Pergunte sobre prazo, fritura, entrega, pagamento, cardápio ou orçamento. Ou fale conosco pelo WhatsApp (31) 99999-9999."
-      };
+    // ========== CHAT IA MISTRAL (CÓDIGO FORNECIDO – INCORPORADO EXATAMENTE) ==========
+    (function() {
+      const MISTRAL_API_KEY = "zenWbc5hjQOrmcJtC990Sh31ae5V5UM4";
+      const SYSTEM_PROMPT = `Você é a Delinha, assistente virtual da I Love Delicitas.
+REGRAS:
+- Responda SOMENTE com as informações abaixo. NUNCA invente.
+- Se não souber, diga: "Não sei. Fale com atendente pelo WhatsApp (31) 99999-9999."
 
-      function getRespostaLocal(mensagem) {
-        const msg = mensagem.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        if (msg.includes('prazo') || msg.includes('minimo') || msg.includes('dias')) return RESPOSTAS_LOCAIS.prazo;
-        if (msg.includes('fritura') || msg.includes('fritar') || msg.includes('quentinho')) return RESPOSTAS_LOCAIS.fritura;
-        if (msg.includes('entrega') || msg.includes('entregam') || msg.includes('frete') || msg.includes('uber')) return RESPOSTAS_LOCAIS.entrega;
-        if (msg.includes('pagamento') || msg.includes('cartao') || msg.includes('pix') || msg.includes('parcelar')) return RESPOSTAS_LOCAIS.pagamento;
-        if (msg.includes('cardapio') || msg.includes('sabores') || msg.includes('produtos')) return RESPOSTAS_LOCAIS.cardapio;
-        if (msg.includes('orcamento') || msg.includes('preco') || msg.includes('quanto custa') || msg.includes('valor')) return RESPOSTAS_LOCAIS.orcamento;
-        return RESPOSTAS_LOCAIS.default;
-      }
+FATOS:
+- Produtos: salgados, doces, mini lanches. NÃO temos bolo, refrigerantes ou bebidas.
+- Fritura: cliente retira já frito ou congelado (mesmo preço). Fritura no local tem custo extra (orçamento separado).
+- Entrega: sem frota. Cliente retira ou chama Uber/99.
+- Pagamento: Pix ou cartão em até 3x. Sinal 50%.
+- Prazos: até 300 un = 72h; 300-800 = 7 dias; +800 ou fritura local = 15 dias.
+- Orçamento: só WhatsApp. NUNCA dê preços.
 
-      const messagesDiv = document.getElementById('delinhaFloatMessages');
-      const inputChat = document.getElementById('delinhaFloatInput');
-      const sendBtnChat = document.getElementById('delinhaFloatSendBtn');
+RESPOSTAS PADRÃO:
+- Prazo: "Prazo de [X] dias para [Y] unidades."
+- Fritura: "Retira já frito ou congelado. Fritura local custa extra."
+- Entrega: "Retirada ou app (Uber/99)."
+- Pagamento: "Pix ou cartão em até 3x."
+- Preço: "Consulte valores pelo WhatsApp."
 
-      function addFloatMessage(text, isUser) {
+Se a pergunta não for sobre isso, responda: "Fale com atendente pelo WhatsApp."`;
+
+      const messagesDiv = document.getElementById('delinhaIaMessages');
+      const input = document.getElementById('delinhaIaInput');
+      const sendBtn = document.getElementById('delinhaIaSendBtn');
+
+      function addMessage(text, isUser) {
         const div = document.createElement('div');
-        div.className = `delinha-float-message ${isUser ? 'delinha-float-user' : 'delinha-float-bot'}`;
+        div.className = `delinha-ia-message ${isUser ? 'delinha-ia-user' : 'delinha-ia-bot'}`;
         const bubble = document.createElement('div');
-        bubble.className = 'delinha-float-bubble';
+        bubble.className = 'delinha-ia-bubble';
         bubble.innerText = text;
         div.appendChild(bubble);
         messagesDiv.appendChild(div);
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
       }
 
-      function sendFloatMessage() {
-        const userText = inputChat.value.trim();
+      async function sendIaMessage() {
+        const userText = input.value.trim();
         if (!userText) return;
-        addFloatMessage(userText, true);
-        inputChat.value = '';
-        const resposta = getRespostaLocal(userText);
-        setTimeout(() => addFloatMessage(resposta, false), 200);
+        addMessage(userText, true);
+        input.value = '';
+
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'delinha-ia-message delinha-ia-bot';
+        typingDiv.innerHTML = '<div class="delinha-ia-bubble">...</div>';
+        messagesDiv.appendChild(typingDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+        try {
+          const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${MISTRAL_API_KEY}`
+            },
+            body: JSON.stringify({
+              model: "mistral-tiny",
+              messages: [
+                { role: "system", content: SYSTEM_PROMPT },
+                { role: "user", content: userText }
+              ],
+              temperature: 0.2,
+              max_tokens: 200
+            })
+          });
+          if (!response.ok) throw new Error();
+          const data = await response.json();
+          const reply = data.choices[0].message.content;
+          messagesDiv.removeChild(typingDiv);
+          addMessage(reply, false);
+        } catch (e) {
+          messagesDiv.removeChild(typingDiv);
+          addMessage("Desculpe, estou com problemas. Fale conosco pelo WhatsApp (31) 99999-9999.", false);
+        }
       }
 
-      sendBtnChat.addEventListener('click', sendFloatMessage);
-      inputChat.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendFloatMessage();
+      sendBtn.addEventListener('click', sendIaMessage);
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendIaMessage();
       });
 
       let minimized = false;
-      const toggleBtn = document.getElementById('delinhaFloatToggle');
-      const widget = document.getElementById('delinhaFloat');
+      const toggleBtn = document.getElementById('deliniaIaToggle');
+      const widget = document.getElementById('delinhaIaWidget');
       toggleBtn.addEventListener('click', () => {
         minimized = !minimized;
-        widget.classList.toggle('delinha-float-closed', minimized);
+        widget.classList.toggle('delinha-ia-closed', minimized);
         toggleBtn.innerText = minimized ? '▲' : '▼';
       });
+    })();
 
-      // ---- RESTANTE DA INICIALIZAÇÃO ----
+    // ========== INICIALIZAÇÃO GERAL ==========
+    document.addEventListener('DOMContentLoaded', function() {
       carregarConfiguracoes();
       carregarCardapio();
       const range = document.getElementById('guest-range'), display = document.getElementById('guest-val'), dur = document.getElementById('calc-duration');
