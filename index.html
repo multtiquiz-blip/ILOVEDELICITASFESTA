@@ -397,8 +397,9 @@
     function notify(msg) { let t = document.createElement('div'); t.className = "fixed bottom-8 left-1/2 -translate-x-1/2 bg-primary text-white px-6 py-3 rounded-full shadow-lg z-[100] animate-pulse"; t.innerText = msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2500); }
     function openChat() { document.getElementById('delinhaFloat').classList.remove('delinha-float-closed'); }
 
-    // ========== CHAT FLUTUANTE – INICIALIZAÇÃO CORRIGIDA ==========
+    // ========== INICIALIZAÇÃO GERAL (CHAT + SITE) ==========
     document.addEventListener('DOMContentLoaded', function() {
+      // ---- CHAT FLUTUANTE ----
       const RESPOSTAS_LOCAIS = {
         prazo: "O prazo depende da quantidade: até 300 unidades → 72h; de 300 a 800 unidades → 7 dias; acima de 800 ou com fritura no local → 15 dias.",
         fritura: "Você pode retirar os salgados já fritos ou congelados (mesmo preço). Fritura no local tem custo extra – consulte orçamento.",
@@ -458,7 +459,7 @@
         toggleBtn.innerText = minimized ? '▲' : '▼';
       });
 
-      // ========== INICIALIZAÇÃO GERAL ==========
+      // ---- RESTANTE DA INICIALIZAÇÃO ----
       carregarConfiguracoes();
       carregarCardapio();
       const range = document.getElementById('guest-range'), display = document.getElementById('guest-val'), dur = document.getElementById('calc-duration');
