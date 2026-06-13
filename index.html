@@ -1,476 +1,1049 @@
 <!DOCTYPE html>
-<html class="scroll-smooth" lang="pt-BR">
+<html lang="pt-BR" class="scroll-smooth">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>I Love Delicitas - Salgados e Doces Artesanais</title>
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com" rel="preconnect">
-  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Material Symbols -->
+  <meta name="description" content="I Love Delicitas — Salgados e Doces Artesanais para Festas em Belo Horizonte. Calculadora inteligente, cardápio completo e orçamento direto pelo WhatsApp.">
+  <title>I Love Delicitas — Salgados e Doces Artesanais | BH</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries">
-  </script>
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-  </script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
   <script>
     tailwind.config = {
-      darkMode: "class",
       theme: {
         extend: {
           colors: {
-            "primary": "#ae2f34",
-            "background": "#fff8f7",
-            "surface": "#fff8f7",
-            "surface-container-low": "#f9f2f1",
-            "surface-container-highest": "#e8e1e0",
-            "on-surface": "#1d1b1b",
-            "on-surface-variant": "#584140",
-            "outline-variant": "#e0bfbd",
-            "inverse-surface": "#33302f",
-            "inverse-on-surface": "#f6efee",
-            "primary-fixed": "#ffdad8",
-            "on-primary": "#ffffff",
-            "error": "#ba1a1a",
+            pri:    '#b81055', 'pri-on': '#ffffff',
+            'pri-c': '#ffd9df', 'pri-c-on': '#5b0025',
+            'pri-dim': '#ffb1c1',
+            surf:   '#fff8f7', 'surf-on': '#26181b',
+            'surf-var': '#f7dce0', 'surf-var-on': '#594045',
+            'surf-c':   '#ffe8eb',
+            'surf-cl':  '#fff0f1',
+            'surf-ch':  '#fde2e5',
+            'surf-inv': '#3c2c2f', 'surf-inv-on': '#ffecee',
+            out:    '#8d7075', 'out-var': '#e1bec4',
+            err:    '#ba1a1a', 'err-on': '#ffffff',
           },
-          borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
-          spacing: { "margin-mobile": "16px", "margin-desktop": "64px", "gutter": "24px", "section-padding": "80px" },
-          fontFamily: { "headline": ["Be Vietnam Pro", "sans-serif"], "body": ["Plus Jakarta Sans", "sans-serif"] },
-          animation: { float: "float 3s ease-in-out infinite", "pulse-fast": "pulse-fast 0.3s ease-in-out", "slide-in": "slide-in 0.4s ease-out" },
+          fontFamily: {
+            disp: ['"Playfair Display"', 'serif'],
+            body: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          animation: {
+            float:     'float 3s ease-in-out infinite',
+            'pulse-q': 'pulse-q 0.35s ease-in-out',
+            'slide-r': 'slide-r 0.38s cubic-bezier(0.16,1,0.3,1)',
+            fadein:    'fadein 0.5s ease forwards',
+          },
           keyframes: {
-            float: { "0%,100%": { transform: "translateY(0)" }, "50%": { transform: "translateY(-5px)" } },
-            "pulse-fast": { "0%": { transform: "scale(1)" }, "50%": { transform: "scale(1.02)" }, "100%": { transform: "scale(1)" } },
-            "slide-in": { "0%": { transform: "translateX(100%)" }, "100%": { transform: "translateX(0)" } }
-          }
+            float:     { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-6px)' } },
+            'pulse-q': { '0%': { transform: 'scale(1)' }, '50%': { transform: 'scale(1.025)' }, '100%': { transform: 'scale(1)' } },
+            'slide-r': { '0%': { transform: 'translateX(100%)' }, '100%': { transform: 'translateX(0)' } },
+            fadein:    { '0%': { opacity: '0', transform: 'translateY(12px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+          },
         }
       }
     }
   </script>
+
   <style>
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-    .icon-fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-    .hide-scrollbar::-webkit-scrollbar { display: none; }
-    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    .header-scrolled { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); background-color: rgba(255, 248, 247, 0.95); }
-    .modal-backdrop { background-color: rgba(29, 27, 27, 0.6); backdrop-filter: blur(4px); }
-    .calculator-card { background: linear-gradient(135deg, #ae2f34 0%, #8d151f 100%); }
-    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .ms { font-family: 'Material Symbols Outlined'; font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; display: inline-block; line-height: 1; }
+    .ms.fill { font-variation-settings: 'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24; }
+
+    /* Scroll animations */
+    .a { opacity: 0; transform: translateY(26px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+    .a.d1 { transition-delay: 90ms; }
+    .a.d2 { transition-delay: 180ms; }
+    .a.d3 { transition-delay: 270ms; }
+    .a.d4 { transition-delay: 360ms; }
+    .a.in { opacity: 1; transform: none; }
+
+    /* Header elevated */
+    .hdr-up { box-shadow: 0 2px 24px rgba(184,16,85,.09); background-color: rgba(255,248,247,.97) !important; }
+
+    /* Gradient card */
+    .grad-card { background: linear-gradient(135deg, #b81055 0%, #8f003f 100%); }
+
+    /* Drawer backdrop */
+    .bkdrop { background: rgba(38,24,27,.55); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
+
+    /* Chat scroll */
+    #chat-msgs { max-height: 250px; overflow-y: auto; scroll-behavior: smooth; }
+
+    /* Typing dots */
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: #b81055; display: inline-block; animation: dott 1.2s ease-in-out infinite both; }
+    .dot:nth-child(2) { animation-delay:.2s; }
+    .dot:nth-child(3) { animation-delay:.4s; }
+    @keyframes dott { 0%,80%,100% { transform:scale(.65); opacity:.35; } 40% { transform:scale(1); opacity:1; } }
+
+    /* Range */
+    input[type=range] { height: 6px; }
+    input[type=range]::-webkit-slider-thumb { cursor: grab; }
+
+    /* Details */
+    details>summary { list-style: none; }
+    details>summary::-webkit-details-marker { display: none; }
+
+    /* No scrollbar */
+    .no-sb::-webkit-scrollbar { display: none; }
+    .no-sb { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Floating WAP btn */
+    .wap-float { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 60; }
   </style>
 </head>
-<body class="bg-background text-on-background font-body antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
 
-  <!-- DRAWER (CARRINHO) -->
-  <div class="fixed inset-y-0 right-0 w-full md:w-96 bg-surface z-[60] shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col" id="quote-drawer">
-    <div class="p-6 border-b border-outline-variant flex items-center justify-between bg-primary text-on-primary">
-      <h3 class="font-headline font-semibold text-xl">Meu Orçamento</h3>
-      <button class="p-2 hover:bg-white/10 rounded-full" onclick="toggleDrawer()"><span class="material-symbols-outlined">close</span></button>
+<body class="bg-surf text-surf-on font-body antialiased">
+
+<!-- ══════════════ DRAWER: Sacola ══════════════ -->
+<div id="drawer" class="fixed inset-y-0 right-0 w-full sm:w-[400px] bg-surf z-[70] shadow-2xl flex flex-col translate-x-full transition-transform duration-300 ease-out">
+  <div class="flex items-center justify-between p-5 bg-pri text-pri-on flex-shrink-0">
+    <div class="flex items-center gap-3">
+      <span class="ms fill text-[22px]">shopping_bag</span>
+      <h3 class="font-disp text-lg font-semibold">Meu Orçamento</h3>
     </div>
-    <div class="flex-grow overflow-y-auto p-6 space-y-4" id="cart-items"><div class="text-center py-10 text-on-surface-variant italic">Sua sacola está vazia.</div></div>
-    <div class="p-6 border-t border-outline-variant bg-surface-container-low">
-      <div class="flex justify-between items-center mb-6"><span class="text-sm font-semibold uppercase tracking-wider text-on-surface-variant">Total Estimado</span><span class="font-headline text-2xl font-bold text-primary" id="cart-total">R$ 0,00</span></div>
-      <button class="w-full bg-primary text-on-primary py-4 rounded-lg font-semibold hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2" onclick="openLeadModal()"><span class="material-symbols-outlined">send</span> Finalizar Orçamento</button>
+    <button onclick="drawerClose()" class="p-1.5 hover:bg-white/15 rounded-full transition-colors">
+      <span class="ms">close</span>
+    </button>
+  </div>
+  <div id="cart-list" class="flex-grow overflow-y-auto p-5 space-y-3">
+    <div id="cart-empty" class="text-center py-14 text-surf-var-on">
+      <span class="ms text-[52px] block mb-3 opacity-20">shopping_bag</span>
+      <p class="font-semibold">Sacola vazia</p>
+      <p class="text-sm mt-1 opacity-60">Adicione itens do cardápio ou use a calculadora.</p>
     </div>
   </div>
-
-  <!-- MODAL LEAD -->
-  <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 modal-backdrop" id="lead-modal">
-    <div class="bg-surface w-full max-w-md rounded-xl shadow-2xl overflow-hidden animate-slide-in">
-      <div class="p-6 bg-surface-container-highest flex justify-between items-center border-b border-outline-variant/30"><h3 class="font-headline font-semibold text-lg text-on-surface">Só mais um passo!</h3><button class="text-on-surface-variant hover:text-primary transition-colors" onclick="closeLeadModal()"><span class="material-symbols-outlined">close</span></button></div>
-      <form class="p-6 space-y-4" id="lead-form">
-        <div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">Seu Nome</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" name="name" required type="text"></div>
-        <div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">WhatsApp</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" name="whatsapp" placeholder="(00) 00000-0000" required type="tel"></div>
-        <div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">Data da Festa</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" name="date" required type="date"></div><div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">Convidados</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" id="modal-guests" name="guests" required type="number"></div></div>
-        <button class="w-full bg-primary text-on-primary py-4 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2 mt-4" type="submit"><span class="material-symbols-outlined">whatsapp</span> Enviar para Delinha</button>
-        <p class="text-[10px] text-on-surface-variant text-center opacity-70">Seus dados estão seguros conosco.</p>
-      </form>
+  <div class="p-5 border-t border-out-var bg-surf-cl flex-shrink-0">
+    <div class="flex justify-between items-center mb-4">
+      <span class="text-sm font-semibold text-surf-var-on uppercase tracking-wide">Total estimado</span>
+      <span id="cart-total" class="font-disp text-2xl font-bold text-pri">R$ 0,00</span>
     </div>
+    <button onclick="leadOpen()" class="w-full bg-pri text-pri-on py-4 rounded-xl font-semibold hover:bg-pri/90 hover:shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2">
+      <span class="ms">whatsapp</span>
+      Finalizar pelo WhatsApp
+    </button>
   </div>
+</div>
 
-  <!-- HEADER -->
-  <header class="bg-surface/80 backdrop-blur-md top-0 sticky z-50 transition-all duration-300 border-b border-outline-variant/10" id="main-header">
-    <div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-max mx-auto">
-      <a class="flex-shrink-0 hover:scale-105 transition-all duration-300" href="#"><img id="logo-img" class="h-12 md:h-16 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo"></a>
-      <nav class="hidden lg:flex items-center gap-8"><a class="text-sm font-semibold text-primary border-b-2 border-primary pb-1" href="#">Início</a><a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors" href="#cardapio">Cardápio</a><a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors" href="#calculadora">Calculadora</a><a class="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors" href="#faq">Dúvidas</a></nav>
-      <div class="flex items-center gap-4"><button class="relative p-2 text-on-surface-variant hover:text-primary transition-colors" onclick="toggleDrawer()"><span class="material-symbols-outlined text-[28px]">shopping_bag</span><span class="absolute top-0 right-0 bg-primary text-on-primary text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center hidden" id="cart-badge">0</span></button><button class="bg-primary text-on-primary px-6 py-2.5 rounded-lg font-semibold text-sm hover:shadow-md transition-all whitespace-nowrap hidden md:block" onclick="openLeadModal()">Solicitar Orçamento</button></div>
-    </div>
-  </header>
+<!-- ══════════════ BACKDROP ══════════════ -->
+<div id="bkdrop" class="fixed inset-0 z-[65] bkdrop hidden" onclick="drawerClose(); navClose();"></div>
 
-  <main>
-    <!-- HERO -->
-    <section class="relative w-full min-h-[600px] flex items-center overflow-hidden bg-surface-container-high">
-      <div class="absolute inset-0 w-full h-full"><div class="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent z-10"></div><img id="banner-img" class="w-full h-full object-cover object-center" src="https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY"></div>
-      <div class="relative z-20 w-full px-margin-mobile md:px-margin-desktop py-16 max-w-max mx-auto"><div class="max-w-2xl"><div class="inline-flex items-center gap-2 bg-primary/10 px-4 py-1.5 rounded-full mb-6"><span class="material-symbols-outlined text-primary text-[18px] icon-fill">stars</span><span class="text-xs font-bold text-primary uppercase tracking-widest" id="hero-badge">Qualidade Premium & Artesanal</span></div><h1 id="hero-title" class="font-headline text-4xl md:text-5xl lg:text-6xl font-bold text-on-surface leading-tight mb-6">A Celebração que o Seu <span class="text-primary">Paladar Merece</span></h1><p id="hero-subtitle" class="font-body text-lg text-on-surface-variant mb-10 max-w-xl">Doces e salgados artesanais. Fritura no local, retirada ou frete por aplicativo. BH e região.</p><div class="flex flex-col sm:flex-row gap-4"><a class="bg-primary text-on-primary px-10 py-4 rounded-lg font-semibold hover:shadow-xl transition-all flex items-center justify-center gap-2 group" href="#calculadora"><span class="material-symbols-outlined group-hover:rotate-12 transition-transform">calculate</span> Calcular Minha Festa</a><button class="bg-surface text-primary border-2 border-primary/20 px-10 py-4 rounded-lg font-semibold hover:bg-primary/5 transition-all flex items-center justify-center gap-2" onclick="openChat()"><span class="material-symbols-outlined">chat_bubble</span> Falar com a Delinha</button></div></div></div>
-    </section>
-
-    <!-- SEÇÃO COMO FUNCIONA (4 passos) -->
-    <section class="py-section-padding px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto" id="como-funciona">
-      <div class="text-center mb-16"><h2 class="font-headline text-3xl font-bold text-on-surface flex items-center justify-center gap-4"><span class="h-[1px] w-12 bg-outline-variant"></span> Como funciona? <span class="h-[1px] w-12 bg-outline-variant"></span></h2></div>
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
-        <div class="hidden md:block absolute top-8 left-[12.5%] right-[12.5%] h-[2px] bg-outline-variant/30 z-0 border-dashed border-t-2"></div>
-        <div class="relative z-10 flex flex-col items-center text-center group"><div class="w-16 h-16 bg-surface border-2 border-primary-container rounded-full flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform bg-white"><span class="material-symbols-outlined text-primary text-[32px]">calculate</span></div><div class="absolute top-0 right-1/2 translate-x-8 -translate-y-2 bg-primary text-on-primary w-6 h-6 rounded-full flex items-center justify-center font-label-sm text-label-sm font-bold">1</div><h3 class="font-label-lg text-label-lg text-on-surface mb-2">Calcule sua festa</h3><p class="font-body-md text-body-md text-on-surface-variant text-sm">Informe os dados e nossa calculadora fará as recomendações.</p></div>
-        <div class="relative z-10 flex flex-col items-center text-center group"><div class="w-16 h-16 bg-surface border-2 border-primary-container rounded-full flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform bg-white"><span class="material-symbols-outlined text-primary text-[32px]">chat_bubble</span></div><div class="absolute top-0 right-1/2 translate-x-8 -translate-y-2 bg-primary text-on-primary w-6 h-6 rounded-full flex items-center justify-center font-label-sm text-label-sm font-bold">2</div><h3 class="font-label-lg text-label-lg text-on-surface mb-2">Converse com a Delinha</h3><p class="font-body-md text-body-md text-on-surface-variant text-sm">Nossa especialista vai tirar todas as suas dúvidas.</p></div>
-        <div class="relative z-10 flex flex-col items-center text-center group"><div class="w-16 h-16 bg-surface border-2 border-primary-container rounded-full flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform bg-white"><span class="material-symbols-outlined text-primary text-[32px]">request_quote</span></div><div class="absolute top-0 right-1/2 translate-x-8 -translate-y-2 bg-primary text-on-primary w-6 h-6 rounded-full flex items-center justify-center font-label-sm text-label-sm font-bold">3</div><h3 class="font-label-lg text-label-lg text-on-surface mb-2">Receba seu orçamento</h3><p class="font-body-md text-body-md text-on-surface-variant text-sm">Você recebe um orçamento personalizado.</p></div>
-        <div class="relative z-10 flex flex-col items-center text-center group"><div class="w-16 h-16 bg-surface border-2 border-primary-container rounded-full flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform bg-white"><span class="material-symbols-outlined text-primary text-[32px]">celebration</span></div><div class="absolute top-0 right-1/2 translate-x-8 -translate-y-2 bg-primary text-on-primary w-6 h-6 rounded-full flex items-center justify-center font-label-sm text-label-sm font-bold">4</div><h3 class="font-label-lg text-label-lg text-on-surface mb-2">Aproveite sua festa</h3><p class="font-body-md text-body-md text-on-surface-variant text-sm">Entregamos tudo com pontualidade e qualidade.</p></div>
+<!-- ══════════════ MODAL: Lead ══════════════ -->
+<div id="lead-modal" class="fixed inset-0 z-[80] hidden items-center justify-center p-4 bkdrop">
+  <div class="bg-surf w-full max-w-[440px] rounded-2xl shadow-2xl overflow-hidden animate-slide-r">
+    <div class="p-6 bg-pri text-pri-on flex justify-between items-center">
+      <div>
+        <h3 class="font-disp text-xl font-semibold">Quase pronto! 🎉</h3>
+        <p class="text-sm opacity-80 mt-0.5">Preencha para receber seu orçamento</p>
       </div>
-    </section>
-
-    <!-- CALCULADORA (sem jantar) -->
-    <section class="py-section-padding px-margin-mobile md:px-margin-desktop bg-surface-container-low" id="calculadora">
-      <div class="max-w-max mx-auto"><div class="text-center mb-16"><h2 class="font-headline text-3xl md:text-4xl font-bold text-on-surface mb-4">Calculadora Inteligente</h2><p class="text-on-surface-variant max-w-2xl mx-auto">Descubra as quantidades ideais de salgados e doces para seu evento.</p></div>
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-        <div class="lg:col-span-7 bg-surface rounded-xl p-6 md:p-10 shadow-sm border border-outline-variant/30 flex flex-col justify-between"><div class="space-y-10"><div><label class="block text-sm font-bold text-on-surface mb-4 uppercase tracking-wider">Tipo de Evento</label><div class="grid grid-cols-3 gap-4"><button class="calc-btn flex flex-col items-center p-4 border border-outline-variant rounded-lg hover:border-primary transition-all group" id="btn-kids" onclick="setCalcVar('type', 'kids')"><span class="material-symbols-outlined text-3xl mb-2 group-hover:scale-110 transition-transform">child_care</span><span class="text-xs font-bold uppercase">Infantil</span></button><button class="calc-btn flex flex-col items-center p-4 border-2 border-primary bg-primary/5 rounded-lg transition-all group" id="btn-adult" onclick="setCalcVar('type', 'adult')"><span class="material-symbols-outlined text-3xl mb-2 icon-fill group-hover:scale-110 transition-transform">celebration</span><span class="text-xs font-bold uppercase">Adulto</span></button><button class="calc-btn flex flex-col items-center p-4 border border-outline-variant rounded-lg hover:border-primary transition-all group" id="btn-corp" onclick="setCalcVar('type', 'corp')"><span class="material-symbols-outlined text-3xl mb-2 group-hover:scale-110 transition-transform">business_center</span><span class="text-xs font-bold uppercase">Corporativo</span></button></div></div>
-        <div><label class="block text-sm font-bold text-on-surface mb-3 uppercase tracking-wider">Duração</label><select class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-3 focus:ring-primary focus:border-primary outline-none" id="calc-duration"><option value="short">Até 3 horas</option><option selected value="med">4 a 6 horas</option><option value="long">Mais de 6 horas</option></select></div>
-        <div><div class="flex justify-between items-end mb-4"><label class="text-sm font-bold text-on-surface uppercase tracking-wider">Total de Convidados</label><span class="text-4xl font-headline font-bold text-primary" id="guest-val">50</span></div><input class="w-full h-2 bg-surface-variant rounded-lg appearance-none cursor-pointer accent-primary" id="guest-range" max="500" min="10" type="range" value="50"></div></div></div>
-        <div class="lg:col-span-5 space-y-6 flex flex-col"><div class="calculator-card text-on-primary rounded-xl p-8 shadow-xl relative overflow-hidden flex-grow flex flex-col justify-between" id="calc-result-card"><div class="absolute -right-8 -top-8 opacity-10"><span class="material-symbols-outlined text-[180px]">restaurant</span></div><div><h3 class="font-headline text-2xl font-bold mb-8 flex items-center gap-3"><span class="material-symbols-outlined icon-fill">verified</span> Guia Delinha</h3><div class="space-y-5 relative z-10"><div class="flex justify-between items-center border-b border-white/20 pb-3"><span class="flex items-center gap-3 text-sm font-medium"><span class="material-symbols-outlined opacity-80">tapas</span> Salgados</span><span class="font-bold text-xl" id="res-salgados">600 un.</span></div><div class="flex justify-between items-center border-b border-white/20 pb-3"><span class="flex items-center gap-3 text-sm font-medium"><span class="material-symbols-outlined opacity-80">bakery_dining</span> Doces</span><span class="font-bold text-xl" id="res-doces">250 un.</span></div></div></div><div class="mt-10"><button class="w-full bg-white text-primary py-4 rounded-lg font-bold hover:scale-[1.02] transition-transform shadow-lg active:scale-95" onclick="applyCalcToQuote()">Adicionar Recomendação à Sacola</button></div></div>
+      <button onclick="leadClose()" class="p-1.5 hover:bg-white/15 rounded-full transition-colors">
+        <span class="ms">close</span>
+      </button>
+    </div>
+    <form id="lead-form" class="p-6 space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-surf-var-on uppercase tracking-wide mb-1.5">Seu nome *</label>
+        <input name="name" required type="text" placeholder="Como posso te chamar?" class="w-full bg-surf-cl border border-out-var rounded-xl px-4 py-3 focus:border-pri focus:ring-2 focus:ring-pri/20 outline-none transition-all text-sm">
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-surf-var-on uppercase tracking-wide mb-1.5">WhatsApp *</label>
+        <input name="whatsapp" required type="tel" placeholder="(31) 99999-9999" class="w-full bg-surf-cl border border-out-var rounded-xl px-4 py-3 focus:border-pri focus:ring-2 focus:ring-pri/20 outline-none transition-all text-sm">
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-bold text-surf-var-on uppercase tracking-wide mb-1.5">Data da festa *</label>
+          <input id="f-date" name="date" required type="date" class="w-full bg-surf-cl border border-out-var rounded-xl px-3 py-3 focus:border-pri focus:ring-2 focus:ring-pri/20 outline-none transition-all text-sm">
         </div>
-      </div></div>
-    </section>
-
-    <!-- CARDÁPIO (dinâmico) -->
-    <section class="py-section-padding px-margin-mobile md:px-margin-desktop" id="cardapio">
-      <div class="max-w-max mx-auto"><div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6"><div><h2 class="font-headline text-3xl font-bold text-on-surface">Nosso Cardápio Artesanal</h2><p class="text-on-surface-variant mt-2">Sabores selecionados para encantar seus convidados.</p></div><div class="flex gap-2 overflow-x-auto pb-2 w-full md:w-auto hide-scrollbar"><button class="filter-btn px-6 py-2 bg-primary text-on-primary rounded-full text-sm font-semibold whitespace-nowrap" onclick="filterCatalog('Todos')">Todos</button><button class="filter-btn px-6 py-2 bg-surface-container text-on-surface-variant rounded-full text-sm font-semibold whitespace-nowrap" onclick="filterCatalog('Fritos')">Fritos</button><button class="filter-btn px-6 py-2 bg-surface-container text-on-surface-variant rounded-full text-sm font-semibold whitespace-nowrap" onclick="filterCatalog('Assados')">Assados</button><button class="filter-btn px-6 py-2 bg-surface-container text-on-surface-variant rounded-full text-sm font-semibold whitespace-nowrap" onclick="filterCatalog('Lanches')">Lanches</button><button class="filter-btn px-6 py-2 bg-surface-container text-on-surface-variant rounded-full text-sm font-semibold whitespace-nowrap" onclick="filterCatalog('Doces')">Doces</button></div></div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter" id="catalog-grid"></div></div>
-    </section>
-
-    <!-- FAQ (fixo, 13 perguntas) -->
-    <section class="py-section-padding px-margin-mobile md:px-margin-desktop bg-surface-container-low" id="faq">
-      <div class="max-w-3xl mx-auto">
-        <div class="text-center mb-16"><span class="text-primary font-bold text-xs uppercase tracking-[0.2em] mb-4 block">Dúvidas Frequentes</span><h2 class="font-headline text-3xl font-bold text-on-surface">Informações Importantes</h2></div>
-        <div class="space-y-4">
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Qual o prazo mínimo para encomendar?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Recomendamos um prazo mínimo de 7 dias para encomendas menores e 15 dias para grandes eventos, garantindo a qualidade e frescor dos nossos produtos artesanais.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Como faço para reservar minha data?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">A reserva é confirmada mediante o pagamento de um sinal ou aprovação total do orçamento via Pix ou Cartão.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Posso alterar meu pedido depois de confirmado?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Alterações podem ser solicitadas com até 72 horas de antecedência, sujeitas a disponibilidade de agenda e insumos.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Vocês entregam?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">O cliente retira no local ou contrata um entregador por aplicativo (Uber, 99, etc.). Não temos frota própria.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Posso retirar meu pedido?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Sim, a retirada pode ser agendada em nossa unidade central em horários pré-estabelecidos.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Como é calculado o frete?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">O valor do frete é calculado com base na distância entre nossa cozinha e o local do seu evento, quando você contrata o entregador.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Quais formas de pagamento são aceitas?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Aceitamos PIX e Cartão de Crédito em até 3 vezes.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">É possível parcelar?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Sim, oferecemos parcelamento em até 3x no cartão de crédito.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Como funciona a segurança da minha encomenda?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Seguimos rigorosos protocolos de higiene. Sua encomenda é preparada com cuidado e embalada adequadamente.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Existe contrato?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Para todos os pedidos, emitimos um comprovante detalhado que serve como contrato de prestação de serviços.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Como meus dados são utilizados?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Seus dados são usados exclusivamente para a gestão do seu pedido e melhoria da sua experiência, em conformidade com a LGPD.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Meus dados são protegidos?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Sim, utilizamos criptografia e servidores seguros para garantir que suas informações pessoais estejam sempre protegidas.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Como falar com o suporte?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 space-y-4 border-t border-outline-variant/10"><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4"><div class="flex items-center gap-3 bg-surface p-3 rounded-lg border border-outline-variant/20"><span class="material-symbols-outlined text-primary">whatsapp</span><div><p class="text-[10px] uppercase font-bold text-outline">WhatsApp</p><p class="text-sm text-on-surface">(31) 99999-9999</p></div></div><div class="flex items-center gap-3 bg-surface p-3 rounded-lg border border-outline-variant/20"><span class="material-symbols-outlined text-primary">call</span><div><p class="text-[10px] uppercase font-bold text-outline">Telefone</p><p class="text-sm text-on-surface">(31) 3333-3333</p></div></div><div class="flex items-center gap-3 bg-surface p-3 rounded-lg border border-outline-variant/20"><span class="material-symbols-outlined text-primary">mail</span><div><p class="text-[10px] uppercase font-bold text-outline">E-mail</p><p class="text-sm text-on-surface">suporte@ilovedelicitas.com.br</p></div></div><div class="flex items-center gap-3 bg-surface p-3 rounded-lg border border-outline-variant/20"><span class="material-symbols-outlined text-primary">schedule</span><div><p class="text-[10px] uppercase font-bold text-outline">Horário</p><p class="text-sm text-on-surface">Seg à Sex, 09h às 18h</p></div></div></div></div></details>
+        <div>
+          <label class="block text-xs font-bold text-surf-var-on uppercase tracking-wide mb-1.5">Convidados *</label>
+          <input id="f-guests" name="guests" required type="number" min="10" class="w-full bg-surf-cl border border-out-var rounded-xl px-3 py-3 focus:border-pri focus:ring-2 focus:ring-pri/20 outline-none transition-all text-sm">
         </div>
       </div>
-    </section>
-  </main>
+      <button type="submit" class="w-full bg-pri text-pri-on py-4 rounded-xl font-semibold hover:bg-pri/90 hover:shadow-lg transition-all flex items-center justify-center gap-2 mt-2">
+        <span class="ms">whatsapp</span>
+        Enviar para a Delinha
+      </button>
+      <p class="text-[10px] text-surf-var-on text-center opacity-60 flex items-center justify-center gap-1">
+        <span class="ms text-[13px]">lock</span> Dados protegidos conforme LGPD
+      </p>
+    </form>
+  </div>
+</div>
 
-  <footer class="bg-inverse-surface text-inverse-on-surface py-20">
-    <div class="max-w-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-16">
-      <div class="col-span-1 md:col-span-1"><img id="footer-logo" class="h-16 mb-8 brightness-0 invert object-contain" src="https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo"><p id="footer-text" class="opacity-70 text-sm leading-relaxed max-w-xs">Gastronomia artesanal para festas em BH. Fritura no local, retirada ou frete por app. Pagamento em até 3x.</p></div>
-      <div><h4 class="font-bold text-sm uppercase tracking-widest mb-8 text-primary-fixed">Navegação</h4><ul class="space-y-4 text-sm font-medium"><li><a class="opacity-70 hover:opacity-100 transition-opacity" href="#">Início</a></li><li><a class="opacity-70 hover:opacity-100 transition-opacity" href="#cardapio">Cardápio</a></li><li><a class="opacity-70 hover:opacity-100 transition-opacity" href="#calculadora">Calculadora</a></li><li><a class="opacity-70 hover:opacity-100 transition-opacity" href="#faq">Dúvidas</a></li></ul></div>
-      <div><h4 class="font-bold text-sm uppercase tracking-widest mb-8 text-primary-fixed">Contato</h4><ul class="space-y-4 text-sm font-medium"><li><span class="opacity-70">BH e Região Metropolitana</span></li><li><span id="footer-email" class="opacity-70">contato@ilovedelicitas.com.br</span></li><li><span id="footer-phone" class="opacity-70">(31) 99999-9999</span></li></ul></div>
-      <div><h4 class="font-bold text-sm uppercase tracking-widest mb-8 text-primary-fixed">Acompanhe</h4><div class="flex gap-4"><a class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary transition-colors" href="#"><span class="material-symbols-outlined text-[20px] icon-fill">photo_camera</span></a><a class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary transition-colors" href="#"><span class="material-symbols-outlined text-[20px] icon-fill">thumb_up</span></a></div><p id="footer-copyright" class="mt-8 text-[11px] opacity-40">© 2025 I Love Delicitas. Todos os direitos reservados.</p></div>
-    </div>
-  </footer>
+<!-- ══════════════ MOBILE NAV ══════════════ -->
+<div id="mobile-nav" class="fixed inset-y-0 left-0 w-72 bg-surf z-[70] shadow-2xl flex flex-col pt-6 pb-8 px-5 -translate-x-full transition-transform duration-300 ease-out lg:hidden">
+  <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfejvXZRCsQi2JjCxVZlrfi7zqsNCDp9aSPMvJL6m3z1KhriD-g0w735WWvcUWw9m7YBfoRVm5Ij-q3eKPinUEsLmVe8XhancuJryirdQWOetYHahP9RdmvWHhPORZ-g1eUjG9lSHkitR9wlv0OBd_bAJHhesUfuVmkEao4cFtUp4N5yKX_S5FBnU6uru7PJMRalYpZvOQz-9REXsrsz3HbdQ1KyopouRHlE3M4xripZr40oszJiY8qP52ZD_Z_Q0VGIglSi4YWEXe" alt="Logo" class="h-10 w-auto object-contain mb-7">
+  <nav class="flex flex-col gap-1 flex-grow">
+    <a href="#" onclick="navClose()" class="flex items-center gap-3 px-4 py-3 rounded-xl text-pri font-semibold bg-pri/5"><span class="ms fill text-[20px]">home</span> Início</a>
+    <a href="#cardapio" onclick="navClose()" class="flex items-center gap-3 px-4 py-3 rounded-xl text-surf-var-on font-semibold hover:bg-surf-var transition-colors"><span class="ms text-[20px]">restaurant_menu</span> Cardápio</a>
+    <a href="#calculadora" onclick="navClose()" class="flex items-center gap-3 px-4 py-3 rounded-xl text-surf-var-on font-semibold hover:bg-surf-var transition-colors"><span class="ms text-[20px]">calculate</span> Calculadora</a>
+    <a href="#como-funciona" onclick="navClose()" class="flex items-center gap-3 px-4 py-3 rounded-xl text-surf-var-on font-semibold hover:bg-surf-var transition-colors"><span class="ms text-[20px]">help_outline</span> Como Funciona</a>
+    <a href="#faq" onclick="navClose()" class="flex items-center gap-3 px-4 py-3 rounded-xl text-surf-var-on font-semibold hover:bg-surf-var transition-colors"><span class="ms text-[20px]">quiz</span> Dúvidas</a>
+  </nav>
+  <a href="https://wa.me/5531999999999" target="_blank" class="flex items-center justify-center gap-2 w-full bg-pri text-pri-on py-3.5 rounded-xl font-semibold hover:bg-pri/90 transition-colors">
+    <span class="ms">chat</span> WhatsApp
+  </a>
+</div>
 
-  <!-- CHAT FLUTUANTE COM RESPOSTAS LOCAIS (OFFLINE) -->
-  <style>
-    .delinha-float {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 360px;
-      max-width: calc(100vw - 40px);
-      background: white;
-      border-radius: 1rem;
-      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
-      border: 1px solid #e0bfbd;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      z-index: 1000;
-      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-      transition: all 0.3s ease;
-    }
-    .delinha-float-header {
-      background: #ae2f34;
-      color: white;
-      padding: 0.75rem 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-    }
-    .delinha-float-header h3 {
-      font-size: 1rem;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .delinha-float-messages {
-      height: 350px;
-      overflow-y: auto;
-      padding: 0.75rem;
-      background: #fefaf9;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .delinha-float-message {
-      display: flex;
-      max-width: 85%;
-    }
-    .delinha-float-user {
-      justify-content: flex-end;
-      align-self: flex-end;
-    }
-    .delinha-float-bot {
-      justify-content: flex-start;
-    }
-    .delinha-float-bubble {
-      padding: 0.5rem 0.75rem;
-      border-radius: 1rem;
-      font-size: 0.85rem;
-      line-height: 1.4;
-    }
-    .delinha-float-user .delinha-float-bubble {
-      background: #ae2f34;
-      color: white;
-      border-bottom-right-radius: 0.2rem;
-    }
-    .delinha-float-bot .delinha-float-bubble {
-      background: #f0eae9;
-      color: #1d1b1b;
-      border-bottom-left-radius: 0.2rem;
-    }
-    .delinha-float-input {
-      display: flex;
-      padding: 0.75rem;
-      border-top: 1px solid #e0bfbd;
-      background: white;
-      gap: 0.5rem;
-    }
-    .delinha-float-input input {
-      flex: 1;
-      padding: 0.5rem 0.75rem;
-      border: 1px solid #e0bfbd;
-      border-radius: 2rem;
-      outline: none;
-      font-family: inherit;
-    }
-    .delinha-float-input button {
-      background: #ae2f34;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 2rem;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .delinha-float-closed .delinha-float-messages,
-    .delinha-float-closed .delinha-float-input {
-      display: none;
-    }
-    @media (max-width: 500px) {
-      .delinha-float { width: 300px; bottom: 10px; right: 10px; }
-      .delinha-float-messages { height: 300px; }
-    }
-  </style>
+<!-- ══════════════ WHATSAPP FAB (mobile) ══════════════ -->
+<a href="https://wa.me/5531999999999" target="_blank" class="wap-float w-14 h-14 bg-pri text-pri-on rounded-full shadow-lg flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all duration-300 lg:hidden animate-float">
+  <span class="ms fill text-[28px]">chat</span>
+</a>
 
-  <div class="delinha-float" id="delinhaFloat">
-    <div class="delinha-float-header" id="delinhaFloatHeader">
-      <h3><span>🤖</span> Delinha - Assistente</h3>
-      <span id="delinhaFloatToggle">▼</span>
+<!-- ══════════════ HEADER ══════════════ -->
+<header id="hdr" class="sticky top-0 z-50 bg-surf/80 backdrop-blur-md border-b border-out-var/20 transition-all duration-300">
+  <div class="flex justify-between items-center w-full px-4 md:px-10 py-3 max-w-[1200px] mx-auto">
+    <!-- Left -->
+    <div class="flex items-center gap-2">
+      <button onclick="navOpen()" class="lg:hidden p-2 text-surf-var-on hover:text-pri transition-colors">
+        <span class="ms">menu</span>
+      </button>
+      <a href="#" class="hover:scale-105 transition-transform duration-300">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfejvXZRCsQi2JjCxVZlrfi7zqsNCDp9aSPMvJL6m3z1KhriD-g0w735WWvcUWw9m7YBfoRVm5Ij-q3eKPinUEsLmVe8XhancuJryirdQWOetYHahP9RdmvWHhPORZ-g1eUjG9lSHkitR9wlv0OBd_bAJHhesUfuVmkEao4cFtUp4N5yKX_S5FBnU6uru7PJMRalYpZvOQz-9REXsrsz3HbdQ1KyopouRHlE3M4xripZr40oszJiY8qP52ZD_Z_Q0VGIglSi4YWEXe" alt="I Love Delicitas" class="h-9 md:h-12 w-auto object-contain">
+      </a>
     </div>
-    <div class="delinha-float-messages" id="delinhaFloatMessages">
-      <div class="delinha-float-message delinha-float-bot"><div class="delinha-float-bubble">Olá! Sou a Delinha. Como posso ajudar você hoje? 🎉</div></div>
-    </div>
-    <div class="delinha-float-input">
-      <input type="text" id="delinhaFloatInput" placeholder="Digite sua pergunta...">
-      <button id="delinhaFloatSendBtn">Enviar</button>
+    <!-- Nav -->
+    <nav class="hidden lg:flex items-center gap-7">
+      <a href="#" class="text-sm font-semibold text-pri border-b-2 border-pri pb-0.5">Início</a>
+      <a href="#cardapio" class="text-sm font-semibold text-surf-var-on hover:text-pri transition-colors">Cardápio</a>
+      <a href="#calculadora" class="text-sm font-semibold text-surf-var-on hover:text-pri transition-colors">Calculadora</a>
+      <a href="#como-funciona" class="text-sm font-semibold text-surf-var-on hover:text-pri transition-colors">Como Funciona</a>
+      <a href="#faq" class="text-sm font-semibold text-surf-var-on hover:text-pri transition-colors">Dúvidas</a>
+    </nav>
+    <!-- Actions -->
+    <div class="flex items-center gap-2 md:gap-3">
+      <button onclick="drawerOpen()" class="relative p-2 text-surf-var-on hover:text-pri transition-colors">
+        <span class="ms text-[26px]">shopping_bag</span>
+        <span id="cart-badge" class="absolute -top-0.5 -right-0.5 bg-pri text-pri-on text-[9px] font-bold w-5 h-5 rounded-full hidden items-center justify-center">0</span>
+      </button>
+      <a href="https://wa.me/5531999999999" target="_blank" class="hidden md:flex items-center gap-1.5 text-pri font-semibold text-sm hover:opacity-75 transition-opacity">
+        <span class="ms text-[18px]">chat</span> WhatsApp
+      </a>
+      <button onclick="leadOpen()" class="bg-pri text-pri-on px-5 py-2 rounded-full text-sm font-semibold hover:bg-pri/90 hover:shadow-md hover:scale-105 transition-all duration-300 whitespace-nowrap">
+        Solicitar Orçamento
+      </button>
     </div>
   </div>
+</header>
 
-  <script>
-    // ========== SUPABASE E FUNÇÕES DO SITE ==========
-    const SUPABASE_URL = 'https://sikiufknmldvkcxcktsn.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpa2l1ZmtubWxkdmtjeGNrdHNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNjYzMzgsImV4cCI6MjA5Njg0MjMzOH0.WKh9GdL3yJxnQqGUhLIeJNOm-7NRhgaMXW8vlkmEb0I';
-    let supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    
-    let cart = [];
-    let calcState = { type: 'adult', guests: 50, duration: 'med' };
-    let CATALOG_DATA = [];
-    let CONFIG = {};
+<main>
 
-    // Dados locais de fallback (cardápio completo)
-    const CATALOG_LOCAL = [
-      { nome: 'Coxinha de Frango', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Clássica massa de batata com frango desfiado temperado.', imagem: 'https://via.placeholder.com/300x200?text=Coxinha' },
-      { nome: 'Bolinha de Queijo', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Massa cremosa recheada com mussarela selecionada.', imagem: 'https://via.placeholder.com/300x200?text=Bolinha' },
-      { nome: 'Empada de Frango', preco: 125, categoria: 'Assados', unidade: 'Cento (100 un.)', descricao: 'Massa podre tradicional com recheio cremoso.', imagem: 'https://via.placeholder.com/300x200?text=Empada' },
-      { nome: 'Quibe', preco: 90, categoria: 'Assados', unidade: 'Cento (100 un.)', descricao: 'Quibe tradicional de carne moída com especiarias.', imagem: 'https://via.placeholder.com/300x200?text=Quibe' },
-      { nome: 'Risole de Milho', preco: 95, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Massa cremosa de milho com recheio cremoso.', imagem: 'https://via.placeholder.com/300x200?text=Risole' },
-      { nome: 'Mini Hambúrguer', preco: 140, categoria: 'Lanches', unidade: 'Cento (100 un.)', descricao: 'Mini pão brioche com hambúrguer artesanal e queijo.', imagem: 'https://via.placeholder.com/300x200?text=Hamburguer' },
-      { nome: 'Brigadeiro', preco: 70, categoria: 'Doces', unidade: 'Cento (100 un.)', descricao: 'Brigadeiro gourmet com granulado belga.', imagem: 'https://via.placeholder.com/300x200?text=Brigadeiro' },
-      { nome: 'Beijinho', preco: 70, categoria: 'Doces', unidade: 'Cento (100 un.)', descricao: 'Beijinho cremoso com coco ralado fresco.', imagem: 'https://via.placeholder.com/300x200?text=Beijinho' }
-    ];
+<!-- ══════════════ HERO ══════════════ -->
+<section class="relative w-full min-h-[600px] md:min-h-[680px] flex items-center overflow-hidden bg-surf-ch">
+  <div class="absolute inset-0">
+    <img src="https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY" alt="" class="w-full h-full object-cover" loading="eager">
+    <div class="absolute inset-0 bg-gradient-to-r from-surf/97 via-surf/87 to-transparent md:to-surf/20"></div>
+  </div>
+  <div class="relative z-10 w-full px-4 md:px-10 py-20 max-w-[1200px] mx-auto">
+    <div class="max-w-2xl">
+      <div class="inline-flex items-center gap-2 bg-pri/10 border border-pri/20 px-4 py-1.5 rounded-full mb-6 a d1">
+        <span class="ms fill text-pri text-[15px]">stars</span>
+        <span class="text-xs font-bold text-pri uppercase tracking-widest">Alegria em cada mordida</span>
+      </div>
+      <h1 class="font-disp font-bold text-surf-on mb-6 leading-tight a d2" style="font-size: clamp(1.9rem, 5vw, 3.4rem); line-height: 1.18;">
+        Salgados e Doces<br>Artesanais para<br><span class="text-pri italic">Festas e Eventos</span>
+      </h1>
+      <p class="text-lg text-surf-var-on mb-10 max-w-xl leading-relaxed a d3">
+        Transformamos momentos especiais em lembranças inesquecíveis. Qualidade artesanal, ingredientes selecionados e entrega confiável em Belo Horizonte.
+      </p>
+      <div class="flex flex-wrap gap-5 mb-10 a d3">
+        <span class="flex items-center gap-2 text-surf-var-on text-sm font-medium"><span class="ms text-pri text-[20px]">eco</span>Ingredientes Selecionados</span>
+        <span class="flex items-center gap-2 text-surf-var-on text-sm font-medium"><span class="ms text-pri text-[20px]">bakery_dining</span>Produção Artesanal</span>
+        <span class="flex items-center gap-2 text-surf-var-on text-sm font-medium"><span class="ms text-pri text-[20px]">local_shipping</span>Entrega Confiável</span>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-4 a d4">
+        <a href="#calculadora" class="bg-pri text-pri-on px-8 py-4 rounded-full font-semibold hover:bg-pri/90 hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2">
+          <span class="ms">calculate</span> Calcular Minha Festa
+        </a>
+        <button onclick="focusChat()" class="bg-surf text-pri border-2 border-pri/30 px-8 py-4 rounded-full font-semibold hover:bg-pri/5 hover:border-pri hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2">
+          <span class="ms">support_agent</span> Falar com a Delinha
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
 
-    async function carregarConfiguracoes() {
-      const { data } = await supabase.from('configuracoes').select('*');
-      if(data) {
-        data.forEach(item => { CONFIG[item.chave] = item.valor; });
-        if(CONFIG.logo_url) document.getElementById('logo-img').src = CONFIG.logo_url;
-        if(CONFIG.banner_url) document.getElementById('banner-img').src = CONFIG.banner_url;
-        if(CONFIG.titulo_hero) document.getElementById('hero-title').innerHTML = CONFIG.titulo_hero;
-        if(CONFIG.subtitulo_hero) document.getElementById('hero-subtitle').innerHTML = CONFIG.subtitulo_hero;
-        if(CONFIG.telefone) document.getElementById('footer-phone').innerHTML = CONFIG.telefone;
-        if(CONFIG.rodape_texto) document.getElementById('footer-text').innerHTML = CONFIG.rodape_texto;
-        if(CONFIG.rodape_copyright) document.getElementById('footer-copyright').innerHTML = CONFIG.rodape_copyright;
-        if(CONFIG.whatsapp_link) document.getElementById('footer-email').innerHTML = `<a href="${CONFIG.whatsapp_link}" class="opacity-70 hover:opacity-100">WhatsApp</a>`;
-      }
-    }
+<!-- ══════════════ COMO FUNCIONA ══════════════ -->
+<section id="como-funciona" class="py-20 px-4 md:px-10 max-w-[1200px] mx-auto">
+  <div class="text-center mb-14 a">
+    <h2 class="font-disp text-3xl md:text-4xl font-bold text-surf-on flex items-center justify-center gap-4 mb-3">
+      <span class="h-px w-10 bg-out-var inline-block"></span>
+      Como funciona?
+      <span class="h-px w-10 bg-out-var inline-block"></span>
+    </h2>
+    <p class="text-surf-var-on">4 passos simples para a festa perfeita</p>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+    <div class="hidden md:block absolute top-8 left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-transparent via-out-var/60 to-transparent z-0"></div>
+    <!-- steps -->
+    <div class="relative z-10 flex flex-col items-center text-center group a d1">
+      <div class="w-16 h-16 bg-white border-2 border-pri-c rounded-full flex items-center justify-center mb-5 shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-300">
+        <span class="ms text-pri text-[28px]">calculate</span>
+      </div>
+      <div class="absolute top-0 right-1/2 translate-x-8 -translate-y-2 bg-pri text-pri-on w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shadow">1</div>
+      <h3 class="font-semibold text-surf-on mb-2 group-hover:text-pri transition-colors">Calcule sua festa</h3>
+      <p class="text-sm text-surf-var-on leading-relaxed">Informe os dados e a calculadora indica as quantidades ideais.</p>
+    </div>
+    <div class="relative z-10 flex flex-col items-center text-center group a d2">
+      <div class="w-16 h-16 bg-white border-2 border-pri-c rounded-full flex items-center justify-center mb-5 shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-300">
+        <span class="ms text-pri text-[28px]">chat_bubble</span>
+      </div>
+      <div class="absolute top-0 right-1/2 translate-x-8 -translate-y-2 bg-pri text-pri-on w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shadow">2</div>
+      <h3 class="font-semibold text-surf-on mb-2 group-hover:text-pri transition-colors">Converse com a Delinha</h3>
+      <p class="text-sm text-surf-var-on leading-relaxed">Nossa IA especialista tira todas as dúvidas em tempo real.</p>
+    </div>
+    <div class="relative z-10 flex flex-col items-center text-center group a d3">
+      <div class="w-16 h-16 bg-white border-2 border-pri-c rounded-full flex items-center justify-center mb-5 shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-300">
+        <span class="ms text-pri text-[28px]">request_quote</span>
+      </div>
+      <div class="absolute top-0 right-1/2 translate-x-8 -translate-y-2 bg-pri text-pri-on w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shadow">3</div>
+      <h3 class="font-semibold text-surf-on mb-2 group-hover:text-pri transition-colors">Receba seu orçamento</h3>
+      <p class="text-sm text-surf-var-on leading-relaxed">Proposta personalizada direto no WhatsApp.</p>
+    </div>
+    <div class="relative z-10 flex flex-col items-center text-center group a d4">
+      <div class="w-16 h-16 bg-white border-2 border-pri-c rounded-full flex items-center justify-center mb-5 shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-300">
+        <span class="ms text-pri text-[28px]">celebration</span>
+      </div>
+      <div class="absolute top-0 right-1/2 translate-x-8 -translate-y-2 bg-pri text-pri-on w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shadow">4</div>
+      <h3 class="font-semibold text-surf-on mb-2 group-hover:text-pri transition-colors">Aproveite sua festa!</h3>
+      <p class="text-sm text-surf-var-on leading-relaxed">Entregamos tudo com pontualidade e qualidade.</p>
+    </div>
+  </div>
+</section>
 
-    async function carregarCardapio() {
-      const { data } = await supabase.from('cardapio').select('*');
-      CATALOG_DATA = (data && data.length) ? data : CATALOG_LOCAL;
-      renderCatalog('Todos');
-    }
+<!-- ══════════════ CALCULADORA + DELINHA ══════════════ -->
+<section id="calculadora" class="py-20 px-4 md:px-10 bg-surf-cl">
+  <div class="max-w-[1200px] mx-auto">
+    <div class="text-center mb-12 a">
+      <h2 class="font-disp text-3xl md:text-4xl font-bold text-surf-on mb-3">Calculadora Inteligente</h2>
+      <p class="text-surf-var-on max-w-2xl mx-auto">Defina os dados da sua festa e descubra exatamente o que precisa. Sem chute, sem desperdício.</p>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-7 items-start">
 
-    function renderCatalog(filter = 'Todos') {
-      const grid = document.getElementById('catalog-grid');
-      if(!grid) return;
-      const filtered = filter === 'Todos' ? CATALOG_DATA : CATALOG_DATA.filter(item => item.categoria === filter);
-      grid.innerHTML = filtered.map(item => `
-        <div class="bg-surface rounded-xl border border-outline-variant overflow-hidden group hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
-          <div class="h-56 overflow-hidden relative"><img src="${item.imagem || 'https://via.placeholder.com/300x200?text=Sem+Imagem'}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"><span class="absolute top-4 left-4 bg-primary text-white text-[10px] px-3 py-1 rounded-full uppercase font-bold tracking-widest shadow-lg">${item.categoria}</span></div>
-          <div class="p-6"><div class="flex justify-between items-start mb-2"><h3 class="font-bold text-on-surface text-lg">${escapeHtml(item.nome)}</h3><span class="text-primary font-bold text-lg">R$ ${Number(item.preco).toFixed(2)}</span></div><p class="text-xs text-on-surface-variant mb-6 line-clamp-2 leading-relaxed italic">${escapeHtml(item.descricao || '')}</p><div class="flex items-center justify-between border-t border-outline-variant/30 pt-4"><span class="text-[10px] text-outline font-semibold uppercase tracking-tight">${item.unidade || 'Unidade'}</span><button onclick="addToCart('${escapeHtml(item.nome).replace(/'/g, "\\'")}', ${Number(item.preco)})" class="w-12 h-12 bg-primary-container/20 text-primary rounded-lg flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all shadow-sm active:scale-90"><span class="material-symbols-outlined">add_shopping_cart</span></button></div></div>
+      <!-- FORM -->
+      <div class="lg:col-span-7 bg-surf rounded-2xl shadow-sm border border-out-var/30 overflow-hidden a d1">
+        <div class="p-6 md:p-7 border-b border-out-var/30 bg-white flex items-center gap-4">
+          <div class="w-12 h-12 bg-pri-c rounded-xl flex items-center justify-center flex-shrink-0">
+            <span class="ms text-pri text-[24px]">calculate</span>
+          </div>
+          <div>
+            <h3 class="font-disp text-xl font-bold text-surf-on">Calculadora de Festa</h3>
+            <p class="text-sm text-surf-var-on">Preencha e veja as quantidades em tempo real</p>
+          </div>
         </div>
-      `).join('');
-    }
+        <div class="p-6 md:p-7 space-y-8">
+          <!-- Tipo -->
+          <div>
+            <label class="block text-xs font-bold text-surf-on uppercase tracking-wide mb-3">Tipo de Evento</label>
+            <div class="grid grid-cols-3 gap-3">
+              <button id="btn-kids" onclick="calcSet('type','kids')" class="ctype flex flex-col items-center gap-2 p-4 border border-out-var rounded-xl hover:border-pri hover:text-pri hover:bg-pri/5 transition-all group text-surf-var-on">
+                <span class="ms text-[26px] group-hover:scale-110 transition-transform">child_care</span>
+                <span class="text-xs font-bold">Infantil</span>
+              </button>
+              <button id="btn-adult" onclick="calcSet('type','adult')" class="ctype active flex flex-col items-center gap-2 p-4 border-2 border-pri rounded-xl bg-pri/5 text-pri transition-all group">
+                <span class="ms fill text-[26px] group-hover:scale-110 transition-transform">celebration</span>
+                <span class="text-xs font-bold">Adulto</span>
+              </button>
+              <button id="btn-corp" onclick="calcSet('type','corp')" class="ctype flex flex-col items-center gap-2 p-4 border border-out-var rounded-xl hover:border-pri hover:text-pri hover:bg-pri/5 transition-all group text-surf-var-on">
+                <span class="ms text-[26px] group-hover:scale-110 transition-transform">business_center</span>
+                <span class="text-xs font-bold">Corporativo</span>
+              </button>
+            </div>
+          </div>
+          <!-- Duração + Refeição -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-xs font-bold text-surf-on uppercase tracking-wide mb-3">Duração</label>
+              <select id="dur-sel" onchange="calcSet('dur', this.value)" class="w-full bg-surf border border-out-var rounded-xl px-4 py-3 focus:border-pri focus:ring-2 focus:ring-pri/20 outline-none transition-all cursor-pointer text-sm">
+                <option value="short">Até 3 horas</option>
+                <option value="med" selected>4 a 6 horas</option>
+                <option value="long">Evento longo (8h+)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-surf-on uppercase tracking-wide mb-3">Haverá refeição principal?</label>
+              <div class="flex gap-2">
+                <button id="btn-meal-y" onclick="calcSet('meal',true)" class="flex-1 py-3 border border-out-var rounded-xl text-sm font-bold text-surf-var-on hover:border-pri hover:text-pri transition-all">Sim</button>
+                <button id="btn-meal-n" onclick="calcSet('meal',false)" class="flex-1 py-3 border-2 border-pri rounded-xl text-sm font-bold text-pri bg-pri/5 transition-all">Não</button>
+              </div>
+            </div>
+          </div>
+          <!-- Convidados -->
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <label class="text-xs font-bold text-surf-on uppercase tracking-wide">Número de convidados</label>
+              <span id="g-num" class="font-disp text-4xl font-bold text-pri tabular-nums">50</span>
+            </div>
+            <input id="g-slider" type="range" min="10" max="500" value="50" oninput="gInput(this.value)" class="w-full h-2 bg-surf-var rounded-full appearance-none cursor-pointer accent-pri">
+            <div class="flex justify-between text-[11px] text-out mt-2 px-0.5">
+              <span>10</span><span>100</span><span>200</span><span>300</span><span>400</span><span>500</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    function filterCatalog(category) {
-      renderCatalog(category);
-      document.querySelectorAll('.filter-btn').forEach(btn => {
-        if(btn.textContent === category) { btn.classList.add('bg-primary', 'text-on-primary'); btn.classList.remove('bg-surface-container', 'text-on-surface-variant'); }
-        else { btn.classList.remove('bg-primary', 'text-on-primary'); btn.classList.add('bg-surface-container', 'text-on-surface-variant'); }
-      });
-    }
+      <!-- RIGHT COLUMN -->
+      <div class="lg:col-span-5 space-y-5">
+        <!-- Result Card -->
+        <div id="res-card" class="grad-card text-pri-on rounded-2xl p-7 shadow-xl relative overflow-hidden a d2">
+          <div class="absolute -right-5 -top-5 opacity-10 select-none pointer-events-none">
+            <span class="ms" style="font-size:160px;">restaurant</span>
+          </div>
+          <div class="relative z-10">
+            <h4 class="font-disp text-lg font-semibold mb-6 flex items-center gap-2">
+              <span class="ms fill text-[20px]">verified</span> Recomendação Delinha
+            </h4>
+            <div class="space-y-4 mb-7">
+              <div class="flex justify-between items-center border-b border-white/20 pb-3">
+                <span class="flex items-center gap-2 text-sm opacity-90"><span class="ms text-[17px]">tapas</span> Salgados</span>
+                <span class="font-bold text-xl tabular-nums" id="r-salgados">600 un.</span>
+              </div>
+              <div class="flex justify-between items-center border-b border-white/20 pb-3">
+                <span class="flex items-center gap-2 text-sm opacity-90"><span class="ms text-[17px]">cookie</span> Doces</span>
+                <span class="font-bold text-xl tabular-nums" id="r-doces">250 un.</span>
+              </div>
+              <div class="flex justify-between items-center border-b border-white/20 pb-3">
+                <span class="flex items-center gap-2 text-sm opacity-90"><span class="ms text-[17px]">cake</span> Bolo</span>
+                <span class="font-bold text-xl tabular-nums" id="r-bolo">5,0 kg</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="flex items-center gap-2 text-sm opacity-90"><span class="ms text-[17px]">local_drink</span> Bebidas</span>
+                <span class="font-bold text-xl tabular-nums" id="r-beb">30 L</span>
+              </div>
+            </div>
+            <button onclick="calcApply()" class="w-full bg-white text-pri py-3.5 rounded-xl font-bold hover:scale-[1.02] hover:shadow-lg active:scale-95 transition-all">
+              Adicionar à Sacola
+            </button>
+          </div>
+        </div>
 
-    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => m==='&'? '&amp;' : (m==='<'? '&lt;' : '&gt;')); }
+        <!-- DELINHA CHAT (AI-powered) -->
+        <div id="delinha-widget" class="bg-surf rounded-2xl shadow-md border border-out-var/30 overflow-hidden a d3">
+          <!-- Header -->
+          <div class="flex items-center gap-3 p-4 border-b border-out-var/20 bg-surf-cl">
+            <div class="relative flex-shrink-0">
+              <div class="w-11 h-11 rounded-full overflow-hidden border-2 border-pri animate-float">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLCpqf-GqswHh3OFeRJrgcS9DY9blSiMEbB6uyowNRwHNv-JyHET4QDMtkVsJk3tJT8PmUvkDJqaK-iqveOGBaHQ-H4iW6sdqF3grA8RSAuXb7HS8AmfbpB-ePXrvgxCZDPqC2c9gQ62k20MJs5IYZjQYp_VJyUnejY-vy5KxwuY2MD6MzWEHCe0M0o2u3Ij6MyGqamqb-VZ1in41tyXOYRLvYulN2inZjJzO2F2hMn0bob3xe5_5UTlesoCq9i3skbCk-cdbaGaUk" alt="Delinha" class="w-full h-full object-cover">
+              </div>
+              <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 border-2 border-surf rounded-full"></span>
+            </div>
+            <div>
+              <p class="font-disp text-pri font-semibold leading-none mb-0.5">Delinha</p>
+              <p class="text-[11px] text-surf-var-on flex items-center gap-1">
+                <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full inline-block"></span>
+                Especialista em Festas · Online
+              </p>
+            </div>
+          </div>
+          <!-- Messages -->
+          <div id="chat-msgs" class="p-4 space-y-3">
+            <div class="flex gap-2 animate-fadein">
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLCpqf-GqswHh3OFeRJrgcS9DY9blSiMEbB6uyowNRwHNv-JyHET4QDMtkVsJk3tJT8PmUvkDJqaK-iqveOGBaHQ-H4iW6sdqF3grA8RSAuXb7HS8AmfbpB-ePXrvgxCZDPqC2c9gQ62k20MJs5IYZjQYp_VJyUnejY-vy5KxwuY2MD6MzWEHCe0M0o2u3Ij6MyGqamqb-VZ1in41tyXOYRLvYulN2inZjJzO2F2hMn0bob3xe5_5UTlesoCq9i3skbCk-cdbaGaUk" class="w-7 h-7 rounded-full object-cover flex-shrink-0 border border-pri/30 mt-1">
+              <div class="bg-surf-cl rounded-2xl rounded-tl-sm p-3 text-sm text-surf-on max-w-[85%]">
+                Olá! 🎉 Sou a Delinha, sua especialista em festas! Pronta para ajudar na celebração perfeita. O que você gostaria de saber?
+              </div>
+            </div>
+            <div id="chip-row" class="flex flex-wrap gap-2 pl-9">
+              <button onclick="chipSend('Me ajude a montar um orçamento')" class="text-[11px] font-bold bg-pri text-pri-on px-3 py-1.5 rounded-lg hover:bg-pri/90 transition-all">💰 Orçamento</button>
+              <button onclick="chipSend('Quais sabores vocês têm?')" class="text-[11px] font-bold bg-surf border border-out-var text-surf-var-on px-3 py-1.5 rounded-lg hover:border-pri hover:text-pri transition-all">🍽️ Sabores</button>
+              <button onclick="chipSend('Quantidades para minha festa?')" class="text-[11px] font-bold bg-surf border border-out-var text-surf-var-on px-3 py-1.5 rounded-lg hover:border-pri hover:text-pri transition-all">📊 Quantidades</button>
+              <button onclick="chipSend('Como posso economizar?')" class="text-[11px] font-bold bg-surf border border-out-var text-surf-var-on px-3 py-1.5 rounded-lg hover:border-pri hover:text-pri transition-all">💡 Economizar</button>
+            </div>
+          </div>
+          <!-- Input -->
+          <div class="p-3 border-t border-out-var/20">
+            <div class="flex items-center gap-2 bg-surf-cl border border-out-var rounded-full px-4 py-2 focus-within:border-pri focus-within:ring-2 focus-within:ring-pri/20 transition-all">
+              <input id="chat-in" type="text" placeholder="Digite sua mensagem..." class="bg-transparent border-none outline-none flex-grow text-sm text-surf-on placeholder:text-out" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();chatSend();}">
+              <button onclick="chatSend()" class="bg-pri text-pri-on w-9 h-9 rounded-full flex items-center justify-center hover:bg-pri/90 hover:scale-110 active:scale-95 transition-all flex-shrink-0">
+                <span class="ms text-[18px]" style="margin-left:1px">send</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div><!-- /right -->
+    </div>
+  </div>
+</section>
 
-    // ========== FUNÇÕES DA CALCULADORA E CARRINHO ==========
-    function setCalcVar(key, val) {
-      calcState[key] = val;
-      if(key === 'type') {
-        ['kids', 'adult', 'corp'].forEach(t => {
-          const btn = document.getElementById(`btn-${t}`);
-          if(btn) {
-            if(t === val) { btn.classList.add('border-2', 'border-primary', 'bg-primary/5'); btn.classList.remove('border-outline-variant'); }
-            else { btn.classList.remove('border-2', 'border-primary', 'bg-primary/5'); btn.classList.add('border-outline-variant'); }
-          }
-        });
-      }
-      updateCalculator();
-    }
+<!-- ══════════════ CARDÁPIO ══════════════ -->
+<section id="cardapio" class="py-20 px-4 md:px-10">
+  <div class="max-w-[1200px] mx-auto">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6 a">
+      <div>
+        <h2 class="font-disp text-3xl md:text-4xl font-bold text-surf-on">Nosso Cardápio Artesanal</h2>
+        <p class="text-surf-var-on mt-2">Sabores selecionados para encantar seus convidados.</p>
+      </div>
+      <div class="flex gap-2 overflow-x-auto pb-1 w-full md:w-auto no-sb">
+        <button onclick="filterCat('Todos')" class="flt px-5 py-2 bg-pri text-pri-on rounded-full text-sm font-semibold whitespace-nowrap transition-all">Todos</button>
+        <button onclick="filterCat('Fritos')" class="flt px-5 py-2 bg-surf-c text-surf-var-on rounded-full text-sm font-semibold whitespace-nowrap hover:bg-surf-var transition-all">🍗 Fritos</button>
+        <button onclick="filterCat('Assados')" class="flt px-5 py-2 bg-surf-c text-surf-var-on rounded-full text-sm font-semibold whitespace-nowrap hover:bg-surf-var transition-all">🥧 Assados</button>
+        <button onclick="filterCat('Lanches')" class="flt px-5 py-2 bg-surf-c text-surf-var-on rounded-full text-sm font-semibold whitespace-nowrap hover:bg-surf-var transition-all">🍔 Lanches</button>
+        <button onclick="filterCat('Doces')" class="flt px-5 py-2 bg-surf-c text-surf-var-on rounded-full text-sm font-semibold whitespace-nowrap hover:bg-surf-var transition-all">🍫 Doces</button>
+      </div>
+    </div>
+    <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+  </div>
+</section>
 
-    function updateCalculator() {
-      const guests = calcState.guests;
-      let sPer = 12, dPer = 5;
-      if(calcState.type === 'kids') { sPer = 10; dPer = 7; }
-      if(calcState.type === 'corp') { sPer = 8; dPer = 3; }
-      if(calcState.duration === 'long') { sPer *= 1.4; dPer *= 1.2; }
-      document.getElementById('res-salgados').innerHTML = `${Math.round(guests * sPer)} un.`;
-      document.getElementById('res-doces').innerHTML = `${Math.round(guests * dPer)} un.`;
-      const card = document.getElementById('calc-result-card');
-      if(card) { card.classList.remove('animate-pulse-fast'); void card.offsetWidth; card.classList.add('animate-pulse-fast'); }
-    }
+<!-- ══════════════ FAQ ══════════════ -->
+<section id="faq" class="py-20 px-4 md:px-10 bg-surf-cl">
+  <div class="max-w-3xl mx-auto">
+    <div class="text-center mb-12 a">
+      <span class="text-pri font-bold text-xs uppercase tracking-[0.2em] mb-3 block">Dúvidas Frequentes</span>
+      <h2 class="font-disp text-3xl md:text-4xl font-bold text-surf-on">Tudo que você precisa saber</h2>
+      <p class="text-surf-var-on mt-3 text-sm">Transparência e clareza para o seu dia especial</p>
+    </div>
+    <div id="faq-acc" class="space-y-3 a d1"></div>
+    <div class="mt-10 p-6 bg-surf rounded-2xl border border-out-var/30 text-center a d2">
+      <p class="text-surf-var-on text-sm mb-4">Não encontrou o que buscava?</p>
+      <div class="flex flex-wrap gap-3 justify-center">
+        <a href="https://wa.me/5531999999999" target="_blank" class="flex items-center gap-2 bg-pri text-pri-on px-6 py-3 rounded-full font-semibold text-sm hover:bg-pri/90 hover:shadow-md transition-all">
+          <span class="ms text-[18px]">chat</span> Falar no WhatsApp
+        </a>
+        <a href="mailto:contato@ilovedelicitas.com.br" class="flex items-center gap-2 bg-surf border border-out-var text-surf-var-on px-6 py-3 rounded-full font-semibold text-sm hover:border-pri hover:text-pri transition-all">
+          <span class="ms text-[18px]">mail</span> Enviar e-mail
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
 
-    function addToCart(name, price) { cart.push({ name, price }); updateCartUI(); notify(`➕ ${name} adicionado!`); }
-    function applyCalcToQuote() { const guests = calcState.guests; cart.push({ name: `Kit para ${guests} convidados`, price: guests * 45 }); updateCartUI(); toggleDrawer(true); }
-    function updateCartUI() {
-      const container = document.getElementById('cart-items'), badge = document.getElementById('cart-badge'), totalSpan = document.getElementById('cart-total');
-      if(!container) return;
-      if(cart.length === 0) { container.innerHTML = '<div class="text-center py-10 text-on-surface-variant italic">Sua sacola está vazia.</div>'; if(badge) badge.classList.add('hidden'); totalSpan.innerText = 'R$ 0,00'; return; }
-      if(badge) { badge.classList.remove('hidden'); badge.innerText = cart.length; }
-      let total = 0;
-      container.innerHTML = cart.map((i,idx) => { total += i.price; return `<div class="flex justify-between items-center bg-surface-container-lowest p-4 rounded-lg border"><div><p class="font-bold">${escapeHtml(i.name)}</p></div><div><span class="font-bold text-primary">R$ ${i.price.toFixed(2)}</span><button onclick="removeItem(${idx})" class="ml-3 text-red-500">🗑️</button></div></div>`; }).join('');
-      totalSpan.innerText = `R$ ${total.toFixed(2)}`;
-    }
-    function removeItem(i) { cart.splice(i,1); updateCartUI(); }
-    function toggleDrawer(force) { let d = document.getElementById('quote-drawer'); if(force) d.classList.remove('translate-x-full'); else d.classList.toggle('translate-x-full'); }
-    function openLeadModal() { let m = document.getElementById('lead-modal'); m.classList.remove('hidden'); m.classList.add('flex'); document.getElementById('modal-guests').value = calcState.guests; }
-    function closeLeadModal() { let m = document.getElementById('lead-modal'); m.classList.add('hidden'); m.classList.remove('flex'); }
-    function notify(msg) { let t = document.createElement('div'); t.className = "fixed bottom-8 left-1/2 -translate-x-1/2 bg-primary text-white px-6 py-3 rounded-full shadow-lg z-[100] animate-pulse"; t.innerText = msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2500); }
-    function openChat() { document.getElementById('delinhaFloat').classList.remove('delinha-float-closed'); }
+</main>
 
-    // ========== INICIALIZAÇÃO GERAL (CHAT + SITE) ==========
-    document.addEventListener('DOMContentLoaded', function() {
-      // ---- CHAT FLUTUANTE ----
-      const RESPOSTAS_LOCAIS = {
-        prazo: "O prazo depende da quantidade: até 300 unidades → 72h; de 300 a 800 unidades → 7 dias; acima de 800 ou com fritura no local → 15 dias.",
-        fritura: "Você pode retirar os salgados já fritos ou congelados (mesmo preço). Fritura no local tem custo extra – consulte orçamento.",
-        entrega: "Não temos frota própria. Você retira no local ou contrata um entregador por aplicativo (Uber/99).",
-        pagamento: "Aceitamos Pix ou cartão de crédito em até 3 vezes. Sinal de 50% para reservar a data.",
-        cardapio: "Temos salgados (coxinha, bolinha, risole, empadas...), doces (brigadeiro, beijinho, mini tortinhas...) e mini lanches. Veja o cardápio completo no site.",
-        orcamento: "Os valores são consultados pelo WhatsApp. Clique no botão 'Solicitar Orçamento' ou me chame pelo WhatsApp.",
-        default: "Desculpe, não entendi. Pergunte sobre prazo, fritura, entrega, pagamento, cardápio ou orçamento. Ou fale conosco pelo WhatsApp (31) 99999-9999."
-      };
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer class="bg-surf-inv text-surf-inv-on">
+  <div class="max-w-[1200px] mx-auto px-4 md:px-10 py-16">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-12 border-b border-out/15 pb-12 mb-8">
+      <div>
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfejvXZRCsQi2JjCxVZlrfi7zqsNCDp9aSPMvJL6m3z1KhriD-g0w735WWvcUWw9m7YBfoRVm5Ij-q3eKPinUEsLmVe8XhancuJryirdQWOetYHahP9RdmvWHhPORZ-g1eUjG9lSHkitR9wlv0OBd_bAJHhesUfuVmkEao4cFtUp4N5yKX_S5FBnU6uru7PJMRalYpZvOQz-9REXsrsz3HbdQ1KyopouRHlE3M4xripZr40oszJiY8qP52ZD_Z_Q0VGIglSi4YWEXe" alt="I Love Delicitas" class="h-11 w-auto object-contain brightness-0 invert mb-5">
+        <p class="text-sm opacity-65 leading-relaxed">Transformando momentos especiais em lembranças inesquecíveis desde 2018.</p>
+        <div class="flex gap-3 mt-5">
+          <a href="#" class="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center hover:bg-pri transition-colors duration-300"><span class="ms fill text-[17px]">photo_camera</span></a>
+          <a href="#" class="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center hover:bg-pri transition-colors duration-300"><span class="ms fill text-[17px]">thumb_up</span></a>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-bold text-[11px] uppercase tracking-[0.2em] mb-6 text-pri-dim">Links Rápidos</h4>
+        <ul class="space-y-3">
+          <li><a href="#" class="text-sm opacity-60 hover:opacity-100 hover:pl-1 transition-all duration-200 block">Início</a></li>
+          <li><a href="#cardapio" class="text-sm opacity-60 hover:opacity-100 hover:pl-1 transition-all duration-200 block">Cardápio</a></li>
+          <li><a href="#calculadora" class="text-sm opacity-60 hover:opacity-100 hover:pl-1 transition-all duration-200 block">Calculadora</a></li>
+          <li><a href="#como-funciona" class="text-sm opacity-60 hover:opacity-100 hover:pl-1 transition-all duration-200 block">Como Funciona</a></li>
+          <li><a href="#faq" class="text-sm opacity-60 hover:opacity-100 hover:pl-1 transition-all duration-200 block">Dúvidas</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold text-[11px] uppercase tracking-[0.2em] mb-6 text-pri-dim">Atendimento</h4>
+        <ul class="space-y-3">
+          <li class="flex items-start gap-2.5"><span class="ms text-[15px] opacity-40 mt-0.5">schedule</span><span class="text-sm opacity-60">Seg a Sáb: 08h às 19h</span></li>
+          <li class="flex items-start gap-2.5"><span class="ms text-[15px] opacity-40 mt-0.5">local_shipping</span><span class="text-sm opacity-60">BH e Região Metropolitana</span></li>
+          <li class="flex items-start gap-2.5"><span class="ms text-[15px] opacity-40 mt-0.5">payment</span><span class="text-sm opacity-60">PIX · Cartão (12x) · PIX Parcelado</span></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold text-[11px] uppercase tracking-[0.2em] mb-6 text-pri-dim">Contato</h4>
+        <ul class="space-y-3">
+          <li class="flex items-start gap-2.5"><span class="ms text-[15px] opacity-40 mt-0.5">call</span><a href="tel:+5531999999999" class="text-sm opacity-60 hover:opacity-100 transition-opacity">(31) 99999-9999</a></li>
+          <li class="flex items-start gap-2.5"><span class="ms text-[15px] opacity-40 mt-0.5">mail</span><a href="mailto:contato@ilovedelicitas.com.br" class="text-sm opacity-60 hover:opacity-100 transition-opacity break-all">contato@ilovedelicitas.com.br</a></li>
+          <li class="flex items-start gap-2.5"><span class="ms text-[15px] opacity-40 mt-0.5">location_on</span><span class="text-sm opacity-60">Belo Horizonte, MG</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
+      <p class="text-[11px] opacity-35">© 2024 I Love Delicitas. Todos os direitos reservados.</p>
+      <p class="text-[11px] opacity-35">Feito com ❤️ em Belo Horizonte</p>
+    </div>
+  </div>
+</footer>
 
-      function getRespostaLocal(mensagem) {
-        const msg = mensagem.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        if (msg.includes('prazo') || msg.includes('minimo') || msg.includes('dias')) return RESPOSTAS_LOCAIS.prazo;
-        if (msg.includes('fritura') || msg.includes('fritar') || msg.includes('quentinho')) return RESPOSTAS_LOCAIS.fritura;
-        if (msg.includes('entrega') || msg.includes('entregam') || msg.includes('frete') || msg.includes('uber')) return RESPOSTAS_LOCAIS.entrega;
-        if (msg.includes('pagamento') || msg.includes('cartao') || msg.includes('pix') || msg.includes('parcelar')) return RESPOSTAS_LOCAIS.pagamento;
-        if (msg.includes('cardapio') || msg.includes('sabores') || msg.includes('produtos')) return RESPOSTAS_LOCAIS.cardapio;
-        if (msg.includes('orcamento') || msg.includes('preco') || msg.includes('quanto custa') || msg.includes('valor')) return RESPOSTAS_LOCAIS.orcamento;
-        return RESPOSTAS_LOCAIS.default;
-      }
+<!-- ══════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════ -->
+<script>
+// ─── DATABASE SIMULATION (mirrors PostgreSQL schema) ───────────────────
+const DB = {
+  configuracoes: { whatsapp:'5531999999999', email:'contato@ilovedelicitas.com.br', telefone:'(31) 99999-9999', nome:'I Love Delicitas' },
 
-      const messagesDiv = document.getElementById('delinhaFloatMessages');
-      const inputChat = document.getElementById('delinhaFloatInput');
-      const sendBtnChat = document.getElementById('delinhaFloatSendBtn');
+  regras_calculadora: {
+    adult: { salgados_por_pessoa: 12, doces_por_pessoa: 5 },
+    kids:  { salgados_por_pessoa: 10, doces_por_pessoa: 7 },
+    corp:  { salgados_por_pessoa: 8,  doces_por_pessoa: 3 }
+  },
 
-      function addFloatMessage(text, isUser) {
-        const div = document.createElement('div');
-        div.className = `delinha-float-message ${isUser ? 'delinha-float-user' : 'delinha-float-bot'}`;
-        const bubble = document.createElement('div');
-        bubble.className = 'delinha-float-bubble';
-        bubble.innerText = text;
-        div.appendChild(bubble);
-        messagesDiv.appendChild(div);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-      }
+  cardapio: [
+    // FRITOS — R$ 90,00/cento
+    { id:1, nome:'Coxinha de Frango', preco:90, categoria:'Fritos', unidade:'Cento (100 un.)', descricao:'Clássica massa de batata com frango desfiado e temperado.', imagem:'https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY', destaque:true },
+    { id:2, nome:'Bolinha de Queijo', preco:90, categoria:'Fritos', unidade:'Cento (100 un.)', descricao:'Massa cremosa recheada com mussarela selecionada.', imagem:'https://lh3.googleusercontent.com/aida/ADBb0ug3bpYC-14I1zO_V97PZ7Fim7BL0amfHX29RlVcu_yRoGkDYHJ6_a6VyX1aTBGbgIUVAV81BgXI_QR7AOMINpO8jDZV2BP8rLuWLJg2s1D0ksCnhzV_WitKxREq6N2SNyOUKF6jZ542g0MldwI4Y5SUhR9JtLWAWOy5HW9qUJ9cOUse400WRjrgjmh6gZfWTwkg2taQPrkh596wdx8ZTysbCSGrM0dpYMpOVmvmc5K_o5bYIOCxpUBkczA' },
+    { id:3, nome:'Risole de Carne', preco:90, categoria:'Fritos', unidade:'Cento (100 un.)', descricao:'Recheio de carne bovina moída com temperos especiais.', imagem:'https://lh3.googleusercontent.com/aida/ADBb0uhwURqBjCY-ysz5Do_AYSGrA2SS77pSEf8y8fW3b57ktXyrZTXNgm5oMnObhrKY7g3oFBY_G8ZkuLbjg-fI84iGllruOF5_EvdjBKY3fPVhB2mBq0AXhGxKA4yjK8SVjId21wxUxNeUJNPoV4UMiOMOzGVnHFhGMY5uFuUf_r--E37whcipdnJnPycipYUUVVYQhlHlZz_jFowD5MEmcUXVx6avhQV_i08nG0nKBx-DeQTv2kq9USniFeoR' },
+    { id:4, nome:'Bolinha Presunto e Queijo', preco:90, categoria:'Fritos', unidade:'Cento (100 un.)', descricao:'Combinação perfeita de presunto e queijo derretido.', imagem:'https://lh3.googleusercontent.com/aida/ADBb0ujIoGjcTUfESCmAjnBwBtv2V2QMjDI7aHmMDjkHO2Ec9i8u4otaWDq1saiK-vkKofwaEx_lk4Fx1jhHHoMxbAolITSKHLP4OfMMaozYNCxjJDNcaCkznGxIp78Es9uNAL_oZ4hwTwF7odzCMrcayduggGmJ7nyFlVDIrBKh3OmTUsIY1dVBgkV4ajGbnerExLvB8ThYnyPdtcPb6g2953qYlzjo-sgl0xGi-8axaBBUBDasHCrTfMyfMcc' },
+    { id:5, nome:'Pastel de Calabresa', preco:90, categoria:'Fritos', unidade:'Cento (100 un.)', descricao:'Calabresa moída com toque especial de ervas.', imagem:'https://lh3.googleusercontent.com/aida/ADBb0uhoAPdXxn2heAYFv0TTRroX115rnEcWjsxhnaIjeYF5NK2THaLYXeVT7qtAQvY-Gs_nucdZkI_dMxUQLZLkZQ_iKGvZFQBUvlxedlFBL7Twzh72BRZyVs93M_D8nHk1hG57B0cg8wK0qbJRikZiQTBzStrwXe5QKZekuVCvJCxHEt42gNUrRw0lX34q4oxO8XWkmIcafJ2UjElH-e2qjlcIQC7ZGQn6cNROrcXObIjSbIUjYd9E3VWV7Pk' },
+    { id:6, nome:'Pastel de Milho', preco:90, categoria:'Fritos', unidade:'Cento (100 un.)', descricao:'Recheio suave de milho verde selecionado.', imagem:'https://lh3.googleusercontent.com/aida/ADBb0ujdQf6etdUVjy-AH23W66Tc1tvz0bvfa6gb0Orn1z8y1KpigHM3I68khjZiHdTKg0d1wpmaTWRCIPQBFVaZcONyEWFH2TkzAXNRp7HtviU5AUH7CXfLMECE8neNkl0z1fr9IW9D1iRP_jaHhCc5eKdHP0T3w6-6PVS09d9UXgkAn_mLKaGhPKK7udIZQo8Ji8lm8UkZGaxZFSCYVI0I8h7bLrPgLO9j0e8luAwUyKGnu4_qX-EiTCZhpKk' },
+    { id:7, nome:'Mini Quibe', preco:90, categoria:'Fritos', unidade:'Cento (100 un.)', descricao:'Trigo de alta qualidade com carne e hortelã fresca.', imagem:'https://lh3.googleusercontent.com/aida/ADBb0ug7Z_3vibGIQV_ru4AAVLufkJJ-djoHVkFvjdaZWAtTC2N12hBnIB3MOc6174Q6zxwXHV9EOdewI2HytnaZUa8l3UvPnfE3Ok4B1iaw3con5ZjyAekTsXe_mcJvOkVbASDr8bIG7sZ0Svq5ykPm2nXwFAy5hk1Lq5rsrWXN-_1fpcK2WK50ITfXpCk7ObdZIGdV2DoPia8n6ecQg8hS7pp9wL-_Wnv6bQGiyTQtojIDIQt-xQvJgQMNLGvK' },
+    { id:8, nome:'Medalhão de Salsicha', preco:90, categoria:'Fritos', unidade:'Cento (100 un.)', descricao:'Salsicha premium envolta em massa crocante.', imagem:'https://lh3.googleusercontent.com/aida/ADBb0ujLO2kxjAyLn3v3hrOZQvnDzje_IJTjN4fvzAkBmXm2uv-Q5rX-ehwh6ifZ_19G-N_diIEQFPwQVs7eA6CmXbM1zp9AE8JUmxoP32uvt-LS6cqVrnzZWqV-BgUsjji6-jQobHxoqpD2bPaGTzdP_fHlU6O-qqUtKErk85v2pePx8MYVPCGKtuSGpcMYbUZ8yjKGqNyNUQbqniIOMcBwkjRBkoipBjkJySwMJAtuYrrAy3LEQ1KQP61K_3vd' },
+    // ASSADOS — R$ 125,00/cento
+    { id:9,  nome:'Empada de Frango', preco:125, categoria:'Assados', unidade:'Cento (100 un.)', descricao:'Massa podre tradicional com recheio cremoso.', imagem:'https://lh3.googleusercontent.com/aida/ADBb0uhT2DFMiIXo6dcHOIcwQwDtF6mfpRyzpE11jeulvjnvTlOakapO0gakJcbbqreE5pU72soB7JqUQNbsSv29wTcVLnN0SGQEQd1-rLUTOR0QAFTVz8HTbf3Ps8MIlqOcdD1i1S65--wsG3StcT42EXTnNXAcg7pdCqBcgrd55i3auNqOSP69WnPWr8wdCz6g5ZRUYilMYUz94tGN9hgEJD9fsdgSwiJ4woAVMJbJyXhAT5DNh8N9mZrEQQTu' },
+    { id:10, nome:'Empada de Queijo', preco:125, categoria:'Assados', unidade:'Cento (100 un.)', descricao:'Deliciosa massa amanteigada com queijo especial.', imagem:'https://lh3.googleusercontent.com/aida/ADBb0uhT2DFMiIXo6dcHOIcwQwDtF6mfpRyzpE11jeulvjnvTlOakapO0gakJcbbqreE5pU72soB7JqUQNbsSv29wTcVLnN0SGQEQd1-rLUTOR0QAFTVz8HTbf3Ps8MIlqOcdD1i1S65--wsG3StcT42EXTnNXAcg7pdCqBcgrd55i3auNqOSP69WnPWr8wdCz6g5ZRUYilMYUz94tGN9hgEJD9fsdgSwiJ4woAVMJbJyXhAT5DNh8N9mZrEQQTu' },
+    { id:11, nome:'Empada de Palmito', preco:125, categoria:'Assados', unidade:'Cento (100 un.)', descricao:'Recheio de palmito especial e cremoso.', imagem:'https://lh3.googleusercontent.com/aida/ADBb0uhT2DFMiIXo6dcHOIcwQwDtF6mfpRyzpE11jeulvjnvTlOakapO0gakJcbbqreE5pU72soB7JqUQNbsSv29wTcVLnN0SGQEQd1-rLUTOR0QAFTVz8HTbf3Ps8MIlqOcdD1i1S65--wsG3StcT42EXTnNXAcg7pdCqBcgrd55i3auNqOSP69WnPWr8wdCz6g5ZRUYilMYUz94tGN9hgEJD9fsdgSwiJ4woAVMJbJyXhAT5DNh8N9mZrEQQTu' },
+    { id:12, nome:'Mini Esfirra Assada', preco:125, categoria:'Assados', unidade:'Cento (100 un.)', descricao:'Massa leve e fofinha com carne temperada.', imagem:'https://lh3.googleusercontent.com/aida/ADBb0uhwURqBjCY-ysz5Do_AYSGrA2SS77pSEf8y8fW3b57ktXyrZTXNgm5oMnObhrKY7g3oFBY_G8ZkuLbjg-fI84iGllruOF5_EvdjBKY3fPVhB2mBq0AXhGxKA4yjK8SVjId21wxUxNeUJNPoV4UMiOMOzGVnHFhGMY5uFuUf_r--E37whcipdnJnPycipYUUVVYQhlHlZz_jFowD5MEmcUXVx6avhQV_i08nG0nKBx-DeQTv2kq9USniFeoR' },
+    { id:13, nome:'Mini Marta Rocha', preco:125, categoria:'Assados', unidade:'Cento (100 un.)', descricao:'Salgado assado especial da casa.', imagem:'https://lh3.googleusercontent.com/aida/ADBb0uhwURqBjCY-ysz5Do_AYSGrA2SS77pSEf8y8fW3b57ktXyrZTXNgm5oMnObhrKY7g3oFBY_G8ZkuLbjg-fI84iGllruOF5_EvdjBKY3fPVhB2mBq0AXhGxKA4yjK8SVjId21wxUxNeUJNPoV4UMiOMOzGVnHFhGMY5uFuUf_r--E37whcipdnJnPycipYUUVVYQhlHlZz_jFowD5MEmcUXVx6avhQV_i08nG0nKBx-DeQTv2kq9USniFeoR' },
+    { id:14, nome:'Mini Pão de Frango', preco:125, categoria:'Assados', unidade:'Cento (100 un.)', descricao:'Pãozinho caseiro recheado com frango cremoso.', imagem:'https://lh3.googleusercontent.com/aida/ADBb0uiTjpuUGiUIi_uCtbInbHa6-OALQ8nSTKnuFumYRZw7yLtq6OfxIyFXowUf71zPpKSzY52QjbdLaTxonk2FhbThmuz0R7mO6bCmzudODEvNr8oZhYSQBpoduFHJqw9O0zkMBhPNk6n1ku0kxQsdvPrj7fVQ0wrlXt1_bns0KurekpWreBzryrqGdPakbp2RNfh1_wdhTjry-5PI93R9yFmd2Cj0qh67tvOMx_dhvZBRvThZvQU77eUXufwP' },
+    { id:15, nome:'Mini Pão Batata Calabresa', preco:125, categoria:'Assados', unidade:'Cento (100 un.)', descricao:'Massa de batata com calabresa e cebola.', imagem:'https://lh3.googleusercontent.com/aida/ADBb0uiTjpuUGiUIi_uCtbInbHa6-OALQ8nSTKnuFumYRZw7yLtq6OfxIyFXowUf71zPpKSzY52QjbdLaTxonk2FhbThmuz0R7mO6bCmzudODEvNr8oZhYSQBpoduFHJqw9O0zkMBhPNk6n1ku0kxQsdvPrj7fVQ0wrlXt1_bns0KurekpWreBzryrqGdPakbp2RNfh1_wdhTjry-5PI93R9yFmd2Cj0qh67tvOMx_dhvZBRvThZvQU77eUXufwP' },
+    // LANCHES — R$ 4,90/unidade (mín. 10)
+    { id:16, nome:'Mini X-Burguer', preco:4.90, categoria:'Lanches', unidade:'Unidade (mín. 10)', descricao:'Hambúrguer artesanal e queijo no mini pão.', imagem:'https://lh3.googleusercontent.com/aida/ADBb0uj8bACtDY9tmuQoPWVGx-rmuGRTnMXEkySN8z2R-afFNDg67Ad8mvBnAJxMSFyyU20NOKikNSUOOjb3vbYx3-bwm6m1HR7rYoFuF8xYfvSU62bZGy9ywURwsPOjNrfGT4RCzMrvkqMJinTMv-_D_D_8Ntjf0iiYeApA2tKlhggOhmS2q_aWv5KsGBCM2-so__FnhsPi8LTDSUFgjexZC3vm5TWkS1GM4_7WjX_XCc7AAx9LZVbUK-k68xT5' },
+    { id:17, nome:'Mini X-Calabresa', preco:4.90, categoria:'Lanches', unidade:'Unidade (mín. 10)', descricao:'Fatias de calabresa acebolada e queijo derretido.', imagem:'https://lh3.googleusercontent.com/aida/ADBb0uj8bACtDY9tmuQoPWVGx-rmuGRTnMXEkySN8z2R-afFNDg67Ad8mvBnAJxMSFyyU20NOKikNSUOOjb3vbYx3-bwm6m1HR7rYoFuF8xYfvSU62bZGy9ywURwsPOjNrfGT4RCzMrvkqMJinTMv-_D_D_8Ntjf0iiYeApA2tKlhggOhmS2q_aWv5KsGBCM2-so__FnhsPi8LTDSUFgjexZC3vm5TWkS1GM4_7WjX_XCc7AAx9LZVbUK-k68xT5' },
+    { id:18, nome:'Mini X-Salada', preco:4.90, categoria:'Lanches', unidade:'Unidade (mín. 10)', descricao:'Mini burguer com queijo, alface e tomate fresco.', imagem:'https://lh3.googleusercontent.com/aida/ADBb0uj8bACtDY9tmuQoPWVGx-rmuGRTnMXEkySN8z2R-afFNDg67Ad8mvBnAJxMSFyyU20NOKikNSUOOjb3vbYx3-bwm6m1HR7rYoFuF8xYfvSU62bZGy9ywURwsPOjNrfGT4RCzMrvkqMJinTMv-_D_D_8Ntjf0iiYeApA2tKlhggOhmS2q_aWv5KsGBCM2-so__FnhsPi8LTDSUFgjexZC3vm5TWkS1GM4_7WjX_XCc7AAx9LZVbUK-k68xT5' },
+    { id:19, nome:'Mini X-Frango', preco:4.90, categoria:'Lanches', unidade:'Unidade (mín. 10)', descricao:'Frango grelhado suculento com queijo especial.', imagem:'https://lh3.googleusercontent.com/aida/ADBb0uj8bACtDY9tmuQoPWVGx-rmuGRTnMXEkySN8z2R-afFNDg67Ad8mvBnAJxMSFyyU20NOKikNSUOOjb3vbYx3-bwm6m1HR7rYoFuF8xYfvSU62bZGy9ywURwsPOjNrfGT4RCzMrvkqMJinTMv-_D_D_8Ntjf0iiYeApA2tKlhggOhmS2q_aWv5KsGBCM2-so__FnhsPi8LTDSUFgjexZC3vm5TWkS1GM4_7WjX_XCc7AAx9LZVbUK-k68xT5' },
+    // DOCES — R$ 140,00/cento
+    { id:20, nome:'Brigadeiro Chocolate', preco:140, categoria:'Doces', unidade:'Cento (100 un.)', descricao:'O clássico preferido de chocolate belga 54%.', imagem:'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa', destaque:true },
+    { id:21, nome:'Brigadeiro Branco', preco:140, categoria:'Doces', unidade:'Cento (100 un.)', descricao:'Doçura suave do leite condensado puro.', imagem:'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
+    { id:22, nome:'Olho de Sogra', preco:140, categoria:'Doces', unidade:'Cento (100 un.)', descricao:'Ameixa selecionada com beijinho de coco fresco.', imagem:'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
+    { id:23, nome:'Cajuzinho', preco:140, categoria:'Doces', unidade:'Cento (100 un.)', descricao:'Amendoim torrado com toque de cacau especial.', imagem:'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
+    { id:24, nome:'Casadinho', preco:140, categoria:'Doces', unidade:'Cento (100 un.)', descricao:'União perfeita do brigadeiro preto e branco.', imagem:'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
+    { id:25, nome:'Beijinho de Coco', preco:140, categoria:'Doces', unidade:'Cento (100 un.)', descricao:'Coco ralado fresco e leite condensado moça.', imagem:'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
+    { id:26, nome:'Mini Tortinhas Mousse', preco:150, categoria:'Doces', unidade:'Cento (100 un.)', descricao:'Tortinhas crocantes com mousse aerada artesanal.', imagem:'https://lh3.googleusercontent.com/aida/ADBb0ujZQMZLaX69NTcOe1py-xglNJfMNYr5zqp67pQvxEPC-EpjA41VGwb2-9XQJnOIw_gw97-58WMBBfkNxKJ2r8vacVDQMS8ztfzytTPJjSuYO7lrF0suO6UpO0s95rcDkuC55cEVHLm6yJe8BVTCo2aVQ8btD8RHtGHrJhwWmoCNPOGntCaeT-Mm5KfvFW4sgfmKY0jnXPVIn7M9-6dUll82gUq17qVeL14rexObBIzhdBJ1gThY4DCScMQ' },
+    { id:27, nome:'Mini Trufas Gourmet', preco:250, categoria:'Doces', unidade:'Cento (100 un.)', descricao:'Trufas artesanais com chocolate nobre belga.', imagem:'https://lh3.googleusercontent.com/aida-public/AB6AXuBXGmUY34Takj3_cQiy2B4QAnV2WkrXoXYxujnbwhwbb-PQr8CLRFkP7MdKiP-MMKre-wysPqOjFdPQZlJEkn1MrJeNMUMKZZ8_77g5PtfmzusW747UarAD2VpSZR3hYFv7a8hxFDRUYFuQeY38fnpcQdE6Rhey5RrInzDxQolYtPeV0Cvca5d9tHJd187G41qf_APQO9J_7d1sHEkq5lsxHVCWPI_vBDQBsUx3kdetFKsWVeV1A15nW7oI2sGP8KTJBa5hYd8Yl5sa' },
+  ],
 
-      function sendFloatMessage() {
-        const userText = inputChat.value.trim();
-        if (!userText) return;
-        addFloatMessage(userText, true);
-        inputChat.value = '';
-        const resposta = getRespostaLocal(userText);
-        setTimeout(() => addFloatMessage(resposta, false), 200);
-      }
+  faq: [
+    { id:1, pergunta:'Qual o prazo mínimo para encomendar?', resposta:'Recomendamos no mínimo 7 dias para pedidos menores e 15 dias para grandes eventos, garantindo qualidade e frescor artesanal.', ordem:1 },
+    { id:2, pergunta:'Como faço para reservar minha data?', resposta:'A reserva é confirmada com pagamento de 50% de sinal via PIX ou Cartão. O restante é pago na entrega.', ordem:2 },
+    { id:3, pergunta:'Posso alterar meu pedido depois de confirmado?', resposta:'Sim! Alterações são aceitas com até 72 horas de antecedência, sujeitas à disponibilidade.', ordem:3 },
+    { id:4, pergunta:'Vocês fazem entrega?', resposta:'Sim! Entregamos em toda Belo Horizonte e região metropolitana com frota própria e climatizada, garantindo que seu pedido chegue perfeito.', ordem:4 },
+    { id:5, pergunta:'Posso retirar meu pedido?', resposta:'Sim, a retirada é agendada em nossa unidade central em horários pré-definidos.', ordem:5 },
+    { id:6, pergunta:'Como é calculado o frete?', resposta:'O frete é calculado pela distância entre nossa cozinha e o local do evento.', ordem:6 },
+    { id:7, pergunta:'Quais formas de pagamento vocês aceitam?', resposta:'Aceitamos PIX, Cartão de Crédito (até 12x) e PIX Parcelado para facilitar seu planejamento.', ordem:7 },
+    { id:8, pergunta:'Existe pedido mínimo?', resposta:'Para salgados e doces, o mínimo é 100 unidades (1 cento) por item. Para mini lanches, o mínimo é 10 unidades.', ordem:8 },
+    { id:9, pergunta:'Os dados que informo estão protegidos?', resposta:'Sim! Seus dados são usados exclusivamente para gestão do pedido, em total conformidade com a LGPD.', ordem:9 },
+    { id:10, pergunta:'Como falar com o suporte?', resposta:'WhatsApp: (31) 99999-9999 · E-mail: contato@ilovedelicitas.com.br · Horário: Seg a Sáb, 08h às 19h.', ordem:10 },
+  ],
 
-      sendBtnChat.addEventListener('click', sendFloatMessage);
-      inputChat.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendFloatMessage();
-      });
+  // respostas_delinha — fallback keywords
+  respostas_delinha: {
+    preco:     'Salgados Fritos: R$90/cento · Assados: R$125/cento · Doces: R$140/cento · Mini Trufas: R$250/cento · Mini Lanches: R$4,90/un.',
+    entrega:   'Entregamos em toda BH e região metropolitana com frota própria climatizada! Frete calculado pela distância.',
+    pagamento: 'PIX, Cartão (até 12x) e PIX Parcelado. Para reservas: 50% sinal + restante na entrega.',
+    prazo:     'Mínimo 7 dias para pedidos pequenos e 15 dias para grandes eventos. Reserve sua data com antecedência!',
+    sabor:     'Salgados Fritos: Coxinha, Bolinha Queijo, Risole, Pastel, Mini Quibe, Medalhão... | Assados: Empadas, Esfirra, Mini Pão... | Doces: Brigadeiro, Beijinho, Cajuzinho, Trufas...',
+    quantidade:'Use a calculadora! Base: Adulto 12 salgados + 5 doces por pessoa · Infantil 10+7 · Corporativo 8+3.',
+  },
 
-      let minimized = false;
-      const toggleBtn = document.getElementById('delinhaFloatToggle');
-      const widget = document.getElementById('delinhaFloat');
-      toggleBtn.addEventListener('click', () => {
-        minimized = !minimized;
-        widget.classList.toggle('delinha-float-closed', minimized);
-        toggleBtn.innerText = minimized ? '▲' : '▼';
-      });
+  horario_funcionamento: [
+    { dia:'Segunda', abertura:'08:00', fechamento:'19:00', fechado:false },
+    { dia:'Terça',   abertura:'08:00', fechamento:'19:00', fechado:false },
+    { dia:'Quarta',  abertura:'08:00', fechamento:'19:00', fechado:false },
+    { dia:'Quinta',  abertura:'08:00', fechamento:'19:00', fechado:false },
+    { dia:'Sexta',   abertura:'08:00', fechamento:'19:00', fechado:false },
+    { dia:'Sábado',  abertura:'08:00', fechamento:'19:00', fechado:false },
+    { dia:'Domingo', abertura:null,    fechamento:null,    fechado:true  },
+  ]
+};
 
-      // ---- RESTANTE DA INICIALIZAÇÃO ----
-      carregarConfiguracoes();
-      carregarCardapio();
-      const range = document.getElementById('guest-range'), display = document.getElementById('guest-val'), dur = document.getElementById('calc-duration');
-      if(range && display) range.addEventListener('input', (e) => { display.textContent = e.target.value; calcState.guests = parseInt(e.target.value); updateCalculator(); });
-      if(dur) dur.addEventListener('change', (e) => { calcState.duration = e.target.value; updateCalculator(); });
-      document.getElementById('lead-form')?.addEventListener('submit', (e) => {
-        e.preventDefault(); let data = new FormData(e.target); let name = data.get('name'); let summary = `Orçamento para ${name}: ${calcState.type}, ${data.get('guests')} convidados.`; let cartText = cart.map(i => i.name).join(', ') || 'Recomendação'; let total = document.getElementById('cart-total')?.textContent; let text = encodeURIComponent(`Olá Delinha! ${summary}\nSacola: ${cartText}\nTotal: ${total}\nWhatsApp: ${data.get('whatsapp')}\nData: ${data.get('date')}`); window.open(`https://wa.me/5531999999999?text=${text}`, '_blank'); closeLeadModal();
-      });
+// ─── APP STATE ─────────────────────────────────────────────────────────
+let cart = [];
+let chatHistory = [];
+let calcState = { type:'adult', meal:false, guests:50, dur:'med' };
+const DELINHA_IMG = 'https://lh3.googleusercontent.com/aida-public/AB6AXuDLCpqf-GqswHh3OFeRJrgcS9DY9blSiMEbB6uyowNRwHNv-JyHET4QDMtkVsJk3tJT8PmUvkDJqaK-iqveOGBaHQ-H4iW6sdqF3grA8RSAuXb7HS8AmfbpB-ePXrvgxCZDPqC2c9gQ62k20MJs5IYZjQYp_VJyUnejY-vy5KxwuY2MD6MzWEHCe0M0o2u3Ij6MyGqamqb-VZ1in41tyXOYRLvYulN2inZjJzO2F2hMn0bob3xe5_5UTlesoCq9i3skbCk-cdbaGaUk';
+
+// ─── CALCULATOR ────────────────────────────────────────────────────────
+function gInput(v) {
+  calcState.guests = parseInt(v);
+  document.getElementById('g-num').textContent = v;
+  calcCalc();
+}
+
+function calcSet(key, val) {
+  calcState[key] = val;
+
+  if (key === 'type') {
+    ['kids','adult','corp'].forEach(t => {
+      const b = document.getElementById('btn-'+t);
+      const isActive = t === val;
+      b.classList.toggle('border-2',   isActive);
+      b.classList.toggle('border-pri', isActive);
+      b.classList.toggle('bg-pri/5',   isActive);
+      b.classList.toggle('text-pri',   isActive);
+      b.classList.toggle('border',     !isActive);
+      b.classList.toggle('border-out-var', !isActive);
+      b.classList.toggle('text-surf-var-on', !isActive);
+      const icon = b.querySelector('.ms');
+      if (icon) icon.classList.toggle('fill', isActive);
     });
+  }
 
-    window.addEventListener('scroll', () => { let h = document.getElementById('main-header'); if(h) window.scrollY > 20 ? h.classList.add('header-scrolled') : h.classList.remove('header-scrolled'); });
-  </script>
+  if (key === 'meal') {
+    const y = document.getElementById('btn-meal-y');
+    const n = document.getElementById('btn-meal-n');
+    [y,n].forEach(btn => {
+      btn.classList.remove('border-2','border-pri','bg-pri/5','text-pri');
+      btn.classList.add('border','border-out-var','text-surf-var-on');
+    });
+    const active = val ? y : n;
+    active.classList.add('border-2','border-pri','bg-pri/5','text-pri');
+    active.classList.remove('border','border-out-var','text-surf-var-on');
+  }
+
+  calcCalc();
+}
+
+function calcCalc() {
+  const g = calcState.guests;
+  const rules = DB.regras_calculadora[calcState.type];
+  let s = rules.salgados_por_pessoa;
+  let d = rules.doces_por_pessoa;
+
+  if (calcState.dur === 'long') { s = Math.round(s * 1.4); d = Math.round(d * 1.2); }
+  if (calcState.meal) s = Math.round(s * 0.7);
+
+  const totalS = Math.round(g * s);
+  const totalD = Math.round(g * d);
+  const totalB = (g * 0.1).toFixed(1).replace('.',',');
+  const totalR = Math.round(g * 0.6);
+
+  document.getElementById('r-salgados').textContent = totalS + ' un.';
+  document.getElementById('r-doces').textContent = totalD + ' un.';
+  document.getElementById('r-bolo').textContent = totalB + ' kg';
+  document.getElementById('r-beb').textContent = totalR + ' L';
+
+  const card = document.getElementById('res-card');
+  card.classList.remove('animate-pulse-q');
+  void card.offsetWidth;
+  card.classList.add('animate-pulse-q');
+}
+
+function calcApply() {
+  const g = calcState.guests;
+  const sText = document.getElementById('r-salgados').textContent;
+  const dText = document.getElementById('r-doces').textContent;
+  const bText = document.getElementById('r-bolo').textContent;
+  const types = { adult:'Adulto', kids:'Infantil', corp:'Corporativo' };
+  const price = g * 48; // estimate ~R$48/pessoa
+  cartAdd(`Pacote Sugerido — Festa ${types[calcState.type]} (${g} convidados)`, price, 'Recomendação', `${sText} salgados · ${dText} doces · ${bText} bolo`);
+  drawerOpen();
+}
+
+// ─── CATALOG ───────────────────────────────────────────────────────────
+function renderCatalog(filter) {
+  const grid = document.getElementById('catalog-grid');
+  const items = filter === 'Todos' ? DB.cardapio : DB.cardapio.filter(i => i.categoria === filter);
+  grid.innerHTML = '';
+  items.forEach(item => {
+    const d = document.createElement('div');
+    d.className = 'bg-surf rounded-2xl border border-out-var overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-300';
+    const precio = item.preco.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+    d.innerHTML = `
+      <div class="relative h-52 overflow-hidden">
+        <img src="${item.imagem}" alt="${item.nome}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <span class="absolute top-3 left-3 bg-pri/90 text-pri-on text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wide shadow">${item.categoria}</span>
+        ${item.destaque ? '<span class="absolute top-3 right-3 bg-amber-400 text-amber-900 text-[10px] px-2 py-1 rounded-full font-bold">⭐ Favorito</span>' : ''}
+      </div>
+      <div class="p-5">
+        <div class="flex justify-between items-start mb-2">
+          <h3 class="font-disp font-semibold text-surf-on text-base leading-tight">${item.nome}</h3>
+          <span class="text-pri font-bold text-base ml-2 flex-shrink-0">${precio}</span>
+        </div>
+        <p class="text-xs text-surf-var-on mb-4 leading-relaxed line-clamp-2">${item.descricao}</p>
+        <div class="flex items-center justify-between pt-3 border-t border-out-var/30">
+          <span class="text-[10px] text-out font-medium uppercase tracking-tight">${item.unidade}</span>
+          <button onclick="cartAdd('${item.nome.replace(/'/g,'\\'')}',${item.preco},'${item.categoria}','${item.unidade}')" class="w-11 h-11 bg-pri-c text-pri rounded-xl flex items-center justify-center hover:bg-pri hover:text-pri-on hover:scale-110 transition-all duration-200 shadow-sm active:scale-95">
+            <span class="ms text-[20px]">add_shopping_cart</span>
+          </button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(d);
+  });
+}
+
+function filterCat(cat) {
+  renderCatalog(cat);
+  document.querySelectorAll('.flt').forEach(b => {
+    const label = b.textContent.replace(/[🍗🥧🍔🍫]/g,'').trim();
+    const active = label === cat;
+    b.classList.toggle('bg-pri',        active);
+    b.classList.toggle('text-pri-on',   active);
+    b.classList.toggle('bg-surf-c',    !active);
+    b.classList.toggle('text-surf-var-on', !active);
+  });
+}
+
+// ─── FAQ ───────────────────────────────────────────────────────────────
+function renderFAQ() {
+  const acc = document.getElementById('faq-acc');
+  DB.faq.sort((a,b) => a.ordem - b.ordem).forEach((item, i) => {
+    const d = document.createElement('details');
+    if (i === 0) d.open = true;
+    d.className = 'group bg-surf rounded-2xl border border-out-var/30 overflow-hidden shadow-sm hover:shadow-md transition-shadow';
+    d.innerHTML = `
+      <summary class="flex justify-between items-center p-5 cursor-pointer font-semibold text-surf-on hover:text-pri transition-colors">
+        <span>${item.pergunta}</span>
+        <span class="ms text-out group-open:rotate-180 transition-transform duration-300 flex-shrink-0 ml-3">expand_more</span>
+      </summary>
+      <div class="px-5 pb-5 text-sm text-surf-var-on leading-relaxed border-t border-out-var/20 pt-4">${item.resposta}</div>
+    `;
+    acc.appendChild(d);
+  });
+}
+
+// ─── CART ──────────────────────────────────────────────────────────────
+function cartAdd(name, price, category, unit='') {
+  cart.push({ name, price, category, unit });
+  cartRender();
+  toast('🛍️ ' + name.split('—')[0].trim() + ' adicionado!');
+}
+
+function cartRemove(i) {
+  cart.splice(i,1);
+  cartRender();
+}
+
+function cartRender() {
+  const list  = document.getElementById('cart-list');
+  const badge = document.getElementById('cart-badge');
+  const total = document.getElementById('cart-total');
+  const empty = document.getElementById('cart-empty');
+
+  if (cart.length === 0) {
+    list.innerHTML = '';
+    list.appendChild(empty);
+    badge.classList.add('hidden'); badge.classList.remove('flex');
+    total.textContent = 'R$ 0,00';
+    return;
+  }
+
+  badge.classList.remove('hidden'); badge.classList.add('flex');
+  badge.textContent = cart.length;
+
+  let sum = 0;
+  list.innerHTML = cart.map((item,i) => {
+    sum += item.price;
+    const pr = item.price.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+    return `<div class="flex gap-3 items-start bg-surf-cl p-4 rounded-xl border border-out-var/20">
+      <div class="flex-grow min-w-0">
+        <p class="font-semibold text-sm text-surf-on line-clamp-2">${item.name}</p>
+        <p class="text-[10px] text-pri font-bold uppercase tracking-tight mt-0.5">${item.category}</p>
+        ${item.unit ? `<p class="text-[10px] text-surf-var-on mt-1">${item.unit}</p>` : ''}
+      </div>
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <span class="font-bold text-pri text-sm">${pr}</span>
+        <button onclick="cartRemove(${i})" class="text-err hover:bg-err/10 p-1.5 rounded-lg transition-colors"><span class="ms text-[16px]">delete</span></button>
+      </div>
+    </div>`;
+  }).join('');
+
+  total.textContent = sum.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+}
+
+// ─── DRAWER ────────────────────────────────────────────────────────────
+function drawerOpen() {
+  document.getElementById('drawer').classList.remove('translate-x-full');
+  document.getElementById('bkdrop').classList.remove('hidden');
+}
+function drawerClose() {
+  document.getElementById('drawer').classList.add('translate-x-full');
+  document.getElementById('bkdrop').classList.add('hidden');
+}
+
+// ─── LEAD MODAL ────────────────────────────────────────────────────────
+function leadOpen() {
+  const modal = document.getElementById('lead-modal');
+  modal.classList.remove('hidden'); modal.classList.add('flex');
+  document.getElementById('f-guests').value = calcState.guests;
+  const min = new Date(); min.setDate(min.getDate()+7);
+  document.getElementById('f-date').min = min.toISOString().split('T')[0];
+}
+function leadClose() {
+  const modal = document.getElementById('lead-modal');
+  modal.classList.add('hidden'); modal.classList.remove('flex');
+}
+
+document.getElementById('lead-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const fd   = new FormData(e.target);
+  const name = fd.get('name');
+  const types = { adult:'Adulto', kids:'Infantil', corp:'Corporativo' };
+  const durs  = { short:'até 3h', med:'4–6h', long:'8h+' };
+  const cartSummary = cart.length
+    ? cart.map(i => `• ${i.name}: ${i.price.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}`).join('\n')
+    : '• Orçamento conforme calculadora';
+  const text = encodeURIComponent(
+    `Olá Delinha! 🎉 Sou *${name}* e gostaria de um orçamento!\n\n` +
+    `📅 *Data:* ${fd.get('date')}\n` +
+    `👥 *Convidados:* ${fd.get('guests')}\n` +
+    `🎊 *Tipo:* ${types[calcState.type]} | ${durs[calcState.dur]} | Refeição: ${calcState.meal?'Sim':'Não'}\n\n` +
+    `🛍️ *Itens de interesse:*\n${cartSummary}\n\nAguardo retorno!`
+  );
+  window.open(`https://wa.me/${DB.configuracoes.whatsapp}?text=${text}`, '_blank');
+  leadClose();
+});
+
+// ─── MOBILE NAV ────────────────────────────────────────────────────────
+function navOpen()  { document.getElementById('mobile-nav').classList.remove('-translate-x-full'); document.getElementById('bkdrop').classList.remove('hidden'); }
+function navClose() { document.getElementById('mobile-nav').classList.add('-translate-x-full');    document.getElementById('bkdrop').classList.add('hidden'); }
+
+// ─── DELINHA AI CHAT ───────────────────────────────────────────────────
+async function chipSend(msg) {
+  const chips = document.getElementById('chip-row');
+  if (chips) chips.style.display = 'none';
+  await delinhaProcess(msg);
+}
+
+async function chatSend() {
+  const inp = document.getElementById('chat-in');
+  const msg = inp.value.trim();
+  if (!msg) return;
+  inp.value = '';
+  await delinhaProcess(msg);
+}
+
+async function delinhaProcess(userMsg) {
+  appendMsg('user', userMsg);
+  const tid = typingShow();
+
+  const types = { adult:'Adulto', kids:'Infantil', corp:'Corporativo' };
+  const durs  = { short:'até 3 horas', med:'4 a 6 horas', long:'mais de 8 horas' };
+  const calcCtx = `Festa ${types[calcState.type]}, ${calcState.guests} convidados, duração ${durs[calcState.dur]}, ${calcState.meal?'com':'sem'} refeição principal. Calculadora indica: ${document.getElementById('r-salgados').textContent} salgados, ${document.getElementById('r-doces').textContent} doces, ${document.getElementById('r-bolo').textContent} bolo.`;
+  const cartCtx = cart.length ? `Sacola: ${cart.map(i=>i.name).join(', ')}.` : 'Sacola vazia.';
+
+  const systemPrompt = `Você é a Delinha, assistente virtual da I Love Delicitas, confeitaria artesanal de Belo Horizonte. Seja simpática, acolhedora e objetiva. Use emojis com moderação.
+
+EMPRESA: I Love Delicitas — salgados e doces artesanais desde 2018 | BH e Região Metropolitana
+CONTATO: WhatsApp (31) 99999-9999 | contato@ilovedelicitas.com.br | Seg-Sáb 08h-19h
+PAGAMENTO: PIX · Cartão (12x) · PIX Parcelado | Sinal: 50% + restante na entrega
+PRAZO: mínimo 7 dias (pequenos) e 15 dias (grandes eventos)
+
+PREÇOS POR CENTO (100 unidades):
+• Salgados Fritos R$90: Coxinha, Bolinha Queijo, Risole, Bolinha Presunto, Pastel Calabresa/Milho, Mini Quibe, Medalhão Salsicha
+• Salgados Assados R$125: Empadas (Frango/Queijo/Palmito), Mini Esfirra, Mini Marta Rocha, Mini Pão Frango/Batata
+• Doces R$140: Brigadeiro Choc/Branco, Olho Sogra, Cajuzinho, Casadinho, Beijinho Coco | R$150 Mini Tortinhas | R$250 Mini Trufas Gourmet
+• Mini Lanches R$4,90/un (mín.10): Mini X-Burguer, X-Calabresa, X-Salada, X-Frango
+
+ESTADO ATUAL: ${calcCtx} | ${cartCtx}
+
+Responda em português, de forma concisa (máximo 2–3 parágrafos). Para fechar orçamento, oriente a usar a sacola ou o WhatsApp.`;
+
+  chatHistory.push({ role:'user', content:userMsg });
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: chatHistory
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || 'Desculpe, tive um problema. Tente novamente!';
+    chatHistory.push({ role:'assistant', content:reply });
+    typingRemove(tid);
+    appendMsg('delinha', reply);
+  } catch {
+    typingRemove(tid);
+    const fallback = delinhaFallback(userMsg);
+    chatHistory.push({ role:'assistant', content:fallback });
+    appendMsg('delinha', fallback);
+  }
+}
+
+function delinhaFallback(msg) {
+  const m = msg.toLowerCase();
+  for (const [k,v] of Object.entries(DB.respostas_delinha))
+    if (m.includes(k)) return v + '\n\nPara mais detalhes, entre em contato pelo WhatsApp! 😊';
+  return 'Olá! Para te ajudar melhor entre em contato: WhatsApp (31) 99999-9999 — Seg a Sáb, 08h às 19h. 🎉';
+}
+
+function appendMsg(role, text) {
+  const box = document.getElementById('chat-msgs');
+  const d = document.createElement('div');
+  d.className = 'animate-fadein';
+  if (role === 'user') {
+    d.className += ' flex justify-end';
+    d.innerHTML = `<div class="bg-pri text-pri-on rounded-2xl rounded-tr-sm p-3 text-sm max-w-[82%]">${esc(text)}</div>`;
+  } else {
+    d.className += ' flex gap-2';
+    d.innerHTML = `<img src="${DELINHA_IMG}" class="w-7 h-7 rounded-full object-cover flex-shrink-0 border border-pri/30 mt-1">
+      <div class="bg-surf-cl rounded-2xl rounded-tl-sm p-3 text-sm text-surf-on max-w-[82%] whitespace-pre-wrap">${esc(text)}</div>`;
+  }
+  box.appendChild(d);
+  box.scrollTop = box.scrollHeight;
+}
+
+function typingShow() {
+  const box = document.getElementById('chat-msgs');
+  const id  = 'ty-' + Date.now();
+  const d   = document.createElement('div');
+  d.id = id; d.className = 'flex gap-2 animate-fadein';
+  d.innerHTML = `<img src="${DELINHA_IMG}" class="w-7 h-7 rounded-full object-cover flex-shrink-0 border border-pri/30 mt-1">
+    <div class="bg-surf-cl rounded-2xl rounded-tl-sm p-3 flex items-center gap-1 min-w-[52px]">
+      <div class="flex gap-1"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>`;
+  box.appendChild(d); box.scrollTop = box.scrollHeight;
+  return id;
+}
+
+function typingRemove(id) { const el = document.getElementById(id); if (el) el.remove(); }
+
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/\n/g,'<br>');
+}
+
+function focusChat() {
+  document.getElementById('calculadora').scrollIntoView({ behavior:'smooth' });
+  setTimeout(() => { const i = document.getElementById('chat-in'); if(i) i.focus(); }, 800);
+}
+
+// ─── TOAST ─────────────────────────────────────────────────────────────
+function toast(msg) {
+  const t = document.createElement('div');
+  t.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] bg-surf-inv text-surf-inv-on px-6 py-3 rounded-full text-sm font-semibold shadow-2xl pointer-events-none whitespace-nowrap animate-slide-r';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2800);
+}
+
+// ─── SCROLL ANIMATIONS ─────────────────────────────────────────────────
+function initAnimations() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.a').forEach(el => el.classList.add('in'));
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('section, .py-20').forEach(sec => {
+    const r = sec.getBoundingClientRect();
+    if (r.top < window.innerHeight) {
+      sec.querySelectorAll('.a').forEach(el => el.classList.add('in'));
+    } else {
+      obs.observe(sec);
+    }
+  });
+}
+
+// Sticky header
+window.addEventListener('scroll', () => {
+  document.getElementById('hdr').classList.toggle('hdr-up', window.scrollY > 30);
+});
+
+// ─── INIT ──────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  calcCalc();
+  renderCatalog('Todos');
+  renderFAQ();
+  // Initialize cart empty state
+  const empty = document.getElementById('cart-empty');
+  if (empty) document.getElementById('cart-list').appendChild(empty);
+  initAnimations();
+});
+</script>
 </body>
 </html>
