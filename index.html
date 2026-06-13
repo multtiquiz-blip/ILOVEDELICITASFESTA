@@ -165,7 +165,7 @@
   </div>
 </footer>
 
-<!-- CHAT FLUTUANTE IA (Mistral) -->
+<!-- CHAT FLUTUANTE COM FALLBACK OFFLINE (RESPOSTAS LOCAIS) -->
 <style>
   .delinha-float {
     position: fixed;
@@ -272,7 +272,7 @@
 
 <div class="delinha-float" id="delinhaFloat">
   <div class="delinha-float-header" id="delinhaFloatHeader">
-    <h3><span>🤖</span> Delinha IA - Assistente</h3>
+    <h3><span>🤖</span> Delinha - Assistente</h3>
     <span id="delinhaFloatToggle">▼</span>
   </div>
   <div class="delinha-float-messages" id="delinhaFloatMessages">
@@ -391,29 +391,27 @@
   function notify(msg) { let t = document.createElement('div'); t.className = "fixed bottom-8 left-1/2 -translate-x-1/2 bg-primary text-white px-6 py-3 rounded-full shadow-lg z-[100] animate-pulse"; t.innerText = msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2500); }
   function openChat() { document.getElementById('delinhaFloat').classList.remove('delinha-float-closed'); }
 
-  // ========== CHAT FLUTUANTE IA (Mistral) ==========
-  const MISTRAL_API_KEY = "zenWbc5hjQOrmcJtC990Sh31ae5V5UM4";
-  const SYSTEM_PROMPT = `Você é a Delinha, assistente virtual da I Love Delicitas.
-REGRAS:
-- Responda SOMENTE com as informações abaixo. NUNCA invente.
-- Se não souber, diga: "Não sei. Fale com atendente pelo WhatsApp (31) 99999-9999."
+  // ========== CHAT FLUTUANTE COM RESPOSTAS LOCAIS (OFFLINE, SEM API) ==========
+  const RESPOSTAS_LOCAIS = {
+    prazo: "O prazo depende da quantidade: até 300 unidades → 72h; de 300 a 800 unidades → 7 dias; acima de 800 ou com fritura no local → 15 dias.",
+    fritura: "Você pode retirar os salgados já fritos ou congelados (mesmo preço). Fritura no local tem custo extra – consulte orçamento.",
+    entrega: "Não temos frota própria. Você retira no local ou contrata um entregador por aplicativo (Uber/99).",
+    pagamento: "Aceitamos Pix ou cartão de crédito em até 3 vezes. Sinal de 50% para reservar a data.",
+    cardapio: "Temos salgados (coxinha, bolinha, risole, empadas...), doces (brigadeiro, beijinho, mini tortinhas...) e mini lanches. Veja o cardápio completo no site.",
+    orcamento: "Os valores são consultados pelo WhatsApp. Clique no botão 'Solicitar Orçamento' ou me chame pelo WhatsApp.",
+    default: "Desculpe, não entendi. Pergunte sobre prazo, fritura, entrega, pagamento, cardápio ou orçamento. Ou fale conosco pelo WhatsApp (31) 99999-9999."
+  };
 
-FATOS:
-- Produtos: salgados, doces, mini lanches. NÃO temos bolo, refrigerantes ou bebidas.
-- Fritura: cliente retira já frito ou congelado (mesmo preço). Fritura no local tem custo extra (orçamento separado).
-- Entrega: sem frota. Cliente retira ou chama Uber/99.
-- Pagamento: Pix ou cartão em até 3x. Sinal 50%.
-- Prazos: até 300 un = 72h; 300-800 = 7 dias; +800 ou fritura local = 15 dias.
-- Orçamento: só WhatsApp. NUNCA dê preços.
-
-RESPOSTAS PADRÃO:
-- Prazo: "Prazo de [X] dias para [Y] unidades."
-- Fritura: "Retira já frito ou congelado. Fritura local custa extra."
-- Entrega: "Retirada ou app (Uber/99)."
-- Pagamento: "Pix ou cartão em até 3x."
-- Preço: "Consulte valores pelo WhatsApp."
-
-Se a pergunta não for sobre isso, responda: "Fale com atendente pelo WhatsApp."`;
+  function getRespostaLocal(mensagem) {
+    const msg = mensagem.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (msg.includes('prazo') || msg.includes('minimo') || msg.includes('dias')) return RESPOSTAS_LOCAIS.prazo;
+    if (msg.includes('fritura') || msg.includes('fritar') || msg.includes('quentinho')) return RESPOSTAS_LOCAIS.fritura;
+    if (msg.includes('entrega') || msg.includes('entregam') || msg.includes('frete') || msg.includes('uber')) return RESPOSTAS_LOCAIS.entrega;
+    if (msg.includes('pagamento') || msg.includes('cartao') || msg.includes('pix') || msg.includes('parcelar')) return RESPOSTAS_LOCAIS.pagamento;
+    if (msg.includes('cardapio') || msg.includes('sabores') || msg.includes('produtos')) return RESPOSTAS_LOCAIS.cardapio;
+    if (msg.includes('orcamento') || msg.includes('preco') || msg.includes('quanto custa') || msg.includes('valor')) return RESPOSTAS_LOCAIS.orcamento;
+    return RESPOSTAS_LOCAIS.default;
+  }
 
   const messagesDiv = document.getElementById('delinhaFloatMessages');
   const inputChat = document.getElementById('delinhaFloatInput');
@@ -430,44 +428,13 @@ Se a pergunta não for sobre isso, responda: "Fale com atendente pelo WhatsApp."
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
   }
 
-  async function sendFloatMessage() {
+  function sendFloatMessage() {
     const userText = inputChat.value.trim();
     if (!userText) return;
     addFloatMessage(userText, true);
     inputChat.value = '';
-
-    const typingDiv = document.createElement('div');
-    typingDiv.className = 'delinha-float-message delinha-float-bot';
-    typingDiv.innerHTML = '<div class="delinha-float-bubble">...</div>';
-    messagesDiv.appendChild(typingDiv);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-    try {
-      const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${MISTRAL_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: "mistral-tiny",
-          messages: [
-            { role: "system", content: SYSTEM_PROMPT },
-            { role: "user", content: userText }
-          ],
-          temperature: 0.2,
-          max_tokens: 200
-        })
-      });
-      if (!response.ok) throw new Error();
-      const data = await response.json();
-      const reply = data.choices[0].message.content;
-      messagesDiv.removeChild(typingDiv);
-      addFloatMessage(reply, false);
-    } catch (e) {
-      messagesDiv.removeChild(typingDiv);
-      addFloatMessage("Desculpe, estou com problemas. Fale conosco pelo WhatsApp (31) 99999-9999.", false);
-    }
+    const resposta = getRespostaLocal(userText);
+    setTimeout(() => addFloatMessage(resposta, false), 200);
   }
 
   sendBtnChat.addEventListener('click', sendFloatMessage);
