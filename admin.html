@@ -3,22 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel I Love Delicitas</title>
+  <title>Painel Administrativo - I Love Delicitas</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
-    body { background: #f1f5f9; font-family: system-ui, sans-serif; }
-    .card { background: white; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); padding: 1.5rem; margin-bottom: 1.5rem; }
-    .tab-active { background: #ae2f34 !important; color: white !important; }
+    body { background: #f1f5f9; font-family: system-ui, -apple-system, sans-serif; }
+    .card { background: white; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); padding: 1.5rem; margin-bottom: 1.5rem; transition: all 0.2s; }
+    .tab-active { background: #ae2f34 !important; color: white !important; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     .tab-inactive { background-color: #e2e8f0 !important; color: #1e293b !important; }
-    .btn-primary { background: #ae2f34; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500; }
-    .btn-primary:hover { background: #8b2327; }
+    .btn-primary { background: #ae2f34; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500; transition: all 0.2s; }
+    .btn-primary:hover { background: #8b2327; transform: translateY(-1px); }
+    .btn-success { background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500; }
+    .btn-success:hover { background: #059669; }
     .btn-outline { border: 1px solid #ae2f34; color: #ae2f34; background: white; border-radius: 0.5rem; padding: 0.25rem 0.75rem; font-size: 0.875rem; }
     .btn-outline:hover { background: #ae2f34; color: white; }
     input, textarea, select { border: 1px solid #cbd5e1; border-radius: 0.5rem; padding: 0.5rem; width: 100%; background: white; }
-    label { font-weight: 600; font-size: 0.875rem; display: block; margin-bottom: 0.25rem; color: #334155; }
-    .image-preview { width: 60px; height: 60px; object-fit: cover; border-radius: 0.5rem; margin-top: 0.5rem; border: 1px solid #e2e8f0; }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: #ae2f34; box-shadow: 0 0 0 3px rgba(174,47,52,0.1); }
+    label { font-weight: 600; font-size: 0.875rem; margin-bottom: 0.25rem; display: block; color: #334155; }
+    .image-preview { width: 60px; height: 60px; object-fit: cover; border-radius: 0.5rem; border: 1px solid #e2e8f0; margin-top: 0.5rem; }
     .status-badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; display: inline-block; }
     .status-success { background: #d1fae5; color: #065f46; }
     .status-error { background: #fee2e2; color: #991b1b; }
@@ -31,109 +34,154 @@
   <div class="bg-white rounded-xl shadow-md p-5 flex justify-between items-center mb-6">
     <div>
       <h1 class="text-2xl font-bold text-gray-800">Painel I Love Delicitas</h1>
-      <p class="text-sm text-gray-500 mt-1">Edite os dados – as alterações vão para o Supabase e para o site</p>
+      <p class="text-sm text-gray-500 mt-1">Gerencie todos os dados (offline + online)</p>
     </div>
-    <div id="status" class="status-badge status-warning">🔄 Conectando...</div>
+    <div id="status" class="status-badge status-warning">🔄 Carregando dados locais...</div>
   </div>
 
-  <!-- Abas (mesmo layout) -->
+  <!-- Abas -->
   <div class="flex flex-wrap gap-2 mb-6 border-b pb-2">
-    <button onclick="mostrarAba('config')" id="btnConfig" class="tab-active px-5 py-2.5 rounded-lg font-semibold">⚙️ Configurações</button>
-    <button onclick="mostrarAba('regras')" id="btnRegras" class="tab-inactive px-5 py-2.5 rounded-lg font-semibold">📊 Calculadora</button>
-    <button onclick="mostrarAba('cardapio')" id="btnCardapio" class="tab-inactive px-5 py-2.5 rounded-lg font-semibold">🍔 Cardápio</button>
-    <button onclick="mostrarAba('faq')" id="btnFaq" class="tab-inactive px-5 py-2.5 rounded-lg font-semibold">❓ FAQ</button>
-    <button onclick="mostrarAba('respostas')" id="btnRespostas" class="tab-inactive px-5 py-2.5 rounded-lg font-semibold">💬 Chat Delinha</button>
-    <button onclick="mostrarAba('redes')" id="btnRedes" class="tab-inactive px-5 py-2.5 rounded-lg font-semibold">🔗 Redes Sociais</button>
-    <button onclick="mostrarAba('horario')" id="btnHorario" class="tab-inactive px-5 py-2.5 rounded-lg font-semibold">⏰ Horário</button>
+    <button onclick="mostrarAba('config')" id="btnConfig" class="tab-active px-5 py-2.5 rounded-lg font-semibold flex items-center gap-2"><span class="material-icons">settings</span> Configurações</button>
+    <button onclick="mostrarAba('regras')" id="btnRegras" class="tab-inactive px-5 py-2.5 rounded-lg font-semibold flex items-center gap-2"><span class="material-icons">calculate</span> Calculadora</button>
+    <button onclick="mostrarAba('cardapio')" id="btnCardapio" class="tab-inactive px-5 py-2.5 rounded-lg font-semibold flex items-center gap-2"><span class="material-icons">restaurant_menu</span> Cardápio</button>
+    <button onclick="mostrarAba('faq')" id="btnFaq" class="tab-inactive px-5 py-2.5 rounded-lg font-semibold flex items-center gap-2"><span class="material-icons">help_outline</span> FAQ</button>
+    <button onclick="mostrarAba('respostas')" id="btnRespostas" class="tab-inactive px-5 py-2.5 rounded-lg font-semibold flex items-center gap-2"><span class="material-icons">chat</span> Chat Delinha</button>
+    <button onclick="mostrarAba('redes')" id="btnRedes" class="tab-inactive px-5 py-2.5 rounded-lg font-semibold flex items-center gap-2"><span class="material-icons">share</span> Redes Sociais</button>
+    <button onclick="mostrarAba('horario')" id="btnHorario" class="tab-inactive px-5 py-2.5 rounded-lg font-semibold flex items-center gap-2"><span class="material-icons">schedule</span> Horário</button>
   </div>
 
-  <!-- Abas (conteúdo) -->
-  <div id="abaConfig" class="card"><h2 class="text-xl font-bold mb-4">Configurações Gerais</h2><div id="configList" class="grid md:grid-cols-2 gap-4"></div><button onclick="salvarConfiguracoes()" class="btn-primary mt-4">💾 Salvar Configurações</button></div>
-  <div id="abaRegras" class="card hidden"><h2 class="text-xl font-bold mb-4">Regras da Calculadora</h2><div id="regrasList"></div><button onclick="salvarRegras()" class="btn-primary mt-4">💾 Salvar Regras</button></div>
-  <div id="abaCardapio" class="card hidden"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">Cardápio</h2><button onclick="novoProduto()" class="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm">+ Adicionar</button></div><div id="produtosList" class="space-y-2 max-h-[500px] overflow-y-auto"></div></div>
-  <div id="abaFaq" class="card hidden"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold">FAQ</h2><button onclick="novoFaq()" class="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm">+ Adicionar</button></div><div id="faqList" class="space-y-2 max-h-[500px] overflow-y-auto"></div></div>
-  <div id="abaRespostas" class="card hidden"><h2 class="text-xl font-bold mb-4">Respostas da Delinha</h2><div id="respostasList"></div><button onclick="salvarRespostas()" class="btn-primary mt-4">💾 Salvar Respostas</button></div>
-  <div id="abaRedes" class="card hidden"><h2 class="text-xl font-bold mb-4">Redes Sociais</h2><div id="redesList" class="grid md:grid-cols-2 gap-4"></div><button onclick="salvarRedes()" class="btn-primary mt-4">💾 Salvar Redes</button></div>
-  <div id="abaHorario" class="card hidden"><h2 class="text-xl font-bold mb-4">Horário</h2><div id="horarioList" class="grid md:grid-cols-2 gap-4"></div><button onclick="salvarHorario()" class="btn-primary mt-4">💾 Salvar Horário</button></div>
+  <!-- Configurações -->
+  <div id="abaConfig" class="card">
+    <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><span class="material-icons text-primary">settings</span> Configurações Gerais</h2>
+    <div id="configList" class="grid md:grid-cols-2 gap-4"></div>
+    <button onclick="salvarConfiguracoes()" class="btn-success mt-4 w-full md:w-auto px-8 py-2">💾 Salvar Configurações</button>
+  </div>
+
+  <!-- Regras da Calculadora -->
+  <div id="abaRegras" class="card hidden">
+    <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><span class="material-icons text-primary">calculate</span> Regras da Calculadora</h2>
+    <div id="regrasList" class="space-y-4"></div>
+    <button onclick="salvarRegras()" class="btn-success mt-4 w-full md:w-auto px-8 py-2">💾 Salvar Regras</button>
+  </div>
+
+  <!-- Cardápio -->
+  <div id="abaCardapio" class="card hidden">
+    <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold flex items-center gap-2"><span class="material-icons text-primary">restaurant_menu</span> Cardápio</h2><button onclick="novoProduto()" class="btn-primary px-4 py-2 text-sm">+ Adicionar Produto</button></div>
+    <div id="produtosList" class="space-y-2 max-h-[500px] overflow-y-auto"></div>
+  </div>
+
+  <!-- FAQ -->
+  <div id="abaFaq" class="card hidden">
+    <div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold flex items-center gap-2"><span class="material-icons text-primary">help_outline</span> Perguntas Frequentes</h2><button onclick="novoFaq()" class="btn-primary px-4 py-2 text-sm">+ Adicionar FAQ</button></div>
+    <div id="faqList" class="space-y-2 max-h-[500px] overflow-y-auto"></div>
+  </div>
+
+  <!-- Respostas do Chat -->
+  <div id="abaRespostas" class="card hidden">
+    <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><span class="material-icons text-primary">chat</span> Respostas da Delinha (Chat)</h2>
+    <div id="respostasList" class="space-y-3"></div>
+    <button onclick="salvarRespostas()" class="btn-success mt-4 w-full md:w-auto px-8 py-2">💾 Salvar Respostas</button>
+  </div>
+
+  <!-- Redes Sociais -->
+  <div id="abaRedes" class="card hidden">
+    <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><span class="material-icons text-primary">share</span> Redes Sociais</h2>
+    <div id="redesList" class="grid md:grid-cols-2 gap-4"></div>
+    <button onclick="salvarRedes()" class="btn-success mt-4 w-full md:w-auto px-8 py-2">💾 Salvar Redes</button>
+  </div>
+
+  <!-- Horário -->
+  <div id="abaHorario" class="card hidden">
+    <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><span class="material-icons text-primary">schedule</span> Horário de Funcionamento</h2>
+    <div id="horarioList" class="grid md:grid-cols-2 gap-4"></div>
+    <button onclick="salvarHorario()" class="btn-success mt-4 w-full md:w-auto px-8 py-2">💾 Salvar Horário</button>
+  </div>
 </div>
 
 <script>
-  // ========== CONFIG SUPABASE ==========
+  // ========== SUPABASE CONFIG ==========
   const SUPABASE_URL = 'https://sikiufknmldvkcxcktsn.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpa2l1ZmtubWxkdmtjeGNrdHNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNjYzMzgsImV4cCI6MjA5Njg0MjMzOH0.WKh9GdL3yJxnQqGUhLIeJNOm-7NRhgaMXW8vlkmEb0I';
   let supabase = null;
   let supabaseConectado = false;
 
-  // ========== DADOS PADRÃO (FALLBACK) ==========
+  // ========== DADOS LOCAIS COMPLETOS (FALLBACK) ==========
   let dados = {
-    config: [],
-    regras: [],
-    produtos: [],
-    faq: [],
-    respostas: [],
-    redes: [],
-    horario: []
+    config: [
+      { chave: 'logo_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo' },
+      { chave: 'banner_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY' },
+      { chave: 'titulo_hero', valor: 'A Celebração que o Seu Paladar Merece' },
+      { chave: 'subtitulo_hero', valor: 'Doces e salgados artesanais. Fritura no local, retirada ou frete por aplicativo. BH e região.' },
+      { chave: 'texto_retirada', valor: '📦 Retirada no local ou frete por aplicativo (consultar valor)' },
+      { chave: 'texto_pagamento', valor: '💳 Pagamento: Pix ou cartão de crédito em até 3x' },
+      { chave: 'texto_fritura', valor: '🍟 Serviço de fritura no local incluso por até 4 horas de evento. Consulte valores.' },
+      { chave: 'telefone', valor: '5531999999999' },
+      { chave: 'whatsapp_link', valor: 'https://wa.me/5531999999999' },
+      { chave: 'rodape_texto', valor: 'Gastronomia artesanal para festas em BH. Qualidade e sabor.' },
+      { chave: 'rodape_copyright', valor: '© 2025 I Love Delicitas' }
+    ],
+    regras: [
+      { tipo_evento: 'adulto', salgados_por_pessoa: 12, doces_por_pessoa: 6 },
+      { tipo_evento: 'infantil', salgados_por_pessoa: 10, doces_por_pessoa: 6 },
+      { tipo_evento: 'corporativo', salgados_por_pessoa: 8, doces_por_pessoa: 4 }
+    ],
+    produtos: [
+      { id: 1, nome: 'Coxinha de Frango', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Massa de batata com frango desfiado', imagem: 'https://via.placeholder.com/300x200' },
+      { id: 2, nome: 'Bolinha de Queijo', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Mussarela derretida', imagem: 'https://via.placeholder.com/300x200' },
+      { id: 3, nome: 'Empada de Frango', preco: 125, categoria: 'Assados', unidade: 'Cento (100 un.)', descricao: 'Massa podre tradicional', imagem: 'https://via.placeholder.com/300x200' }
+    ],
+    faq: [
+      { id: 1, pergunta: 'Qual o prazo mínimo para encomendar?', resposta: 'Recomendamos um prazo mínimo de 7 dias para encomendas menores e 15 dias para grandes eventos, garantindo a qualidade e frescor dos nossos produtos artesanais.', ordem: 1 },
+      { id: 2, pergunta: 'Como faço para reservar minha data?', resposta: 'A reserva é confirmada mediante o pagamento de um sinal ou aprovação total do orçamento via Pix ou Cartão.', ordem: 2 },
+      { id: 3, pergunta: 'Vocês entregam?', resposta: 'O cliente retira no local ou contrata um entregador por aplicativo (Uber, 99, etc.). Não temos frota própria.', ordem: 3 },
+      { id: 4, pergunta: 'Quais formas de pagamento são aceitas?', resposta: 'Aceitamos PIX e Cartão de Crédito em até 3 vezes.', ordem: 4 }
+    ],
+    respostas: [
+      { palavra_chave: 'prazo', resposta: 'Nosso prazo mínimo é de 72 horas. Para eventos grandes, recomendamos 15 dias de antecedência.' },
+      { palavra_chave: 'pagamento', resposta: 'Aceitamos Pix ou cartão de crédito em até 3 vezes.' },
+      { palavra_chave: 'entrega', resposta: 'Você retira no local ou contrata um frete por aplicativo. Não temos frota própria.' },
+      { palavra_chave: 'fritura', resposta: 'Fazemos a fritura no local do evento por até 4 horas. Consulte o valor pelo WhatsApp.' },
+      { palavra_chave: 'calcular', resposta: 'Use a calculadora do site para saber as quantidades. Depois me pergunte o valor total pelo WhatsApp :)' }
+    ],
+    redes: [
+      { plataforma: 'instagram', url: 'https://instagram.com/ilovedelicitas', ativo: true },
+      { plataforma: 'facebook', url: 'https://facebook.com/ilovedelicitas', ativo: true },
+      { plataforma: 'tiktok', url: 'https://tiktok.com/@ilovedelicitas', ativo: true }
+    ],
+    horario: [
+      { dia: 'segunda', abertura: '09:00', fechamento: '18:00', fechado: false },
+      { dia: 'terca', abertura: '09:00', fechamento: '18:00', fechado: false },
+      { dia: 'quarta', abertura: '09:00', fechamento: '18:00', fechado: false },
+      { dia: 'quinta', abertura: '09:00', fechamento: '18:00', fechado: false },
+      { dia: 'sexta', abertura: '09:00', fechamento: '18:00', fechado: false },
+      { dia: 'sabado', abertura: '09:00', fechamento: '16:00', fechado: false },
+      { dia: 'domingo', abertura: '', fechamento: '', fechado: true }
+    ]
   };
 
-  // Dados padrão completos (como no código anterior)
-  const CONFIG_PADRAO = [
-    { chave: 'logo_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo' },
-    { chave: 'banner_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY' },
-    { chave: 'titulo_hero', valor: 'A Celebração que o Seu Paladar Merece' },
-    { chave: 'subtitulo_hero', valor: 'Doces e salgados artesanais. Fritura no local, retirada ou frete por aplicativo. BH e região.' },
-    { chave: 'texto_retirada', valor: '📦 Retirada no local ou frete por aplicativo (consultar valor)' },
-    { chave: 'texto_pagamento', valor: '💳 Pagamento: Pix ou cartão de crédito em até 3x' },
-    { chave: 'texto_fritura', valor: '🍟 Serviço de fritura no local incluso por até 4 horas de evento. Consulte valores.' },
-    { chave: 'telefone', valor: '5531999999999' },
-    { chave: 'whatsapp_link', valor: 'https://wa.me/5531999999999' },
-    { chave: 'rodape_texto', valor: 'Gastronomia artesanal para festas em Belo Horizonte. Qualidade artesanal com a agilidade que você precisa.' },
-    { chave: 'rodape_copyright', valor: '© 2025 I Love Delicitas. Todos os direitos reservados.' },
-    { chave: 'cep_entrega', valor: '30000-000 a 35000-000 (Belo Horizonte)' },
-    { chave: 'mensagem_promocional', valor: '🎉 Reserve com 15 dias de antecedência e ganhe 5% de desconto!' }
-  ];
-  const REGRAS_PADRAO = [
-    { tipo_evento: 'adulto', salgados_por_pessoa: 12, doces_por_pessoa: 6 },
-    { tipo_evento: 'infantil', salgados_por_pessoa: 10, doces_por_pessoa: 6 },
-    { tipo_evento: 'corporativo', salgados_por_pessoa: 8, doces_por_pessoa: 4 }
-  ];
-  const RESPOSTAS_PADRAO = [
-    { palavra_chave: 'prazo', resposta: 'Nosso prazo mínimo é de 72 horas. Para eventos grandes, recomendamos 15 dias de antecedência.' },
-    { palavra_chave: 'pagamento', resposta: 'Aceitamos Pix ou cartão de crédito em até 3 vezes.' },
-    { palavra_chave: 'entrega', resposta: 'Você retira no local ou contrata um frete por aplicativo. Não temos frota própria.' },
-    { palavra_chave: 'fritura', resposta: 'Fazemos a fritura no local do evento por até 4 horas. Consulte o valor pelo WhatsApp.' },
-    { palavra_chave: 'calcular', resposta: 'Use a calculadora do site para saber as quantidades. Depois me pergunte o valor total pelo WhatsApp :)' }
-  ];
-  const REDES_PADRAO = [
-    { plataforma: 'instagram', url: 'https://instagram.com/ilovedelicitas', ativo: true },
-    { plataforma: 'facebook', url: 'https://facebook.com/ilovedelicitas', ativo: true },
-    { plataforma: 'tiktok', url: 'https://tiktok.com/@ilovedelicitas', ativo: true },
-    { plataforma: 'youtube', url: '', ativo: false },
-    { plataforma: 'twitter', url: '', ativo: false },
-    { plataforma: 'linkedin', url: '', ativo: false }
-  ];
-  const HORARIO_PADRAO = [
-    { dia: 'segunda', abertura: '09:00', fechamento: '18:00', fechado: false },
-    { dia: 'terca', abertura: '09:00', fechamento: '18:00', fechado: false },
-    { dia: 'quarta', abertura: '09:00', fechamento: '18:00', fechado: false },
-    { dia: 'quinta', abertura: '09:00', fechamento: '18:00', fechado: false },
-    { dia: 'sexta', abertura: '09:00', fechamento: '18:00', fechado: false },
-    { dia: 'sabado', abertura: '09:00', fechamento: '16:00', fechado: false },
-    { dia: 'domingo', abertura: '', fechamento: '', fechado: true }
-  ];
-
-  // ========== FUNÇÕES DE CARREGAMENTO ==========
+  // ========== TENTAR CONECTAR AO SUPABASE E CARREGAR DADOS REAIS ==========
   async function inicializar() {
     try {
       supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      await carregarDoSupabase();
-      supabaseConectado = true;
-      document.getElementById('status').innerHTML = '✅ Conectado ao Supabase';
-      document.getElementById('status').className = 'status-badge status-success';
+      // Tenta buscar um registro para testar conexão
+      const { error } = await supabase.from('configuracoes').select('*').limit(1);
+      if (error && error.message.includes('does not exist')) {
+        // Se a tabela não existe, ignora e mantém dados locais
+        console.warn('Tabelas não existem no Supabase. Usando dados locais.');
+        supabaseConectado = false;
+        document.getElementById('status').innerHTML = '⚠️ Modo offline - dados locais';
+        document.getElementById('status').className = 'status-badge status-warning';
+      } else {
+        supabaseConectado = true;
+        document.getElementById('status').innerHTML = '✅ Conectado ao Supabase';
+        document.getElementById('status').className = 'status-badge status-success';
+        await carregarDoSupabase();
+      }
     } catch(e) {
       supabaseConectado = false;
-      document.getElementById('status').innerHTML = '⚠️ Offline - dados locais';
+      document.getElementById('status').innerHTML = '⚠️ Modo offline - dados locais';
       document.getElementById('status').className = 'status-badge status-warning';
-      carregarDadosLocais();
+      console.warn('Erro ao conectar Supabase:', e);
     }
     renderizarTudo();
   }
@@ -149,197 +197,241 @@
         supabase.from('redes_sociais').select('*'),
         supabase.from('horario_funcionamento').select('*').order('id')
       ]);
-      dados.config = c.data && c.data.length ? c.data : [...CONFIG_PADRAO];
-      dados.regras = r.data && r.data.length ? r.data : [...REGRAS_PADRAO];
-      dados.produtos = p.data && p.data.length ? p.data : [];
-      dados.faq = f.data && f.data.length ? f.data : [];
-      dados.respostas = rs.data && rs.data.length ? rs.data : [...RESPOSTAS_PADRAO];
-      dados.redes = red.data && red.data.length ? red.data : [...REDES_PADRAO];
-      dados.horario = hor.data && hor.data.length ? hor.data : [...HORARIO_PADRAO];
-      
-      // Se não houver produtos ou faq, inserir padrão no banco
-      if (!p.data.length) await popularProdutosEPadrao();
-      if (!f.data.length) await popularFaqEPadrao();
-    } catch(e) { console.warn(e); carregarDadosLocais(); }
+      if (c.data && c.data.length) dados.config = c.data;
+      if (r.data && r.data.length) dados.regras = r.data;
+      if (p.data && p.data.length) dados.produtos = p.data;
+      if (f.data && f.data.length) dados.faq = f.data;
+      if (rs.data && rs.data.length) dados.respostas = rs.data;
+      if (red.data && red.data.length) dados.redes = red.data;
+      if (hor.data && hor.data.length) dados.horario = hor.data;
+    } catch(e) {
+      console.warn('Erro ao carregar dados do Supabase, mantendo locais:', e);
+    }
   }
 
-  async function popularProdutosEPadrao() {
-    const PRODUTOS_PADRAO = [
-      { nome: 'Coxinha de Frango', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Clássica massa de batata com frango desfiado.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY' },
-      { nome: 'Bolinha de Queijo', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Massa cremosa recheada com mussarela.', imagem: 'https://lh3.googleusercontent.com/aida/ADBb0ug3bpYC-14I1zO_V97PZ7Fim7BL0amfHX29RlVcu_yRoGkDYHJ6_a6VyX1aTBGbgIUVAV81BgXI_QR7AOMINpO8jDZV2BP8rLuWLJg2s1D0ksCnhzV_WitKxREq6N2SNyOUKF6jZ542g0MldwI4Y5SUhR9JtLWAWOy5HW9qUJ9cOUse400WRjrgjmh6gZfWTwkg2taQPrkh596wdx8ZTysbCSGrM0dpYMpOVmvmc5K_o5bYIOCxpUBkczA' }
-    ];
-    for(let p of PRODUTOS_PADRAO) await supabase.from('cardapio').insert(p);
-    dados.produtos = PRODUTOS_PADRAO;
-  }
-
-  async function popularFaqEPadrao() {
-    const FAQ_PADRAO = [
-      { pergunta: 'Qual o prazo mínimo para encomendar?', resposta: 'Recomendamos um prazo mínimo de 7 dias para encomendas menores e 15 dias para grandes eventos.', ordem: 1 },
-      { pergunta: 'Como faço para reservar minha data?', resposta: 'A reserva é confirmada mediante o pagamento de um sinal ou aprovação total do orçamento via Pix ou Cartão.', ordem: 2 },
-      { pergunta: 'Vocês entregam?', resposta: 'O cliente retira no local ou contrata um entregador por aplicativo (Uber, 99, etc.). Não temos frota própria.', ordem: 3 },
-      { pergunta: 'Quais formas de pagamento são aceitas?', resposta: 'Aceitamos PIX e Cartão de Crédito em até 3 vezes.', ordem: 4 }
-    ];
-    for(let f of FAQ_PADRAO) await supabase.from('faq').insert(f);
-    dados.faq = FAQ_PADRAO;
-  }
-
-  function carregarDadosLocais() {
-    dados.config = [...CONFIG_PADRAO];
-    dados.regras = [...REGRAS_PADRAO];
-    dados.respostas = [...RESPOSTAS_PADRAO];
-    dados.redes = [...REDES_PADRAO];
-    dados.horario = [...HORARIO_PADRAO];
-    if (!dados.produtos.length) dados.produtos = [];
-    if (!dados.faq.length) dados.faq = [];
-  }
-
-  // ========== RENDERIZAÇÃO (igual ao anterior) ==========
+  // ========== RENDERIZAÇÃO (SEMPRE COM DADOS LOCAIS, ATUALIZA SE SUPABASE) ==========
   function renderizarTudo() {
-    renderizarConfiguracoes(); renderizarRegras(); renderizarProdutos(); renderizarFaq(); renderizarRespostas(); renderizarRedes(); renderizarHorario();
+    renderizarConfiguracoes();
+    renderizarRegras();
+    renderizarProdutos();
+    renderizarFaq();
+    renderizarRespostas();
+    renderizarRedes();
+    renderizarHorario();
   }
+
   function renderizarConfiguracoes() {
-    const campos = ['logo_url','banner_url','titulo_hero','subtitulo_hero','texto_retirada','texto_pagamento','texto_fritura','telefone','whatsapp_link','rodape_texto','rodape_copyright','cep_entrega','mensagem_promocional'];
     const container = document.getElementById('configList');
+    const campos = ['logo_url','banner_url','titulo_hero','subtitulo_hero','texto_retirada','texto_pagamento','texto_fritura','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
     container.innerHTML = campos.map(chave => {
       const item = dados.config.find(c => c.chave === chave);
       return `<div><label>${chave}</label><input type="text" id="cfg_${chave}" value="${escapeHtml(item?.valor || '')}" class="w-full">${chave.includes('url') && item?.valor ? `<img src="${item.valor}" class="image-preview" onerror="this.style.display='none'">` : ''}</div>`;
     }).join('');
   }
+
   function renderizarRegras() {
     const container = document.getElementById('regrasList');
-    container.innerHTML = dados.regras.map(r => `<div class="border rounded-lg p-4 mb-4 bg-gray-50"><label class="font-bold capitalize">${r.tipo_evento}</label><div class="grid md:grid-cols-2 gap-4 mt-2"><div><label>Salgados/pessoa</label><input type="number" id="reg_${r.tipo_evento}_s" value="${r.salgados_por_pessoa}"></div><div><label>Doces/pessoa</label><input type="number" id="reg_${r.tipo_evento}_d" value="${r.doces_por_pessoa}"></div></div></div>`).join('');
+    container.innerHTML = dados.regras.map(r => `
+      <div class="border p-4 rounded">
+        <label class="font-bold capitalize">${r.tipo_evento}</label>
+        <div class="grid grid-cols-2 gap-4 mt-2">
+          <div><label>Salgados/pessoa</label><input type="number" id="reg_${r.tipo_evento}_s" value="${r.salgados_por_pessoa}" class="w-full"></div>
+          <div><label>Doces/pessoa</label><input type="number" id="reg_${r.tipo_evento}_d" value="${r.doces_por_pessoa}" class="w-full"></div>
+        </div>
+      </div>
+    `).join('');
   }
+
   function renderizarProdutos() {
     const container = document.getElementById('produtosList');
-    if(!dados.produtos.length) { container.innerHTML = '<div class="text-center py-8 text-gray-400">Nenhum produto</div>'; return; }
-    container.innerHTML = dados.produtos.map(p => `<div class="flex justify-between items-center border-b py-3"><div><span class="font-bold">${escapeHtml(p.nome)}</span> - R$ ${p.preco} - ${p.categoria}</div><div><button onclick="editarProduto(${p.id})" class="btn-outline">Editar</button> <button onclick="excluirProduto(${p.id})" class="text-red-600 ml-2">Excluir</button></div></div>`).join('');
+    if (!dados.produtos.length) { container.innerHTML = '<div class="text-center py-8 text-gray-400">Nenhum produto. Clique em "Adicionar".</div>'; return; }
+    container.innerHTML = dados.produtos.map(p => `
+      <div class="flex justify-between items-center border-b py-3">
+        <div><span class="font-bold">${escapeHtml(p.nome)}</span> - R$ ${p.preco} - ${p.categoria}</div>
+        <div><button onclick="editarProduto(${p.id})" class="btn-outline">Editar</button> <button onclick="excluirProduto(${p.id})" class="text-red-600 ml-2">Excluir</button></div>
+      </div>
+    `).join('');
   }
+
   function renderizarFaq() {
     const container = document.getElementById('faqList');
-    if(!dados.faq.length) { container.innerHTML = '<div class="text-center py-8 text-gray-400">Nenhuma FAQ</div>'; return; }
-    container.innerHTML = dados.faq.map(f => `<div class="flex justify-between items-center border-b py-3"><div><span class="font-bold">${escapeHtml(f.pergunta)}</span><br><span class="text-sm text-gray-500">${escapeHtml(f.resposta.substring(0,80))}...</span></div><div><button onclick="editarFaq(${f.id})" class="btn-outline">Editar</button> <button onclick="excluirFaq(${f.id})" class="text-red-600 ml-2">Excluir</button></div></div>`).join('');
+    if (!dados.faq.length) { container.innerHTML = '<div class="text-center py-8 text-gray-400">Nenhuma FAQ</div>'; return; }
+    container.innerHTML = dados.faq.map(f => `
+      <div class="flex justify-between items-center border-b py-3">
+        <div><span class="font-bold">${escapeHtml(f.pergunta)}</span><br><span class="text-sm text-gray-500">${escapeHtml(f.resposta.substring(0,80))}...</span></div>
+        <div><button onclick="editarFaq(${f.id})" class="btn-outline">Editar</button> <button onclick="excluirFaq(${f.id})" class="text-red-600 ml-2">Excluir</button></div>
+      </div>
+    `).join('');
   }
+
   function renderizarRespostas() {
     const container = document.getElementById('respostasList');
-    container.innerHTML = dados.respostas.map(r => `<div class="border p-3 rounded mb-3"><label class="font-bold">Palavra-chave: ${escapeHtml(r.palavra_chave)}</label><textarea id="resp_${r.palavra_chave}" class="w-full mt-1" rows="2">${escapeHtml(r.resposta)}</textarea></div>`).join('');
+    container.innerHTML = dados.respostas.map(r => `
+      <div class="border p-3 rounded mb-3">
+        <label class="font-bold">Palavra-chave: ${escapeHtml(r.palavra_chave)}</label>
+        <textarea id="resp_${r.palavra_chave}" class="w-full mt-1" rows="2">${escapeHtml(r.resposta)}</textarea>
+      </div>
+    `).join('');
   }
+
   function renderizarRedes() {
     const plataformas = ['instagram','facebook','tiktok','youtube','twitter','linkedin'];
     const container = document.getElementById('redesList');
-    container.innerHTML = plataformas.map(plat => { const item = dados.redes.find(r=>r.plataforma===plat); return `<div><label class="capitalize">${plat}</label><input type="url" id="rede_${plat}" value="${item?.url || ''}" placeholder="https://${plat}.com/..." class="w-full"></div>`; }).join('');
-  }
-  function renderizarHorario() {
-    const dias = ['segunda','terca','quarta','quinta','sexta','sabado','domingo'], labels = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
-    const container = document.getElementById('horarioList');
-    container.innerHTML = dias.map((dia,idx) => { const item = dados.horario.find(h=>h.dia===dia); return `<div class="border p-3 rounded"><label class="font-bold">${labels[idx]}</label><div class="grid grid-cols-2 gap-2 mt-1"><div><label class="text-xs">Abertura</label><input type="time" id="abertura_${dia}" value="${item?.abertura || '09:00'}"></div><div><label class="text-xs">Fechamento</label><input type="time" id="fechamento_${dia}" value="${item?.fechamento || '18:00'}"></div></div><label class="flex items-center gap-2 mt-2"><input type="checkbox" id="fechado_${dia}" ${item?.fechado ? 'checked' : ''}> Fechado</label></div>`; }).join('');
-    dias.forEach(dia => { const cb = document.getElementById(`fechado_${dia}`); if(cb) cb.addEventListener('change', e => { document.getElementById(`abertura_${dia}`).disabled = e.target.checked; document.getElementById(`fechamento_${dia}`).disabled = e.target.checked; }); });
+    container.innerHTML = plataformas.map(plat => {
+      const item = dados.redes.find(r => r.plataforma === plat);
+      return `<div><label class="capitalize">${plat}</label><input type="url" id="rede_${plat}" value="${item?.url || ''}" placeholder="https://${plat}.com/..." class="w-full"></div>`;
+    }).join('');
   }
 
-  // ========== FUNÇÕES DE SALVAMENTO (SUPABASE + LOCAL) ==========
+  function renderizarHorario() {
+    const dias = ['segunda','terca','quarta','quinta','sexta','sabado','domingo'];
+    const labels = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
+    const container = document.getElementById('horarioList');
+    container.innerHTML = dias.map((dia, idx) => {
+      const item = dados.horario.find(h => h.dia === dia);
+      return `<div class="border p-3 rounded"><label class="font-bold">${labels[idx]}</label><div class="grid grid-cols-2 gap-2 mt-1"><div><label class="text-xs">Abertura</label><input type="time" id="abertura_${dia}" value="${item?.abertura || '09:00'}"></div><div><label class="text-xs">Fechamento</label><input type="time" id="fechamento_${dia}" value="${item?.fechamento || '18:00'}"></div></div><label class="flex items-center gap-2 mt-2"><input type="checkbox" id="fechado_${dia}" ${item?.fechado ? 'checked' : ''}> Fechado</label></div>`;
+    }).join('');
+    dias.forEach(dia => {
+      const cb = document.getElementById(`fechado_${dia}`);
+      if(cb) cb.addEventListener('change', e => {
+        document.getElementById(`abertura_${dia}`).disabled = e.target.checked;
+        document.getElementById(`fechamento_${dia}`).disabled = e.target.checked;
+      });
+    });
+  }
+
+  // ========== FUNÇÕES DE SALVAMENTO (LOCAL + SUPABASE) ==========
   async function salvarConfiguracoes() {
-    const campos = ['logo_url','banner_url','titulo_hero','subtitulo_hero','texto_retirada','texto_pagamento','texto_fritura','telefone','whatsapp_link','rodape_texto','rodape_copyright','cep_entrega','mensagem_promocional'];
-    for(let chave of campos) {
+    const campos = ['logo_url','banner_url','titulo_hero','subtitulo_hero','texto_retirada','texto_pagamento','texto_fritura','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
+    for (let chave of campos) {
       const valor = document.getElementById(`cfg_${chave}`).value;
       let idx = dados.config.findIndex(c => c.chave === chave);
-      if(idx>=0) dados.config[idx].valor = valor;
+      if (idx >= 0) dados.config[idx].valor = valor;
       else dados.config.push({ chave, valor });
-      if(supabaseConectado) await supabase.from('configuracoes').upsert({ chave, valor }, { onConflict: 'chave' });
+      if (supabaseConectado) await supabase.from('configuracoes').upsert({ chave, valor }, { onConflict: 'chave' });
     }
     alert('Configurações salvas!');
+    if (!supabaseConectado) alert('⚠️ Modo offline – alterações salvas apenas localmente.');
   }
+
   async function salvarRegras() {
-    for(let r of dados.regras) {
+    for (let r of dados.regras) {
       const s = parseInt(document.getElementById(`reg_${r.tipo_evento}_s`).value);
       const d = parseInt(document.getElementById(`reg_${r.tipo_evento}_d`).value);
-      r.salgados_por_pessoa = s; r.doces_por_pessoa = d;
-      if(supabaseConectado) await supabase.from('regras_calculadora').upsert({ tipo_evento: r.tipo_evento, salgados_por_pessoa: s, doces_por_pessoa: d }, { onConflict: 'tipo_evento' });
+      r.salgados_por_pessoa = s;
+      r.doces_por_pessoa = d;
+      if (supabaseConectado) await supabase.from('regras_calculadora').upsert({ tipo_evento: r.tipo_evento, salgados_por_pessoa: s, doces_por_pessoa: d }, { onConflict: 'tipo_evento' });
     }
     alert('Regras salvas!');
   }
+
   async function salvarRespostas() {
-    for(let r of dados.respostas) {
+    for (let r of dados.respostas) {
       const nova = document.getElementById(`resp_${r.palavra_chave}`).value;
       r.resposta = nova;
-      if(supabaseConectado) await supabase.from('respostas_delinha').upsert({ palavra_chave: r.palavra_chave, resposta: nova }, { onConflict: 'palavra_chave' });
+      if (supabaseConectado) await supabase.from('respostas_delinha').upsert({ palavra_chave: r.palavra_chave, resposta: nova }, { onConflict: 'palavra_chave' });
     }
     alert('Respostas salvas!');
   }
+
   async function salvarRedes() {
     const plataformas = ['instagram','facebook','tiktok','youtube','twitter','linkedin'];
-    for(let plat of plataformas) {
+    for (let plat of plataformas) {
       const url = document.getElementById(`rede_${plat}`).value;
-      let idx = dados.redes.findIndex(r=>r.plataforma===plat);
-      if(idx>=0) dados.redes[idx].url = url;
+      let idx = dados.redes.findIndex(r => r.plataforma === plat);
+      if (idx >= 0) dados.redes[idx].url = url;
       else dados.redes.push({ plataforma: plat, url, ativo: true });
-      if(supabaseConectado) await supabase.from('redes_sociais').upsert({ plataforma: plat, url, icone: plat, ativo: true }, { onConflict: 'plataforma' });
+      if (supabaseConectado) await supabase.from('redes_sociais').upsert({ plataforma: plat, url, icone: plat, ativo: true }, { onConflict: 'plataforma' });
     }
     alert('Redes sociais salvas!');
   }
+
   async function salvarHorario() {
     const dias = ['segunda','terca','quarta','quinta','sexta','sabado','domingo'];
-    for(let dia of dias) {
+    for (let dia of dias) {
       const fechado = document.getElementById(`fechado_${dia}`).checked;
       const abertura = fechado ? null : document.getElementById(`abertura_${dia}`).value;
       const fechamento = fechado ? null : document.getElementById(`fechamento_${dia}`).value;
-      let idx = dados.horario.findIndex(h=>h.dia===dia);
-      if(idx>=0) { dados.horario[idx].abertura = abertura; dados.horario[idx].fechamento = fechamento; dados.horario[idx].fechado = fechado; }
+      let idx = dados.horario.findIndex(h => h.dia === dia);
+      if (idx >= 0) { dados.horario[idx].abertura = abertura; dados.horario[idx].fechamento = fechamento; dados.horario[idx].fechado = fechado; }
       else dados.horario.push({ dia, abertura, fechamento, fechado });
-      if(supabaseConectado) await supabase.from('horario_funcionamento').upsert({ dia, abertura, fechamento, fechado }, { onConflict: 'dia' });
+      if (supabaseConectado) await supabase.from('horario_funcionamento').upsert({ dia, abertura, fechamento, fechado }, { onConflict: 'dia' });
     }
     alert('Horário salvo!');
   }
 
   // ========== CRUD PRODUTOS ==========
   async function novoProduto() {
-    const nome = prompt('Nome do produto'); if(!nome) return;
-    const preco = parseFloat(prompt('Preço')); if(isNaN(preco)) return;
-    const categoria = prompt('Categoria', 'Fritos');
-    const unidade = prompt('Unidade', 'Cento');
+    const nome = prompt('Nome do produto'); if (!nome) return;
+    const preco = parseFloat(prompt('Preço (R$)')); if (isNaN(preco)) return;
+    const categoria = prompt('Categoria (Fritos/Assados/Lanches/Doces)', 'Fritos');
+    const unidade = prompt('Unidade (ex: Cento)', 'Cento');
     const descricao = prompt('Descrição', '');
     const imagem = prompt('URL da imagem', 'https://via.placeholder.com/300x200');
-    const novoId = dados.produtos.length ? Math.max(...dados.produtos.map(p=>p.id)) + 1 : 1;
+    const novoId = dados.produtos.length ? Math.max(...dados.produtos.map(p => p.id)) + 1 : 1;
     const novo = { id: novoId, nome, preco, categoria, unidade, descricao, imagem };
-    if(supabaseConectado) await supabase.from('cardapio').insert([{ nome, preco, categoria, unidade, descricao, imagem }]);
     dados.produtos.push(novo);
+    if (supabaseConectado) await supabase.from('cardapio').insert([{ nome, preco, categoria, unidade, descricao, imagem }]);
     renderizarProdutos();
   }
   async function editarProduto(id) {
-    const p = dados.produtos.find(x=>x.id==id); if(!p) return;
-    const nome = prompt('Nome', p.nome); const preco = parseFloat(prompt('Preço', p.preco));
-    const categoria = prompt('Categoria', p.categoria); const unidade = prompt('Unidade', p.unidade);
-    const descricao = prompt('Descrição', p.descricao); const imagem = prompt('URL da imagem', p.imagem);
-    if(nome) p.nome = nome; if(!isNaN(preco)) p.preco = preco; if(categoria) p.categoria = categoria;
-    if(unidade) p.unidade = unidade; if(descricao) p.descricao = descricao; if(imagem) p.imagem = imagem;
-    if(supabaseConectado) await supabase.from('cardapio').update(p).eq('id', id);
+    const p = dados.produtos.find(x => x.id == id);
+    if (!p) return;
+    const nome = prompt('Nome', p.nome); if (nome) p.nome = nome;
+    const preco = parseFloat(prompt('Preço', p.preco)); if (!isNaN(preco)) p.preco = preco;
+    const categoria = prompt('Categoria', p.categoria); if (categoria) p.categoria = categoria;
+    const unidade = prompt('Unidade', p.unidade); if (unidade) p.unidade = unidade;
+    const descricao = prompt('Descrição', p.descricao); if (descricao) p.descricao = descricao;
+    const imagem = prompt('URL da imagem', p.imagem); if (imagem) p.imagem = imagem;
+    if (supabaseConectado) await supabase.from('cardapio').update(p).eq('id', id);
     renderizarProdutos();
   }
   async function excluirProduto(id) {
-    if(confirm('Excluir?')) { if(supabaseConectado) await supabase.from('cardapio').delete().eq('id', id); dados.produtos = dados.produtos.filter(p=>p.id!==id); renderizarProdutos(); }
+    if (confirm('Excluir permanentemente?')) {
+      dados.produtos = dados.produtos.filter(p => p.id !== id);
+      if (supabaseConectado) await supabase.from('cardapio').delete().eq('id', id);
+      renderizarProdutos();
+    }
   }
 
   // ========== CRUD FAQ ==========
   async function novoFaq() {
-    const pergunta = prompt('Pergunta'); if(!pergunta) return;
-    const resposta = prompt('Resposta'); if(!resposta) return;
-    const novoId = dados.faq.length ? Math.max(...dados.faq.map(f=>f.id)) + 1 : 1;
-    const novo = { id: novoId, pergunta, resposta, ordem: dados.faq.length+1 };
-    if(supabaseConectado) await supabase.from('faq').insert([{ pergunta, resposta, ordem: dados.faq.length+1 }]);
+    const pergunta = prompt('Pergunta'); if (!pergunta) return;
+    const resposta = prompt('Resposta'); if (!resposta) return;
+    const novoId = dados.faq.length ? Math.max(...dados.faq.map(f => f.id)) + 1 : 1;
+    const novo = { id: novoId, pergunta, resposta, ordem: dados.faq.length + 1 };
     dados.faq.push(novo);
+    if (supabaseConectado) await supabase.from('faq').insert([{ pergunta, resposta, ordem: dados.faq.length + 1 }]);
     renderizarFaq();
   }
   async function editarFaq(id) {
-    const f = dados.faq.find(x=>x.id==id); if(!f) return;
-    const pergunta = prompt('Pergunta', f.pergunta); const resposta = prompt('Resposta', f.resposta);
-    if(pergunta) f.pergunta = pergunta; if(resposta) f.resposta = resposta;
-    if(supabaseConectado) await supabase.from('faq').update({ pergunta, resposta }).eq('id', id);
+    const f = dados.faq.find(x => x.id == id);
+    if (!f) return;
+    const pergunta = prompt('Pergunta', f.pergunta); if (pergunta) f.pergunta = pergunta;
+    const resposta = prompt('Resposta', f.resposta); if (resposta) f.resposta = resposta;
+    if (supabaseConectado) await supabase.from('faq').update({ pergunta, resposta }).eq('id', id);
     renderizarFaq();
   }
   async function excluirFaq(id) {
-    if(confirm('Excluir?')) { if(supabaseConectado) await supabase.from('faq').delete().eq('id', id); dados.faq = dados.faq.filter(f=>f.id!==id); renderizarFaq(); }
+    if (confirm('Excluir esta FAQ?')) {
+      dados.faq = dados.faq.filter(f => f.id !== id);
+      if (supabaseConectado) await supabase.from('faq').delete().eq('id', id);
+      renderizarFaq();
+    }
   }
 
-  function mostrarAba(aba) { const abas = ['config','regras','cardapio','faq','respostas','redes','horario']; for(let a of abas) { document.getElementById(`aba${a.charAt(0).toUpperCase()+a.slice(1)}`).classList.add('hidden'); document.getElementById(`btn${a.charAt(0).toUpperCase()+a.slice(1)}`).classList.remove('tab-active'); document.getElementById(`btn${a.charAt(0).toUpperCase()+a.slice(1)}`).classList.add('tab-inactive'); } document.getElementById(`aba${aba.charAt(0).toUpperCase()+aba.slice(1)}`).classList.remove('hidden'); document.getElementById(`btn${aba.charAt(0).toUpperCase()+aba.slice(1)}`).classList.add('tab-active'); }
-  function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => m==='&'? '&amp;' : (m==='<'? '&lt;' : '&gt;')); }
+  function mostrarAba(aba) {
+    const abas = ['config','regras','cardapio','faq','respostas','redes','horario'];
+    for (let a of abas) {
+      document.getElementById(`aba${a.charAt(0).toUpperCase() + a.slice(1)}`).classList.add('hidden');
+      document.getElementById(`btn${a.charAt(0).toUpperCase() + a.slice(1)}`).classList.remove('tab-active');
+      document.getElementById(`btn${a.charAt(0).toUpperCase() + a.slice(1)}`).classList.add('tab-inactive');
+    }
+    document.getElementById(`aba${aba.charAt(0).toUpperCase() + aba.slice(1)}`).classList.remove('hidden');
+    document.getElementById(`btn${aba.charAt(0).toUpperCase() + aba.slice(1)}`).classList.add('tab-active');
+  }
+
+  function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;')); }
 
   inicializar();
 </script>
