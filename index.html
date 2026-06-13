@@ -278,7 +278,7 @@
     </div>
     <div class="delinha-ia-input-area">
       <input type="text" id="delinhaIaInput" placeholder="Digite sua pergunta...">
-      <button id="delinhaIaSendBtn">Enviar</button>
+      <button type="button" id="delinhaIaSendBtn">Enviar</button>
     </div>
   </div>
 
@@ -460,7 +460,7 @@ Se a pergunta não for sobre isso, responda: "Fale com atendente pelo WhatsApp."
                 'Authorization': `Bearer ${MISTRAL_API_KEY}`
               },
               body: JSON.stringify({
-                model: "mistral-tiny",
+                model: "open-mistral-7b",
                 messages: [
                   { role: "system", content: SYSTEM_PROMPT },
                   { role: "user", content: userText }
@@ -481,7 +481,7 @@ Se a pergunta não for sobre isso, responda: "Fale com atendente pelo WhatsApp."
         }
 
         sendBtn.addEventListener('click', sendIaMessage);
-        input.addEventListener('keypress', (e) => {
+        input.addEventListener('keydown', (e) => {
           if (e.key === 'Enter') sendIaMessage();
         });
 
