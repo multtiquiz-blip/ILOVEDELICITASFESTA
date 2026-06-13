@@ -282,7 +282,7 @@
     </div>
   </div>
 
-  <!-- Script do Chat IA (executado após o widget estar no DOM) -->
+  <!-- Script do Chat IA (executado após o widget) -->
   <script>
     (function() {
       const MISTRAL_API_KEY = "zenWbc5hjQOrmcJtC990Sh31ae5V5UM4";
@@ -359,7 +359,7 @@ Se a pergunta não for sobre isso, responda: "Fale com atendente pelo WhatsApp."
           addMessage(reply, false);
         } catch (e) {
           messagesDiv.removeChild(typingDiv);
-          addMessage("Desculpe, estou com problemas. Fale conosco pelo WhatsApp (31) 99999-9999.", false);
+          addMessage("Desculpe, estou com problemas. Fale conosco pelo WhatsApp (31) 99572-2258.", false);
         }
       }
 
@@ -381,7 +381,6 @@ Se a pergunta não for sobre isso, responda: "Fale com atendente pelo WhatsApp."
 
   <!-- Script principal do site -->
   <script>
-    // ========== SUPABASE E FUNÇÕES DO SITE ==========
     const SUPABASE_URL = 'https://sikiufknmldvkcxcktsn.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpa2l1ZmtubWxkdmtjeGNrdHNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNjYzMzgsImV4cCI6MjA5Njg0MjMzOH0.WKh9GdL3yJxnQqGUhLIeJNOm-7NRhgaMXW8vlkmEb0I';
     let supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -445,7 +444,6 @@ Se a pergunta não for sobre isso, responda: "Fale com atendente pelo WhatsApp."
 
     function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => m==='&'? '&amp;' : (m==='<'? '&lt;' : '&gt;')); }
 
-    // ========== FUNÇÕES DA CALCULADORA E CARRINHO ==========
     function setCalcVar(key, val) {
       calcState[key] = val;
       if(key === 'type') {
