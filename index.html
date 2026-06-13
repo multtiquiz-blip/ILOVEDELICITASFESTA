@@ -176,13 +176,13 @@
   </div>
 
   <!-- MODAL LEAD -->
-  <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 modal-backdrop" id="lead-modal">
-    <div class="bg-surface w-full max-w-md rounded-xl shadow-2xl overflow-hidden animate-slide-in">
+  <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 modal-backdrop" id="lead-modal" onclick="closeLeadModalOnBackdrop(event)">
+    <div class="bg-surface w-full max-w-md rounded-xl shadow-2xl overflow-hidden animate-slide-in" onclick="event.stopPropagation()">
       <div class="p-6 bg-surface-container-highest flex justify-between items-center border-b border-outline-variant/30"><h3 class="font-headline font-semibold text-lg text-on-surface">Só mais um passo!</h3><button class="text-on-surface-variant hover:text-primary transition-colors" onclick="closeLeadModal()"><span class="material-symbols-outlined">close</span></button></div>
       <form class="p-6 space-y-4" id="lead-form">
         <div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">Seu Nome</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" name="name" required type="text"></div>
         <div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">WhatsApp</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" name="whatsapp" placeholder="(00) 00000-0000" required type="tel"></div>
-        <div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">Data da Festa</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" name="date" required type="date"></div><div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">Convidados</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" id="modal-guests" name="guests" required type="number"></div></div>
+        <div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">Data da Festa</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" name="date" required type="date"></div><div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">Convidados</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" id="modal-guests" name="guests" required type="number" min="1"></div></div>
         <button class="w-full bg-primary text-on-primary py-4 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2 mt-4" type="submit"><span class="material-symbols-outlined">whatsapp</span> Enviar para Delinha</button>
         <p class="text-[10px] text-on-surface-variant text-center opacity-70">Seus dados estão seguros conosco.</p>
       </form>
@@ -271,7 +271,7 @@
   <div class="delinha-ia-widget" id="delinhaIaWidget">
     <div class="delinha-ia-header" id="delinhaIaHeader">
       <h3><span>🤖</span> Delinha IA (Assistente)</h3>
-      <span id="deliniaIaToggle">▼</span>
+      <span id="delinhaIaToggle">▼</span>
     </div>
     <div class="delinha-ia-messages" id="delinhaIaMessages">
       <div class="delinha-ia-message delinha-ia-bot"><div class="delinha-ia-bubble">Olá! Sou a Delinha com inteligência artificial. Como posso ajudar você hoje? 🎉</div></div>
@@ -282,31 +282,9 @@
     </div>
   </div>
 
-  <!-- Script do Chat IA (agora chamando NOSSA API) -->
+  <!-- Script do Chat IA (com fallback local) -->
   <script>
     (function() {
-      const SYSTEM_PROMPT = `Você é a Delinha, assistente virtual da I Love Delicitas.
-REGRAS:
-- Responda SOMENTE com as informações abaixo. NUNCA invente.
-- Se não souber, diga: "Não sei. Fale com atendente pelo WhatsApp (31) 99999-9999."
-
-FATOS:
-- Produtos: salgados, doces, mini lanches. NÃO temos bolo, refrigerantes ou bebidas.
-- Fritura: cliente retira já frito ou congelado (mesmo preço). Fritura no local tem custo extra (orçamento separado).
-- Entrega: sem frota. Cliente retira ou chama Uber/99.
-- Pagamento: Pix ou cartão em até 3x. Sinal 50%.
-- Prazos: até 300 un = 72h; 300-800 = 7 dias; +800 ou fritura local = 15 dias.
-- Orçamento: só WhatsApp. NUNCA dê preços.
-
-RESPOSTAS PADRÃO:
-- Prazo: "Prazo de [X] dias para [Y] unidades."
-- Fritura: "Retira já frito ou congelado. Fritura local custa extra."
-- Entrega: "Retirada ou app (Uber/99)."
-- Pagamento: "Pix ou cartão em até 3x."
-- Preço: "Consulte valores pelo WhatsApp."
-
-Se a pergunta não for sobre isso, responda: "Fale com atendente pelo WhatsApp."`;
-
       const messagesDiv = document.getElementById('delinhaIaMessages');
       const input = document.getElementById('delinhaIaInput');
       const sendBtn = document.getElementById('delinhaIaSendBtn');
@@ -322,6 +300,18 @@ Se a pergunta não for sobre isso, responda: "Fale com atendente pelo WhatsApp."
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
       }
 
+      // Fallback local com base no SYSTEM_PROMPT
+      function respostaLocal(msg) {
+        const lower = msg.toLowerCase();
+        if (lower.includes('prazo')) return "Prazo: até 300 un = 72h; 300-800 = 7 dias; +800 = 15 dias.";
+        if (lower.includes('fritura')) return "Retira já frito ou congelado. Fritura local tem custo extra.";
+        if (lower.includes('entrega') || lower.includes('uber')) return "Retirada ou app (Uber/99).";
+        if (lower.includes('pagamento') || lower.includes('pix')) return "Pix ou cartão em até 3x. Sinal 50%.";
+        if (lower.includes('preço') || lower.includes('valor')) return "Consulte valores pelo WhatsApp.";
+        if (lower.includes('bolo') || lower.includes('bebida')) return "Não temos bolo, refrigerantes ou bebidas.";
+        return "Fale com atendente pelo WhatsApp (31) 99999-9999.";
+      }
+
       async function sendIaMessage() {
         const userText = input.value.trim();
         if (!userText) return;
@@ -335,20 +325,22 @@ Se a pergunta não for sobre isso, responda: "Fale com atendente pelo WhatsApp."
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
         try {
-          // Agora chamamos nosso endpoint seguro no Vercel
           const response = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: userText })
           });
-          if (!response.ok) throw new Error();
+          if (!response.ok) throw new Error('API error');
           const data = await response.json();
           const reply = data.reply;
           messagesDiv.removeChild(typingDiv);
           addMessage(reply, false);
         } catch (e) {
+          console.error('Erro na API:', e);
           messagesDiv.removeChild(typingDiv);
-          addMessage("Desculpe, estou com problemas. Fale conosco pelo WhatsApp (31) 99999-9999.", false);
+          // Fallback local
+          const fallback = respostaLocal(userText);
+          addMessage(fallback, false);
         }
       }
 
@@ -358,7 +350,7 @@ Se a pergunta não for sobre isso, responda: "Fale com atendente pelo WhatsApp."
       });
 
       let minimized = false;
-      const toggleBtn = document.getElementById('deliniaIaToggle');
+      const toggleBtn = document.getElementById('delinhaIaToggle');
       const widget = document.getElementById('delinhaIaWidget');
       toggleBtn.addEventListener('click', () => {
         minimized = !minimized;
@@ -368,131 +360,284 @@ Se a pergunta não for sobre isso, responda: "Fale com atendente pelo WhatsApp."
     })();
   </script>
 
-  <!-- Script principal do site -->
+  <!-- Script principal do site (com correções) -->
   <script>
-    const SUPABASE_URL = 'https://sikiufknmldvkcxcktsn.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpa2l1ZmtubWxkdmtjeGNrdHNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNjYzMzgsImV4cCI6MjA5Njg0MjMzOH0.WKh9GdL3yJxnQqGUhLIeJNOm-7NRhgaMXW8vlkmEb0I';
-    let supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    
-    let cart = [];
-    let calcState = { type: 'adult', guests: 50, duration: 'med' };
-    let CATALOG_DATA = [];
-    let CONFIG = {};
+    (function() {
+      const SUPABASE_URL = 'https://sikiufknmldvkcxcktsn.supabase.co';
+      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpa2l1ZmtubWxkdmtjeGNrdHNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNjYzMzgsImV4cCI6MjA5Njg0MjMzOH0.WKh9GdL3yJxnQqGUhLIeJNOm-7NRhgaMXW8vlkmEb0I';
+      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      
+      let cart = [];
+      let calcState = { type: 'adult', guests: 50, duration: 'med' };
+      let CATALOG_DATA = [];
+      let CONFIG = {};
 
-    const CATALOG_LOCAL = [
-      { nome: 'Coxinha de Frango', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Clássica massa de batata com frango desfiado temperado.', imagem: 'https://via.placeholder.com/300x200?text=Coxinha' },
-      { nome: 'Bolinha de Queijo', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Massa cremosa recheada com mussarela selecionada.', imagem: 'https://via.placeholder.com/300x200?text=Bolinha' },
-      { nome: 'Empada de Frango', preco: 125, categoria: 'Assados', unidade: 'Cento (100 un.)', descricao: 'Massa podre tradicional com recheio cremoso.', imagem: 'https://via.placeholder.com/300x200?text=Empada' },
-      { nome: 'Quibe', preco: 90, categoria: 'Assados', unidade: 'Cento (100 un.)', descricao: 'Quibe tradicional de carne moída com especiarias.', imagem: 'https://via.placeholder.com/300x200?text=Quibe' },
-      { nome: 'Risole de Milho', preco: 95, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Massa cremosa de milho com recheio cremoso.', imagem: 'https://via.placeholder.com/300x200?text=Risole' },
-      { nome: 'Mini Hambúrguer', preco: 140, categoria: 'Lanches', unidade: 'Cento (100 un.)', descricao: 'Mini pão brioche com hambúrguer artesanal e queijo.', imagem: 'https://via.placeholder.com/300x200?text=Hamburguer' },
-      { nome: 'Brigadeiro', preco: 70, categoria: 'Doces', unidade: 'Cento (100 un.)', descricao: 'Brigadeiro gourmet com granulado belga.', imagem: 'https://via.placeholder.com/300x200?text=Brigadeiro' },
-      { nome: 'Beijinho', preco: 70, categoria: 'Doces', unidade: 'Cento (100 un.)', descricao: 'Beijinho cremoso com coco ralado fresco.', imagem: 'https://via.placeholder.com/300x200?text=Beijinho' }
-    ];
+      const CATALOG_LOCAL = [
+        { nome: 'Coxinha de Frango', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Clássica massa de batata com frango desfiado temperado.', imagem: 'https://via.placeholder.com/300x200?text=Coxinha' },
+        { nome: 'Bolinha de Queijo', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Massa cremosa recheada com mussarela selecionada.', imagem: 'https://via.placeholder.com/300x200?text=Bolinha' },
+        { nome: 'Empada de Frango', preco: 125, categoria: 'Assados', unidade: 'Cento (100 un.)', descricao: 'Massa podre tradicional com recheio cremoso.', imagem: 'https://via.placeholder.com/300x200?text=Empada' },
+        { nome: 'Quibe', preco: 90, categoria: 'Assados', unidade: 'Cento (100 un.)', descricao: 'Quibe tradicional de carne moída com especiarias.', imagem: 'https://via.placeholder.com/300x200?text=Quibe' },
+        { nome: 'Risole de Milho', preco: 95, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Massa cremosa de milho com recheio cremoso.', imagem: 'https://via.placeholder.com/300x200?text=Risole' },
+        { nome: 'Mini Hambúrguer', preco: 140, categoria: 'Lanches', unidade: 'Cento (100 un.)', descricao: 'Mini pão brioche com hambúrguer artesanal e queijo.', imagem: 'https://via.placeholder.com/300x200?text=Hamburguer' },
+        { nome: 'Brigadeiro', preco: 70, categoria: 'Doces', unidade: 'Cento (100 un.)', descricao: 'Brigadeiro gourmet com granulado belga.', imagem: 'https://via.placeholder.com/300x200?text=Brigadeiro' },
+        { nome: 'Beijinho', preco: 70, categoria: 'Doces', unidade: 'Cento (100 un.)', descricao: 'Beijinho cremoso com coco ralado fresco.', imagem: 'https://via.placeholder.com/300x200?text=Beijinho' }
+      ];
 
-    async function carregarConfiguracoes() {
-      const { data } = await supabase.from('configuracoes').select('*');
-      if(data) {
-        data.forEach(item => { CONFIG[item.chave] = item.valor; });
-        if(CONFIG.logo_url) document.getElementById('logo-img').src = CONFIG.logo_url;
-        if(CONFIG.banner_url) document.getElementById('banner-img').src = CONFIG.banner_url;
-        if(CONFIG.titulo_hero) document.getElementById('hero-title').innerHTML = CONFIG.titulo_hero;
-        if(CONFIG.subtitulo_hero) document.getElementById('hero-subtitle').innerHTML = CONFIG.subtitulo_hero;
-        if(CONFIG.telefone) document.getElementById('footer-phone').innerHTML = CONFIG.telefone;
-        if(CONFIG.rodape_texto) document.getElementById('footer-text').innerHTML = CONFIG.rodape_texto;
-        if(CONFIG.rodape_copyright) document.getElementById('footer-copyright').innerHTML = CONFIG.rodape_copyright;
-        if(CONFIG.whatsapp_link) document.getElementById('footer-email').innerHTML = `<a href="${CONFIG.whatsapp_link}" class="opacity-70 hover:opacity-100">WhatsApp</a>`;
+      async function carregarConfiguracoes() {
+        try {
+          const { data } = await supabase.from('configuracoes').select('*');
+          if (data) {
+            data.forEach(item => { CONFIG[item.chave] = item.valor; });
+            if (CONFIG.logo_url) document.getElementById('logo-img').src = CONFIG.logo_url;
+            if (CONFIG.banner_url) document.getElementById('banner-img').src = CONFIG.banner_url;
+            if (CONFIG.titulo_hero) document.getElementById('hero-title').innerHTML = CONFIG.titulo_hero;
+            if (CONFIG.subtitulo_hero) document.getElementById('hero-subtitle').innerHTML = CONFIG.subtitulo_hero;
+            if (CONFIG.telefone) document.getElementById('footer-phone').innerHTML = CONFIG.telefone;
+            if (CONFIG.rodape_texto) document.getElementById('footer-text').innerHTML = CONFIG.rodape_texto;
+            if (CONFIG.rodape_copyright) document.getElementById('footer-copyright').innerHTML = CONFIG.rodape_copyright;
+            if (CONFIG.whatsapp_link) {
+              document.getElementById('footer-email').innerHTML = `<a href="${CONFIG.whatsapp_link}" class="opacity-70 hover:opacity-100">WhatsApp</a>`;
+            }
+          }
+        } catch (err) {
+          console.error('Erro ao carregar configurações:', err);
+        }
       }
-    }
 
-    async function carregarCardapio() {
-      const { data } = await supabase.from('cardapio').select('*');
-      CATALOG_DATA = (data && data.length) ? data : CATALOG_LOCAL;
-      renderCatalog('Todos');
-    }
+      async function carregarCardapio() {
+        try {
+          const { data } = await supabase.from('cardapio').select('*');
+          CATALOG_DATA = (data && data.length) ? data : CATALOG_LOCAL;
+          renderCatalog('Todos');
+        } catch (err) {
+          console.error('Erro ao carregar cardápio:', err);
+          CATALOG_DATA = CATALOG_LOCAL;
+          renderCatalog('Todos');
+        }
+      }
 
-    function renderCatalog(filter = 'Todos') {
-      const grid = document.getElementById('catalog-grid');
-      if(!grid) return;
-      const filtered = filter === 'Todos' ? CATALOG_DATA : CATALOG_DATA.filter(item => item.categoria === filter);
-      grid.innerHTML = filtered.map(item => `
-        <div class="bg-surface rounded-xl border border-outline-variant overflow-hidden group hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
-          <div class="h-56 overflow-hidden relative"><img src="${item.imagem || 'https://via.placeholder.com/300x200?text=Sem+Imagem'}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"><span class="absolute top-4 left-4 bg-primary text-white text-[10px] px-3 py-1 rounded-full uppercase font-bold tracking-widest shadow-lg">${item.categoria}</span></div>
-          <div class="p-6"><div class="flex justify-between items-start mb-2"><h3 class="font-bold text-on-surface text-lg">${escapeHtml(item.nome)}</h3><span class="text-primary font-bold text-lg">R$ ${Number(item.preco).toFixed(2)}</span></div><p class="text-xs text-on-surface-variant mb-6 line-clamp-2 leading-relaxed italic">${escapeHtml(item.descricao || '')}</p><div class="flex items-center justify-between border-t border-outline-variant/30 pt-4"><span class="text-[10px] text-outline font-semibold uppercase tracking-tight">${item.unidade || 'Unidade'}</span><button onclick="addToCart('${escapeHtml(item.nome).replace(/'/g, "\\'")}', ${Number(item.preco)})" class="w-12 h-12 bg-primary-container/20 text-primary rounded-lg flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all shadow-sm active:scale-90"><span class="material-symbols-outlined">add_shopping_cart</span></button></div></div>
-        </div>
-      `).join('');
-    }
+      function renderCatalog(filter = 'Todos') {
+        const grid = document.getElementById('catalog-grid');
+        if (!grid) return;
+        const filtered = filter === 'Todos' ? CATALOG_DATA : CATALOG_DATA.filter(item => item.categoria === filter);
+        grid.innerHTML = filtered.map(item => `
+          <div class="bg-surface rounded-xl border border-outline-variant overflow-hidden group hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
+            <div class="h-56 overflow-hidden relative"><img src="${item.imagem || 'https://via.placeholder.com/300x200?text=Sem+Imagem'}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"><span class="absolute top-4 left-4 bg-primary text-white text-[10px] px-3 py-1 rounded-full uppercase font-bold tracking-widest shadow-lg">${item.categoria}</span></div>
+            <div class="p-6"><div class="flex justify-between items-start mb-2"><h3 class="font-bold text-on-surface text-lg">${escapeHtml(item.nome)}</h3><span class="text-primary font-bold text-lg">R$ ${Number(item.preco).toFixed(2)}</span></div><p class="text-xs text-on-surface-variant mb-6 line-clamp-2 leading-relaxed italic">${escapeHtml(item.descricao || '')}</p><div class="flex items-center justify-between border-t border-outline-variant/30 pt-4"><span class="text-[10px] text-outline font-semibold uppercase tracking-tight">${item.unidade || 'Unidade'}</span><button onclick="addToCart(${JSON.stringify(item.nome)}, ${Number(item.preco)})" class="w-12 h-12 bg-primary-container/20 text-primary rounded-lg flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all shadow-sm active:scale-90"><span class="material-symbols-outlined">add_shopping_cart</span></button></div></div>
+          </div>
+        `).join('');
+      }
 
-    function filterCatalog(category) {
-      renderCatalog(category);
-      document.querySelectorAll('.filter-btn').forEach(btn => {
-        if(btn.textContent === category) { btn.classList.add('bg-primary', 'text-on-primary'); btn.classList.remove('bg-surface-container', 'text-on-surface-variant'); }
-        else { btn.classList.remove('bg-primary', 'text-on-primary'); btn.classList.add('bg-surface-container', 'text-on-surface-variant'); }
-      });
-    }
-
-    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => m==='&'? '&amp;' : (m==='<'? '&lt;' : '&gt;')); }
-
-    function setCalcVar(key, val) {
-      calcState[key] = val;
-      if(key === 'type') {
-        ['kids', 'adult', 'corp'].forEach(t => {
-          const btn = document.getElementById(`btn-${t}`);
-          if(btn) {
-            if(t === val) { btn.classList.add('border-2', 'border-primary', 'bg-primary/5'); btn.classList.remove('border-outline-variant'); }
-            else { btn.classList.remove('border-2', 'border-primary', 'bg-primary/5'); btn.classList.add('border-outline-variant'); }
+      function filterCatalog(category) {
+        renderCatalog(category);
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+          if (btn.textContent === category) {
+            btn.classList.add('bg-primary', 'text-on-primary');
+            btn.classList.remove('bg-surface-container', 'text-on-surface-variant');
+          } else {
+            btn.classList.remove('bg-primary', 'text-on-primary');
+            btn.classList.add('bg-surface-container', 'text-on-surface-variant');
           }
         });
       }
-      updateCalculator();
-    }
 
-    function updateCalculator() {
-      const guests = calcState.guests;
-      let sPer = 12, dPer = 5;
-      if(calcState.type === 'kids') { sPer = 10; dPer = 7; }
-      if(calcState.type === 'corp') { sPer = 8; dPer = 3; }
-      if(calcState.duration === 'long') { sPer *= 1.4; dPer *= 1.2; }
-      document.getElementById('res-salgados').innerHTML = `${Math.round(guests * sPer)} un.`;
-      document.getElementById('res-doces').innerHTML = `${Math.round(guests * dPer)} un.`;
-      const card = document.getElementById('calc-result-card');
-      if(card) { card.classList.remove('animate-pulse-fast'); void card.offsetWidth; card.classList.add('animate-pulse-fast'); }
-    }
+      function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>"]/g, function(m) {
+          if (m === '&') return '&amp;';
+          if (m === '<') return '&lt;';
+          if (m === '>') return '&gt;';
+          if (m === '"') return '&quot;';
+          return m;
+        });
+      }
 
-    function addToCart(name, price) { cart.push({ name, price }); updateCartUI(); notify(`➕ ${name} adicionado!`); }
-    function applyCalcToQuote() { const guests = calcState.guests; cart.push({ name: `Kit para ${guests} convidados`, price: guests * 45 }); updateCartUI(); toggleDrawer(true); }
-    function updateCartUI() {
-      const container = document.getElementById('cart-items'), badge = document.getElementById('cart-badge'), totalSpan = document.getElementById('cart-total');
-      if(!container) return;
-      if(cart.length === 0) { container.innerHTML = '<div class="text-center py-10 text-on-surface-variant italic">Sua sacola está vazia.</div>'; if(badge) badge.classList.add('hidden'); totalSpan.innerText = 'R$ 0,00'; return; }
-      if(badge) { badge.classList.remove('hidden'); badge.innerText = cart.length; }
-      let total = 0;
-      container.innerHTML = cart.map((i,idx) => { total += i.price; return `<div class="flex justify-between items-center bg-surface-container-lowest p-4 rounded-lg border"><div><p class="font-bold">${escapeHtml(i.name)}</p></div><div><span class="font-bold text-primary">R$ ${i.price.toFixed(2)}</span><button onclick="removeItem(${idx})" class="ml-3 text-red-500">🗑️</button></div></div>`; }).join('');
-      totalSpan.innerText = `R$ ${total.toFixed(2)}`;
-    }
-    function removeItem(i) { cart.splice(i,1); updateCartUI(); }
-    function toggleDrawer(force) { let d = document.getElementById('quote-drawer'); if(force) d.classList.remove('translate-x-full'); else d.classList.toggle('translate-x-full'); }
-    function openLeadModal() { let m = document.getElementById('lead-modal'); m.classList.remove('hidden'); m.classList.add('flex'); document.getElementById('modal-guests').value = calcState.guests; }
-    function closeLeadModal() { let m = document.getElementById('lead-modal'); m.classList.add('hidden'); m.classList.remove('flex'); }
-    function notify(msg) { let t = document.createElement('div'); t.className = "fixed bottom-8 left-1/2 -translate-x-1/2 bg-primary text-white px-6 py-3 rounded-full shadow-lg z-[100] animate-pulse"; t.innerText = msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2500); }
-    
-    function openChat() {
-      const widget = document.getElementById('delinhaIaWidget');
-      if (widget) widget.classList.remove('delinha-ia-closed');
-    }
+      function setCalcVar(key, val) {
+        calcState[key] = val;
+        if (key === 'type') {
+          ['kids', 'adult', 'corp'].forEach(t => {
+            const btn = document.getElementById(`btn-${t}`);
+            if (btn) {
+              if (t === val) {
+                btn.classList.add('border-2', 'border-primary', 'bg-primary/5');
+                btn.classList.remove('border-outline-variant');
+              } else {
+                btn.classList.remove('border-2', 'border-primary', 'bg-primary/5');
+                btn.classList.add('border-outline-variant');
+              }
+            }
+          });
+        }
+        updateCalculator();
+      }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      carregarConfiguracoes();
-      carregarCardapio();
-      const range = document.getElementById('guest-range'), display = document.getElementById('guest-val'), dur = document.getElementById('calc-duration');
-      if(range && display) range.addEventListener('input', (e) => { display.textContent = e.target.value; calcState.guests = parseInt(e.target.value); updateCalculator(); });
-      if(dur) dur.addEventListener('change', (e) => { calcState.duration = e.target.value; updateCalculator(); });
-      document.getElementById('lead-form')?.addEventListener('submit', (e) => {
-        e.preventDefault(); let data = new FormData(e.target); let name = data.get('name'); let summary = `Orçamento para ${name}: ${calcState.type}, ${data.get('guests')} convidados.`; let cartText = cart.map(i => i.name).join(', ') || 'Recomendação'; let total = document.getElementById('cart-total')?.textContent; let text = encodeURIComponent(`Olá Delinha! ${summary}\nSacola: ${cartText}\nTotal: ${total}\nWhatsApp: ${data.get('whatsapp')}\nData: ${data.get('date')}`); window.open(`https://wa.me/5531999999999?text=${text}`, '_blank'); closeLeadModal();
+      function updateCalculator() {
+        const guests = parseInt(calcState.guests) || 50;
+        let sPer = 12, dPer = 5;
+        if (calcState.type === 'kids') { sPer = 10; dPer = 7; }
+        if (calcState.type === 'corp') { sPer = 8; dPer = 3; }
+        if (calcState.duration === 'long') { sPer *= 1.4; dPer *= 1.2; }
+        document.getElementById('res-salgados').innerHTML = `${Math.round(guests * sPer)} un.`;
+        document.getElementById('res-doces').innerHTML = `${Math.round(guests * dPer)} un.`;
+        const card = document.getElementById('calc-result-card');
+        if (card) {
+          card.classList.remove('animate-pulse-fast');
+          void card.offsetWidth;
+          card.classList.add('animate-pulse-fast');
+        }
+      }
+
+      function addToCart(name, price) {
+        cart.push({ name, price });
+        updateCartUI();
+        notify(`➕ ${name} adicionado!`);
+      }
+
+      function applyCalcToQuote() {
+        const guests = parseInt(calcState.guests) || 50;
+        if (guests < 1) {
+          notify('⚠️ Número de convidados inválido.');
+          return;
+        }
+        cart.push({ name: `Kit para ${guests} convidados`, price: guests * 45 });
+        updateCartUI();
+        toggleDrawer(true);
+      }
+
+      function updateCartUI() {
+        const container = document.getElementById('cart-items');
+        const badge = document.getElementById('cart-badge');
+        const totalSpan = document.getElementById('cart-total');
+        if (!container) return;
+        if (cart.length === 0) {
+          container.innerHTML = '<div class="text-center py-10 text-on-surface-variant italic">Sua sacola está vazia.</div>';
+          if (badge) badge.classList.add('hidden');
+          totalSpan.innerText = 'R$ 0,00';
+          return;
+        }
+        if (badge) {
+          badge.classList.remove('hidden');
+          badge.innerText = cart.length;
+        }
+        let total = 0;
+        container.innerHTML = cart.map((i, idx) => {
+          total += i.price;
+          return `<div class="flex justify-between items-center bg-surface-container-lowest p-4 rounded-lg border"><div><p class="font-bold">${escapeHtml(i.name)}</p></div><div><span class="font-bold text-primary">R$ ${i.price.toFixed(2)}</span><button onclick="removeItem(${idx})" class="ml-3 text-red-500">🗑️</button></div></div>`;
+        }).join('');
+        totalSpan.innerText = `R$ ${total.toFixed(2)}`;
+      }
+
+      function removeItem(i) {
+        cart.splice(i, 1);
+        updateCartUI();
+      }
+
+      function toggleDrawer(force) {
+        const d = document.getElementById('quote-drawer');
+        if (d) {
+          if (force === true) d.classList.remove('translate-x-full');
+          else d.classList.toggle('translate-x-full');
+        }
+      }
+
+      function openLeadModal() {
+        const m = document.getElementById('lead-modal');
+        if (m) {
+          m.classList.remove('hidden');
+          m.classList.add('flex');
+          document.getElementById('modal-guests').value = calcState.guests;
+        }
+      }
+
+      function closeLeadModal() {
+        const m = document.getElementById('lead-modal');
+        if (m) {
+          m.classList.add('hidden');
+          m.classList.remove('flex');
+        }
+      }
+
+      function closeLeadModalOnBackdrop(event) {
+        if (event.target === event.currentTarget) {
+          closeLeadModal();
+        }
+      }
+
+      function notify(msg) {
+        const t = document.createElement('div');
+        t.className = "fixed bottom-8 left-1/2 -translate-x-1/2 bg-primary text-white px-6 py-3 rounded-full shadow-lg z-[100] animate-pulse";
+        t.innerText = msg;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 2500);
+      }
+
+      function openChat() {
+        const widget = document.getElementById('delinhaIaWidget');
+        if (widget) widget.classList.remove('delinha-ia-closed');
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        carregarConfiguracoes();
+        carregarCardapio();
+        const range = document.getElementById('guest-range');
+        const display = document.getElementById('guest-val');
+        const dur = document.getElementById('calc-duration');
+        if (range && display) {
+          range.addEventListener('input', (e) => {
+            display.textContent = e.target.value;
+            calcState.guests = parseInt(e.target.value);
+            updateCalculator();
+          });
+        }
+        if (dur) {
+          dur.addEventListener('change', (e) => {
+            calcState.duration = e.target.value;
+            updateCalculator();
+          });
+        }
+        document.getElementById('lead-form')?.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const data = new FormData(e.target);
+          const name = data.get('name');
+          const guests = data.get('guests') || calcState.guests;
+          const summary = `Orçamento para ${name}: ${calcState.type}, ${guests} convidados.`;
+          const cartText = cart.map(i => i.name).join(', ') || 'Recomendação';
+          const total = document.getElementById('cart-total')?.textContent || 'R$ 0,00';
+          const whatsapp = data.get('whatsapp');
+          const date = data.get('date');
+          let numeroWhatsApp = CONFIG.telefone ? CONFIG.telefone.replace(/\D/g, '') : '5531999999999';
+          if (!numeroWhatsApp.startsWith('55')) numeroWhatsApp = '55' + numeroWhatsApp;
+          const text = encodeURIComponent(`Olá Delinha! ${summary}\nSacola: ${cartText}\nTotal: ${total}\nWhatsApp: ${whatsapp}\nData: ${date}`);
+          window.open(`https://wa.me/${numeroWhatsApp}?text=${text}`, '_blank');
+          closeLeadModal();
+        });
+
+        // Fechar modal com ESC
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') closeLeadModal();
+        });
       });
-    });
 
-    window.addEventListener('scroll', () => { let h = document.getElementById('main-header'); if(h) window.scrollY > 20 ? h.classList.add('header-scrolled') : h.classList.remove('header-scrolled'); });
+      window.addEventListener('scroll', () => {
+        const h = document.getElementById('main-header');
+        if (h) {
+          if (window.scrollY > 20) h.classList.add('header-scrolled');
+          else h.classList.remove('header-scrolled');
+        }
+      });
+
+      // Expor funções globalmente para uso no HTML
+      window.setCalcVar = setCalcVar;
+      window.filterCatalog = filterCatalog;
+      window.addToCart = addToCart;
+      window.applyCalcToQuote = applyCalcToQuote;
+      window.removeItem = removeItem;
+      window.toggleDrawer = toggleDrawer;
+      window.openLeadModal = openLeadModal;
+      window.closeLeadModal = closeLeadModal;
+      window.closeLeadModalOnBackdrop = closeLeadModalOnBackdrop;
+      window.openChat = openChat;
+    })();
   </script>
 </body>
 </html>
