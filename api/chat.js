@@ -1,14 +1,19 @@
-// api/chat.js
 export default async function handler(req, res) {
+  // Verifica o método da requisição
   if (req.method !== 'POST') {
+    console.warn('Método não permitido:', req.method);
     return res.status(405).json({ error: 'Método não permitido' });
   }
 
   const userMessage = req.body.message;
+  console.log('📩 Mensagem recebida do usuário:', userMessage);
+
   if (!userMessage || typeof userMessage !== 'string' || userMessage.trim() === '') {
+    console.warn('Mensagem vazia ou inválida');
     return res.status(400).json({ reply: 'Por favor, digite uma mensagem válida.' });
   }
 
+  // SYSTEM_PROMPT completo (mesmo do seu HTML)
   const SYSTEM_PROMPT = `Você é a Delinha, assistente virtual da I Love Delicitas.
 REGRAS:
 - Responda SOMENTE com as informações abaixo. NUNCA invente.
@@ -32,16 +37,17 @@ RESPOSTAS PADRÃO:
 Se a pergunta não for sobre isso, responda: "Fale com atendente pelo WhatsApp."`;
 
   const MISTRAL_API_KEY = process.env.MISTRAL_API_KEY;
+  console.log('🔑 Chave da Mistral:', MISTRAL_API_KEY ? 'Configurada (sim)' : 'NÃO CONFIGURADA');
 
-  // Se a chave não existir, retorna mensagem amigável (status 200)
   if (!MISTRAL_API_KEY) {
-    console.error('MISTRAL_API_KEY não definida no ambiente.');
+    console.error('❌ Chave da Mistral não encontrada nas variáveis de ambiente');
     return res.status(200).json({ 
       reply: "A Delinha está com problemas técnicos. Por favor, fale conosco pelo WhatsApp (31) 99999-9999." 
     });
   }
 
   try {
+    console.log('📤 Chamando a API da Mistral...');
     const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -49,28 +55,37 @@ Se a pergunta não for sobre isso, responda: "Fale com atendente pelo WhatsApp."
         'Authorization': `Bearer ${MISTRAL_API_KEY}`
       },
       body: JSON.stringify({
-        model: "mistral-small-latest",  // ✅ Modelo atualizado
+        model: "mistral-small-latest",
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: userMessage }
         ],
         temperature: 0.2,
-        max_tokens: 600  // ✅ Aumentado para evitar cortes
+        max_tokens: 600
       })
     });
 
+    console.log('📥 Resposta da Mistral - Status:', response.status);
+
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.error('Erro da Mistral API:', response.status, errorData);
-      throw new Error(`Mistral API error: ${response.status}`);
+      console.error('❌ Erro na Mistral API:', response.status, errorData);
+      return res.status(200).json({ 
+        reply: "Desculpe, estou com problemas. Fale conosco pelo WhatsApp (31) 99999-9999." 
+      });
     }
 
     const data = await response.json();
-    const reply = data.choices[0].message.content.trim();
-    res.status(200).json({ reply });
+    console.log('📦 Dados recebidos da Mistral:', data);
+
+    const reply = data.choices?.[0]?.message?.content?.trim() || 
+                   "Não consegui processar sua pergunta. Fale com atendente pelo WhatsApp.";
+    console.log('✅ Resposta gerada:', reply);
+
+    return res.status(200).json({ reply });
   } catch (error) {
-    console.error('Erro ao chamar Mistral:', error);
-    res.status(200).json({ 
+    console.error('❌ Erro crítico ao chamar a Mistral:', error);
+    return res.status(200).json({ 
       reply: "Desculpe, estou com problemas. Fale conosco pelo WhatsApp (31) 99999-9999." 
     });
   }
