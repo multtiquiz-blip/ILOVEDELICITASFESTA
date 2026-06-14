@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Painel - Teste Local</title>
+  <style>
+    body { font-family: system-ui; background: #f1f5f9; padding: 20px; }
+    .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    h1 { font-size: 24px; margin-bottom: 20px; }
+    .tab { display: inline-block; padding: 10px 20px; background: #e2e8f0; border-radius: 8px; cursor: pointer; margin-right: 5px; }
+    .tab-active { background: #ae2f34; color: white; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <div id="app">
+    <h1>🔍 Painel de Teste (Somente Local)</h1>
+    <div style="margin-bottom: 20px;">
+      <span class="tab tab-active" onclick="showTab('config')">Configurações</span>
+      <span class="tab" onclick="showTab('produtos')">Produtos</span>
+      <span class="tab" onclick="showTab('faq')">FAQ</span>
+    </div>
+
+    <div id="tab-config" class="card">
+      <h2>Configurações</h2>
+      <div id="config-list">Carregando...</div>
+    </div>
+    <div id="tab-produtos" class="card hidden">
+      <h2>Produtos</h2>
+      <div id="produtos-list">Carregando...</div>
+    </div>
+    <div id="tab-faq" class="card hidden">
+      <h2>FAQ</h2>
+      <div id="faq-list">Carregando...</div>
+    </div>
+  </div>
+
+  <script>
+    console.log('✅ Script iniciado');
+
+    // Dados locais completos
+    const dados = {
+      config: [
+        { chave: 'titulo_hero', valor: 'A Celebração que o Seu Paladar Merece' },
+        { chave: 'telefone', valor: '5531999999999' },
+        { chave: 'rodape_texto', valor: 'Gastronomia artesanal para festas em BH' }
+      ],
+      produtos: [
+        { id: 1, nome: 'Coxinha de Frango', preco: 90, categoria: 'Fritos' },
+        { id: 2, nome: 'Bolinha de Queijo', preco: 90, categoria: 'Fritos' }
+      ],
+      faq: [
+        { id: 1, pergunta: 'Qual o prazo?', resposta: '7 dias' }
+      ]
+    };
+
+    function showTab(tab) {
+      document.querySelectorAll('.tab').forEach(el => el.classList.remove('tab-active'));
+      document.querySelectorAll('.card').forEach(el => el.classList.add('hidden'));
+      document.getElementById('tab-' + tab).classList.remove('hidden');
+      document.querySelector(`[onclick="showTab('${tab}')"]`).classList.add('tab-active');
+    }
+
+    function render() {
+      console.log('✅ Renderizando dados...');
+      document.getElementById('config-list').innerHTML = dados.config.map(c => `<div><b>${c.chave}:</b> ${c.valor}</div>`).join('');
+      document.getElementById('produtos-list').innerHTML = dados.produtos.map(p => `<div>${p.nome} - R$ ${p.preco}</div>`).join('');
+      document.getElementById('faq-list').innerHTML = dados.faq.map(f => `<div><b>${f.pergunta}</b><br>${f.resposta}</div>`).join('');
+    }
+
+    // Executa após o DOM carregar
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('✅ DOMContentLoaded disparado');
+      render();
+    });
+
+    // Fallback
+    setTimeout(function() {
+      if (document.getElementById('config-list').innerHTML === 'Carregando...') {
+        console.warn('⚠️ DOMContentLoaded não funcionou. Usando fallback.');
+        render();
+      }
+    }, 2000);
+  </script>
+
+</body>
+</html>
