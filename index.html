@@ -157,26 +157,100 @@
       .delinha-ia-messages { height: 300px; }
     }
 
-    /* ===== PAINEL ADMIN ===== */
-    .admin-float-btn {
+    /* ===== LOGIN MODAL ===== */
+    .login-overlay {
       position: fixed;
-      bottom: 20px;
-      left: 20px;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      z-index: 99999;
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+    .login-overlay.active { display: flex; }
+    .login-box {
+      background: white;
+      padding: 40px;
+      border-radius: 1rem;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .login-box h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #1d1b1b;
+    }
+    .login-box p {
+      font-size: 14px;
+      color: #584140;
+      margin-bottom: 24px;
+    }
+    .login-box input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e0bfbd;
+      border-radius: 0.5rem;
+      font-size: 16px;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+    .login-box input:focus {
+      outline: none;
+      border-color: #ae2f34;
+    }
+    .login-box button {
+      width: 100%;
+      padding: 12px;
       background: #ae2f34;
       color: white;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .login-box button:hover { background: #8b2327; }
+    .login-error {
+      color: #ba1a1a;
+      font-size: 14px;
+      margin-top: 8px;
+      display: none;
+    }
+
+    /* ===== BOTÃO ADMIN ULTRADISCRETO ===== */
+    .admin-trigger {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 28px;
+      height: 28px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      z-index: 999;
+      opacity: 0.4;
+      transition: opacity 0.3s, transform 0.3s;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
-      cursor: pointer;
-      z-index: 9999;
-      box-shadow: 0 4px 12px rgba(174,47,52,0.4);
-      transition: transform 0.2s;
+      color: #584140;
     }
-    .admin-float-btn:hover { transform: scale(1.05); }
+    .admin-trigger:hover {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+    .admin-trigger .material-symbols-outlined {
+      font-size: 20px;
+    }
+
+    /* ===== PAINEL ADMIN ===== */
     .admin-panel {
       display: none;
       position: fixed;
@@ -219,13 +293,14 @@
       cursor: pointer;
       font-weight: 600;
       transition: all 0.2s;
+      font-size: 14px;
     }
     .admin-tab.active { background: #ae2f34; color: white; }
     .admin-tab:hover:not(.active) { background: #d1d5db; }
     .admin-section { display: none; }
     .admin-section.active { display: block; }
     .admin-field { margin-bottom: 12px; }
-    .admin-field label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 4px; color: #334155; }
+    .admin-field label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; color: #334155; }
     .admin-field input, .admin-field textarea, .admin-field select {
       width: 100%;
       padding: 8px 12px;
@@ -235,7 +310,7 @@
       background: white;
       transition: border-color 0.2s;
     }
-    .admin-field input:focus, .admin-field textarea:focus, .admin-field select:focus {
+    .admin-field input:focus, .admin-field textarea:focus {
       outline: none;
       border-color: #ae2f34;
       box-shadow: 0 0 0 3px rgba(174,47,52,0.1);
@@ -290,44 +365,47 @@
       border: 1px solid #e2e8f0;
       margin-top: 4px;
     }
+    .admin-logout-btn {
+      position: absolute;
+      bottom: 16px;
+      left: 20px;
+      background: #ef4444;
+      color: white;
+      padding: 6px 16px;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12px;
+      transition: background 0.2s;
+    }
+    .admin-logout-btn:hover { background: #dc2626; }
   </style>
 </head>
 <body class="bg-background text-on-background font-body antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
 
-  <!-- ===== DRAWER (CARRINHO) ===== -->
-  <div class="fixed inset-y-0 right-0 w-full md:w-96 bg-surface z-[60] shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col" id="quote-drawer">
-    <div class="p-6 border-b border-outline-variant flex items-center justify-between bg-primary text-on-primary">
-      <h3 class="font-headline font-semibold text-xl">Meu Orçamento</h3>
-      <button class="p-2 hover:bg-white/10 rounded-full" onclick="toggleDrawer()"><span class="material-symbols-outlined">close</span></button>
-    </div>
-    <div class="flex-grow overflow-y-auto p-6 space-y-4" id="cart-items"><div class="text-center py-10 text-on-surface-variant italic">Sua sacola está vazia.</div></div>
-    <div class="p-6 border-t border-outline-variant bg-surface-container-low">
-      <div class="flex justify-between items-center mb-6"><span class="text-sm font-semibold uppercase tracking-wider text-on-surface-variant">Total Estimado</span><span class="font-headline text-2xl font-bold text-primary" id="cart-total">R$ 0,00</span></div>
-      <button class="w-full bg-primary text-on-primary py-4 rounded-lg font-semibold hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2" onclick="openLeadModal()"><span class="material-symbols-outlined">send</span> Finalizar Orçamento</button>
-    </div>
-  </div>
-
-  <!-- ===== MODAL LEAD ===== -->
-  <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 modal-backdrop" id="lead-modal" onclick="closeLeadModalOnBackdrop(event)">
-    <div class="bg-surface w-full max-w-md rounded-xl shadow-2xl overflow-hidden animate-slide-in" onclick="event.stopPropagation()">
-      <div class="p-6 bg-surface-container-highest flex justify-between items-center border-b border-outline-variant/30"><h3 class="font-headline font-semibold text-lg text-on-surface">Só mais um passo!</h3><button class="text-on-surface-variant hover:text-primary transition-colors" onclick="closeLeadModal()"><span class="material-symbols-outlined">close</span></button></div>
-      <form class="p-6 space-y-4" id="lead-form">
-        <div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">Seu Nome</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" name="name" required type="text"></div>
-        <div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">WhatsApp</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" name="whatsapp" placeholder="(00) 00000-0000" required type="tel"></div>
-        <div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">Data da Festa</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" name="date" required type="date"></div><div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">Convidados</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" id="modal-guests" name="guests" required type="number" min="1"></div></div>
-        <button class="w-full bg-primary text-on-primary py-4 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2 mt-4" type="submit"><span class="material-symbols-outlined">whatsapp</span> Enviar para Delinha</button>
-        <p class="text-[10px] text-on-surface-variant text-center opacity-70">Seus dados estão seguros conosco.</p>
-      </form>
+  <!-- ===== LOGIN MODAL ===== -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-box">
+      <h2>🔐 Acesso ao Painel</h2>
+      <p>Digite a senha para acessar o painel administrativo.</p>
+      <input type="password" id="loginSenha" placeholder="Senha" onkeydown="if(event.key==='Enter') verificarLogin()">
+      <button onclick="verificarLogin()">Entrar</button>
+      <div class="login-error" id="loginError">Senha incorreta. Tente novamente.</div>
+      <p style="font-size:12px; color:#999; margin-top:12px;">Senha padrão: <strong>delinha2025</strong></p>
     </div>
   </div>
 
-  <!-- ===== BOTÃO ADMIN ===== -->
-  <div class="admin-float-btn" onclick="abrirAdmin()" title="Painel Administrativo">⚙️</div>
+  <!-- ===== BOTÃO ADMIN ULTRADISCRETO ===== -->
+  <button class="admin-trigger" id="adminTrigger" onclick="abrirAdmin()" style="display:none;">
+    <span class="material-symbols-outlined">settings</span>
+  </button>
 
   <!-- ===== PAINEL ADMIN ===== -->
   <div class="admin-panel" id="adminPanel">
     <div class="admin-content">
       <span class="admin-close" onclick="fecharAdmin()">×</span>
+      <button class="admin-logout-btn" onclick="logout()">🚪 Sair</button>
       <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
         <span class="material-symbols-outlined icon-fill">settings</span> Painel Administrativo
         <span class="text-sm font-normal text-on-surface-variant">(dados salvos no navegador)</span>
@@ -338,7 +416,6 @@
         <span class="admin-tab" onclick="mudarAba('produtos',this)">🍕 Cardápio</span>
         <span class="admin-tab" onclick="mudarAba('faq',this)">❓ FAQ</span>
         <span class="admin-tab" onclick="mudarAba('redes',this)">📱 Redes</span>
-        <span class="admin-tab" onclick="mudarAba('export',this)">📤 Exportar</span>
       </div>
 
       <!-- Configurações -->
@@ -370,13 +447,33 @@
         <div id="redesList" class="grid md:grid-cols-2 gap-4"></div>
         <button class="admin-btn-success mt-4 w-full md:w-auto px-8 py-2" onclick="salvarRedes()">💾 Salvar Redes</button>
       </div>
+    </div>
+  </div>
 
-      <!-- Exportar -->
-      <div class="admin-section" id="aba-export">
-        <p class="text-sm text-on-surface-variant mb-4">Copie este JSON para fazer backup ou usar em outro lugar.</p>
-        <textarea id="exportJson" rows="8" class="w-full font-mono text-sm bg-surface-container-low p-3 rounded-lg border border-outline-variant" readonly></textarea>
-        <button class="admin-btn-primary mt-4 px-8 py-2" onclick="copiarJson()">📋 Copiar JSON</button>
-      </div>
+  <!-- ===== DRAWER (CARRINHO) ===== -->
+  <div class="fixed inset-y-0 right-0 w-full md:w-96 bg-surface z-[60] shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col" id="quote-drawer">
+    <div class="p-6 border-b border-outline-variant flex items-center justify-between bg-primary text-on-primary">
+      <h3 class="font-headline font-semibold text-xl">Meu Orçamento</h3>
+      <button class="p-2 hover:bg-white/10 rounded-full" onclick="toggleDrawer()"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div class="flex-grow overflow-y-auto p-6 space-y-4" id="cart-items"><div class="text-center py-10 text-on-surface-variant italic">Sua sacola está vazia.</div></div>
+    <div class="p-6 border-t border-outline-variant bg-surface-container-low">
+      <div class="flex justify-between items-center mb-6"><span class="text-sm font-semibold uppercase tracking-wider text-on-surface-variant">Total Estimado</span><span class="font-headline text-2xl font-bold text-primary" id="cart-total">R$ 0,00</span></div>
+      <button class="w-full bg-primary text-on-primary py-4 rounded-lg font-semibold hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2" onclick="openLeadModal()"><span class="material-symbols-outlined">send</span> Finalizar Orçamento</button>
+    </div>
+  </div>
+
+  <!-- ===== MODAL LEAD ===== -->
+  <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 modal-backdrop" id="lead-modal" onclick="closeLeadModalOnBackdrop(event)">
+    <div class="bg-surface w-full max-w-md rounded-xl shadow-2xl overflow-hidden animate-slide-in" onclick="event.stopPropagation()">
+      <div class="p-6 bg-surface-container-highest flex justify-between items-center border-b border-outline-variant/30"><h3 class="font-headline font-semibold text-lg text-on-surface">Só mais um passo!</h3><button class="text-on-surface-variant hover:text-primary transition-colors" onclick="closeLeadModal()"><span class="material-symbols-outlined">close</span></button></div>
+      <form class="p-6 space-y-4" id="lead-form">
+        <div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">Seu Nome</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" name="name" required type="text"></div>
+        <div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">WhatsApp</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" name="whatsapp" placeholder="(00) 00000-0000" required type="tel"></div>
+        <div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">Data da Festa</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" name="date" required type="date"></div><div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">Convidados</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" id="modal-guests" name="guests" required type="number" min="1"></div></div>
+        <button class="w-full bg-primary text-on-primary py-4 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2 mt-4" type="submit"><span class="material-symbols-outlined">whatsapp</span> Enviar para Delinha</button>
+        <p class="text-[10px] text-on-surface-variant text-center opacity-70">Seus dados estão seguros conosco.</p>
+      </form>
     </div>
   </div>
 
@@ -460,7 +557,6 @@
     </div>
   </div>
 
-  <!-- ===== SCRIPTS ===== -->
   <script>
     (function() {
       const messagesDiv = document.getElementById('delinhaIaMessages');
@@ -536,10 +632,8 @@
     })();
   </script>
 
-  <!-- ===== SCRIPT PRINCIPAL (com painel e dados) ===== -->
   <script>
     (function() {
-      // ===== DADOS PADRÃO =====
       const DADOS_PADRAO = {
         config: [
           { chave: 'logo_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo' },
@@ -571,7 +665,6 @@
 
       let dados = {};
 
-      // ===== CARREGAR DADOS =====
       function carregarDados() {
         const salvo = localStorage.getItem('ilovedelicitas_dados');
         if (salvo) {
@@ -595,19 +688,15 @@
         localStorage.setItem('ilovedelicitas_dados', JSON.stringify(dados));
       }
 
-      // ===== RENDERIZAR SITE =====
       function renderizarSite() {
         const getConfig = (chave) => {
           const item = dados.config.find(c => c.chave === chave);
           return item ? item.valor : '';
         };
 
-        // Imagens
         document.getElementById('logo-img').src = getConfig('logo_url') || DADOS_PADRAO.config.find(c=>c.chave==='logo_url').valor;
         document.getElementById('banner-img').src = getConfig('banner_url') || DADOS_PADRAO.config.find(c=>c.chave==='banner_url').valor;
         document.getElementById('footer-logo').src = getConfig('logo_url') || DADOS_PADRAO.config.find(c=>c.chave==='logo_url').valor;
-
-        // Textos
         document.getElementById('hero-title').innerHTML = getConfig('titulo_hero') || 'A Celebração que o Seu Paladar Merece';
         document.getElementById('hero-subtitle').innerHTML = getConfig('subtitulo_hero') || 'Doces e salgados artesanais. Fritura no local, retirada ou frete por aplicativo. BH e região.';
         document.getElementById('footer-text').innerHTML = getConfig('rodape_texto') || 'Gastronomia artesanal para festas em BH. Fritura no local, retirada ou frete por app. Pagamento em até 3x.';
@@ -617,7 +706,6 @@
           document.getElementById('footer-email').innerHTML = `<a href="${getConfig('whatsapp_link')}" class="opacity-70 hover:opacity-100">WhatsApp</a>`;
         }
 
-        // Cardápio
         const grid = document.getElementById('catalog-grid');
         if (grid) {
           grid.innerHTML = dados.produtos.map(p => `
@@ -628,7 +716,6 @@
           `).join('');
         }
 
-        // FAQ
         const faqContainer = document.getElementById('faq-container');
         if (faqContainer) {
           const sorted = [...dados.faq].sort((a,b) => (a.ordem||0) - (b.ordem||0));
@@ -644,7 +731,6 @@
         }
       }
 
-      // ===== ESCAPE HTML =====
       function escapeHtml(str) {
         if (!str) return '';
         return String(str).replace(/[&<>"]/g, function(m) {
@@ -656,7 +742,6 @@
         });
       }
 
-      // ===== CARRINHO =====
       let cart = [];
       let calcState = { type: 'adult', guests: 50, duration: 'med' };
 
@@ -721,7 +806,6 @@
         setTimeout(() => t.remove(), 2500);
       }
 
-      // ===== CALCULADORA =====
       function setCalcVar(key, val) {
         calcState[key] = val;
         if (key === 'type') {
@@ -751,7 +835,6 @@
         document.getElementById('res-doces').innerHTML = `${Math.round(guests * dPer)} un.`;
       }
 
-      // ===== FILTRO CARDÁPIO =====
       function filterCatalog(category) {
         const grid = document.getElementById('catalog-grid');
         if (!grid) return;
@@ -772,7 +855,6 @@
         });
       }
 
-      // ===== MODAL LEAD =====
       function openLeadModal() {
         const m = document.getElementById('lead-modal');
         if (m) {
@@ -801,8 +883,31 @@
         if (widget) widget.classList.remove('delinha-ia-closed');
       }
 
-      // ===== PAINEL ADMIN =====
+      let loginState = false;
+      let senhaCorreta = 'delinha2025';
+
+      function verificarLogin() {
+        const senha = document.getElementById('loginSenha').value;
+        if (senha === senhaCorreta) {
+          document.getElementById('loginOverlay').classList.remove('active');
+          document.getElementById('adminTrigger').style.display = 'flex';
+          loginState = true;
+        } else {
+          document.getElementById('loginError').style.display = 'block';
+        }
+      }
+
+      function logout() {
+        loginState = false;
+        document.getElementById('adminTrigger').style.display = 'none';
+        document.getElementById('adminPanel').classList.remove('active');
+        document.getElementById('loginOverlay').classList.add('active');
+        document.getElementById('loginSenha').value = '';
+        document.getElementById('loginError').style.display = 'none';
+      }
+
       function abrirAdmin() {
+        if (!loginState) return;
         document.getElementById('adminPanel').classList.add('active');
         renderizarAdmin();
       }
@@ -819,7 +924,6 @@
       }
 
       function renderizarAdmin() {
-        // Configurações
         const camposConfig = ['logo_url','banner_url','titulo_hero','subtitulo_hero','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
         const configContainer = document.getElementById('configList');
         configContainer.innerHTML = camposConfig.map(chave => {
@@ -827,7 +931,6 @@
           return `<div class="admin-field"><label>${chave}</label><input type="text" id="cfg_${chave}" value="${escapeHtml(item?.valor || '')}"></div>`;
         }).join('');
 
-        // Produtos
         const produtosContainer = document.getElementById('produtosList');
         produtosContainer.innerHTML = dados.produtos.map(p => `
           <div class="admin-item">
@@ -839,7 +942,6 @@
           </div>
         `).join('');
 
-        // FAQ
         const faqContainer = document.getElementById('faqList');
         faqContainer.innerHTML = dados.faq.map(f => `
           <div class="admin-item">
@@ -851,20 +953,14 @@
           </div>
         `).join('');
 
-        // Redes
         const plataformas = ['instagram','facebook','tiktok','youtube','twitter','linkedin'];
         const redesContainer = document.getElementById('redesList');
         redesContainer.innerHTML = plataformas.map(plat => {
           const item = dados.redes.find(r => r.plataforma === plat);
           return `<div class="admin-field"><label class="capitalize">${plat}</label><input type="url" id="rede_${plat}" value="${item?.url || ''}" placeholder="https://${plat}.com/..."></div>`;
         }).join('');
-
-        // Exportar
-        const exportJson = document.getElementById('exportJson');
-        if (exportJson) exportJson.value = JSON.stringify(dados, null, 2);
       }
 
-      // ===== SALVAR CONFIGURAÇÕES =====
       function salvarConfig() {
         const campos = ['logo_url','banner_url','titulo_hero','subtitulo_hero','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
         for (let chave of campos) {
@@ -878,7 +974,6 @@
         alert('✅ Configurações salvas!');
       }
 
-      // ===== SALVAR REDES =====
       function salvarRedes() {
         const plataformas = ['instagram','facebook','tiktok','youtube','twitter','linkedin'];
         for (let plat of plataformas) {
@@ -891,7 +986,6 @@
         alert('✅ Redes salvas!');
       }
 
-      // ===== CRUD PRODUTOS =====
       function novoProduto() {
         const nome = prompt('Nome do produto'); if (!nome) return;
         const preco = parseFloat(prompt('Preço (R$)')); if (isNaN(preco)) return;
@@ -923,7 +1017,6 @@
         }
       }
 
-      // ===== CRUD FAQ =====
       function novoFaq() {
         const pergunta = prompt('Pergunta'); if (!pergunta) return;
         const resposta = prompt('Resposta'); if (!resposta) return;
@@ -953,23 +1046,9 @@
         }
       }
 
-      // ===== EXPORTAR =====
-      function copiarJson() {
-        const json = document.getElementById('exportJson');
-        navigator.clipboard.writeText(json.value).then(() => {
-          alert('✅ JSON copiado!');
-        }).catch(() => {
-          json.select();
-          document.execCommand('copy');
-          alert('✅ JSON copiado!');
-        });
-      }
-
-      // ===== INICIAR =====
       carregarDados();
       renderizarSite();
 
-      // Eventos do DOM
       const range = document.getElementById('guest-range');
       const display = document.getElementById('guest-val');
       const dur = document.getElementById('calc-duration');
@@ -1017,7 +1096,6 @@
         }
       });
 
-      // Expor funções globalmente
       window.setCalcVar = setCalcVar;
       window.filterCatalog = filterCatalog;
       window.addToCart = addToCart;
@@ -1028,6 +1106,8 @@
       window.closeLeadModal = closeLeadModal;
       window.closeLeadModalOnBackdrop = closeLeadModalOnBackdrop;
       window.openChat = openChat;
+      window.verificarLogin = verificarLogin;
+      window.logout = logout;
       window.abrirAdmin = abrirAdmin;
       window.fecharAdmin = fecharAdmin;
       window.mudarAba = mudarAba;
@@ -1039,7 +1119,6 @@
       window.novoFaq = novoFaq;
       window.editarFaq = editarFaq;
       window.excluirFaq = excluirFaq;
-      window.copiarJson = copiarJson;
     })();
   </script>
 </body>
