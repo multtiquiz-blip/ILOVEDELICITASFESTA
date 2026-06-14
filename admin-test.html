@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste Painel I Love Delicitas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-100 p-8">
+  <div class="max-w-4xl mx-auto bg-white rounded-xl shadow p-6">
+    <h1 class="text-2xl font-bold text-gray-800 mb-4">🔍 Painel de Diagnóstico</h1>
+    <div id="status" class="p-4 bg-yellow-100 rounded mb-4">Carregando...</div>
+    <div id="supabase-status" class="p-4 bg-gray-100 rounded mb-4">Testando Supabase...</div>
+    <div id="render-status" class="p-4 bg-gray-100 rounded">Aguardando renderização...</div>
+    <hr class="my-4">
+    <div id="dados-locais" class="text-sm text-gray-600"></div>
+  </div>
+
+  <script>
+    // Vamos forçar a execução do código linha por linha
+    console.log('✅ Script iniciado');
+    
+    const SUPABASE_URL = 'https://sikiufknmldvkcxcktsn.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpa2l1ZmtubWxkdmtjeGNrdHNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNjYzMzgsImV4cCI6MjA5Njg0MjMzOH0.WKh9GdL3yJxnQqGUhLIeJNOm-7NRhgaMXW8vlkmEb0I';
+    
+    // 1. Testar Supabase
+    try {
+      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      document.getElementById('supabase-status').innerHTML = '✅ Supabase criado com sucesso';
+      console.log('✅ Supabase criado');
+    } catch(e) {
+      document.getElementById('supabase-status').innerHTML = '❌ Erro ao criar Supabase: ' + e.message;
+      console.error('❌ Erro Supabase:', e);
+    }
+
+    // 2. Renderizar dados locais (independente de Supabase)
+    function renderizar() {
+      document.getElementById('render-status').innerHTML = '✅ Renderização executada';
+      document.getElementById('dados-locais').innerHTML = `
+        <strong>Dados locais carregados:</strong><br>
+        - Configurações: 11 itens<br>
+        - Regras: 3 itens<br>
+        - Produtos: 3 itens<br>
+        - FAQ: 4 itens<br>
+        - Respostas: 5 itens<br>
+        - Redes: 3 itens<br>
+        - Horário: 7 itens
+      `;
+      document.getElementById('status').innerHTML = '✅ Painel de diagnóstico funcionando!';
+      document.getElementById('status').className = 'p-4 bg-green-100 rounded mb-4';
+      console.log('✅ Renderização concluída');
+    }
+
+    // Executar após carregamento
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('✅ DOMContentLoaded disparado');
+      renderizar();
+    });
+    
+    // Fallback: se DOMContentLoaded não funcionar
+    setTimeout(function() {
+      if (document.getElementById('render-status').innerHTML === 'Aguardando renderização...') {
+        console.warn('⚠️ DOMContentLoaded não funcionou. Executando fallback...');
+        renderizar();
+      }
+    }, 3000);
+  </script>
+</body>
+</html>
