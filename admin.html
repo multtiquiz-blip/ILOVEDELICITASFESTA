@@ -1,82 +1,342 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html class="scroll-smooth" lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel - I Love Delicitas</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Painel Admin - I Love Delicitas</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#ae2f34",
+            "background": "#fff8f7",
+            "surface": "#fff8f7",
+            "surface-container-low": "#f9f2f1",
+            "surface-container-highest": "#e8e1e0",
+            "on-surface": "#1d1b1b",
+            "on-surface-variant": "#584140",
+            "outline-variant": "#e0bfbd",
+            "inverse-surface": "#33302f",
+            "inverse-on-surface": "#f6efee",
+            "primary-fixed": "#ffdad8",
+            "on-primary": "#ffffff",
+            "error": "#ba1a1a",
+          },
+          borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+          spacing: { "margin-mobile": "16px", "margin-desktop": "64px", "gutter": "24px", "section-padding": "80px" },
+          fontFamily: { "headline": ["Be Vietnam Pro", "sans-serif"], "body": ["Plus Jakarta Sans", "sans-serif"] },
+          animation: { float: "float 3s ease-in-out infinite", "pulse-fast": "pulse-fast 0.3s ease-in-out", "slide-in": "slide-in 0.4s ease-out" },
+          keyframes: {
+            float: { "0%,100%": { transform: "translateY(0)" }, "50%": { transform: "translateY(-5px)" } },
+            "pulse-fast": { "0%": { transform: "scale(1)" }, "50%": { transform: "scale(1.02)" }, "100%": { transform: "scale(1)" } },
+            "slide-in": { "0%": { transform: "translateX(100%)" }, "100%": { transform: "translateX(0)" } }
+          }
+        }
+      }
+    }
+  </script>
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { background:#f1f5f9; padding:20px; font-family:system-ui; }
-    .card { background:white; border-radius:12px; padding:20px; margin-bottom:16px; box-shadow:0 2px 4px rgba(0,0,0,0.05); }
-    .tab-active { background:#ae2f34 !important; color:white !important; }
-    .tab-inactive { background:#e2e8f0 !important; color:#1e293b !important; }
-    .btn { padding:8px 16px; border-radius:6px; border:none; cursor:pointer; font-weight:600; }
-    .btn-primary { background:#ae2f34; color:white; }
-    .btn-success { background:#10b981; color:white; }
-    .btn-danger { background:#ef4444; color:white; }
-    input, textarea { width:100%; padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px; }
-    .field { margin-bottom:10px; }
-    .field label { display:block; font-weight:600; font-size:13px; margin-bottom:4px; }
-    .item { display:flex; justify-content:space-between; padding:6px 10px; border-bottom:1px solid #e2e8f0; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .icon-fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .header-scrolled { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); background-color: rgba(255, 248, 247, 0.95); }
+    .modal-backdrop { background-color: rgba(29, 27, 27, 0.6); backdrop-filter: blur(4px); }
+    .calculator-card { background: linear-gradient(135deg, #ae2f34 0%, #8d151f 100%); }
+    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+    /* Admin Panel Styles */
+    .admin-tab-active { background: #ae2f34 !important; color: white !important; }
+    .admin-tab-inactive { background-color: #e2e8f0 !important; color: #1e293b !important; }
+    .admin-card { background: white; border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .admin-btn-primary { background: #ae2f34; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500; transition: all 0.2s; }
+    .admin-btn-primary:hover { background: #8b2327; }
+    .admin-btn-success { background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500; }
+    .admin-btn-success:hover { background: #059669; }
+    .admin-btn-danger { background: #ef4444; color: white; padding: 0.25rem 0.75rem; border-radius: 0.5rem; }
+    .admin-field input, .admin-field textarea, .admin-field select { border: 1px solid #cbd5e1; border-radius: 0.5rem; padding: 0.5rem; width: 100%; background: white; }
+    .admin-field input:focus, .admin-field textarea:focus { outline: none; border-color: #ae2f34; box-shadow: 0 0 0 3px rgba(174,47,52,0.1); }
+    .admin-field label { font-weight: 600; font-size: 0.875rem; margin-bottom: 0.25rem; display: block; color: #334155; }
+    .image-preview { width: 60px; height: 60px; object-fit: cover; border-radius: 0.5rem; border: 1px solid #e2e8f0; margin-top: 0.5rem; }
+    .admin-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-bottom: 1px solid #e2e8f0; }
+    .admin-item:last-child { border-bottom: none; }
   </style>
 </head>
-<body>
+<body class="bg-background text-on-background font-body antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
 
-  <div class="max-w-4xl mx-auto">
-    <h1 class="text-2xl font-bold mb-4">⚙️ Painel I Love Delicitas</h1>
-    <p class="text-sm text-gray-500 mb-4">Acesse a URL secreta para editar. Ninguém sabe que existe.</p>
+  <!-- HEADER -->
+  <header class="bg-surface/80 backdrop-blur-md top-0 sticky z-50 transition-all duration-300 border-b border-outline-variant/10" id="main-header">
+    <div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-max mx-auto">
+      <h1 class="font-headline text-2xl font-bold text-primary">Painel I Love Delicitas</h1>
+      <a href="/" class="bg-primary text-on-primary px-4 py-2 rounded-lg font-semibold text-sm hover:shadow-md transition-all">← Voltar ao Site</a>
+    </div>
+  </header>
 
-    <div class="flex gap-2 mb-4">
-      <span class="tab-active px-4 py-2 rounded-lg cursor-pointer" onclick="mudarAba('config',this)">Config</span>
-      <span class="tab-inactive px-4 py-2 rounded-lg cursor-pointer" onclick="mudarAba('produtos',this)">Cardápio</span>
-      <span class="tab-inactive px-4 py-2 rounded-lg cursor-pointer" onclick="mudarAba('faq',this)">FAQ</span>
-      <span class="tab-inactive px-4 py-2 rounded-lg cursor-pointer" onclick="mudarAba('redes',this)">Redes</span>
+  <main class="max-w-max mx-auto px-margin-mobile md:px-margin-desktop py-8">
+    <!-- Status -->
+    <div id="status" class="mb-4 p-3 rounded-lg text-sm font-medium bg-yellow-100 text-yellow-800">🔄 Carregando dados do Supabase...</div>
+
+    <!-- Tabs -->
+    <div class="flex flex-wrap gap-2 mb-6 border-b border-outline-variant/30 pb-2">
+      <button class="admin-tab-active px-5 py-2.5 rounded-lg font-semibold" onclick="mostrarAba('config')">⚙️ Configurações</button>
+      <button class="admin-tab-inactive px-5 py-2.5 rounded-lg font-semibold" onclick="mostrarAba('cardapio')">🍕 Cardápio</button>
+      <button class="admin-tab-inactive px-5 py-2.5 rounded-lg font-semibold" onclick="mostrarAba('faq')">❓ FAQ</button>
+      <button class="admin-tab-inactive px-5 py-2.5 rounded-lg font-semibold" onclick="mostrarAba('redes')">📱 Redes Sociais</button>
     </div>
 
-    <div id="aba-config" class="card">
-      <div id="configCampos"></div>
-      <button class="btn btn-success" onclick="salvarConfig()">💾 Salvar</button>
+    <!-- Abas -->
+    <div id="aba-config" class="admin-card">
+      <h2 class="text-xl font-bold mb-4">⚙️ Configurações Gerais</h2>
+      <div id="configList" class="grid md:grid-cols-2 gap-4"></div>
+      <button class="admin-btn-success mt-4 w-full md:w-auto px-8 py-2" onclick="salvarConfig()">💾 Salvar Configurações</button>
     </div>
-    <div id="aba-produtos" class="card hidden">
-      <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
-        <h3>Cardápio</h3>
-        <button class="btn btn-primary" onclick="novoProduto()">+ Adicionar</button>
+
+    <div id="aba-cardapio" class="admin-card hidden">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold">🍕 Cardápio</h2>
+        <button class="admin-btn-primary" onclick="novoProduto()">+ Adicionar Produto</button>
       </div>
-      <div id="produtosList"></div>
+      <div id="produtosList" class="space-y-2"></div>
     </div>
-    <div id="aba-faq" class="card hidden">
-      <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
-        <h3>FAQ</h3>
-        <button class="btn btn-primary" onclick="novoFaq()">+ Adicionar</button>
+
+    <div id="aba-faq" class="admin-card hidden">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold">❓ FAQ</h2>
+        <button class="admin-btn-primary" onclick="novoFaq()">+ Adicionar FAQ</button>
       </div>
-      <div id="faqList"></div>
+      <div id="faqList" class="space-y-2"></div>
     </div>
-    <div id="aba-redes" class="card hidden">
-      <div id="redesCampos"></div>
-      <button class="btn btn-success" onclick="salvarRedes()">💾 Salvar</button>
+
+    <div id="aba-redes" class="admin-card hidden">
+      <h2 class="text-xl font-bold mb-4">📱 Redes Sociais</h2>
+      <div id="redesList" class="grid md:grid-cols-2 gap-4"></div>
+      <button class="admin-btn-success mt-4 w-full md:w-auto px-8 py-2" onclick="salvarRedes()">💾 Salvar Redes</button>
     </div>
-  </div>
+  </main>
 
   <script>
-    // MESMA ESTRUTURA DE DADOS DO index.html
-    const DADOS_PADRAO = { /* mesmo conteúdo do index.html */ };
-    let dados = {};
+    const SUPABASE_URL = 'https://sikiufknmldvkcxcktsn.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpa2l1ZmtubWxkdmtjeGNrdHNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNjYzMzgsImV4cCI6MjA5Njg0MjMzOH0.WKh9GdL3yJxnQqGUhLIeJNOm-7NRhgaMXW8vlkmEb0I';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    function carregar() {
-      const salvo = localStorage.getItem('ilovedelicitas_dados');
-      if(salvo) {
-        try { dados = JSON.parse(salvo); } catch(e) { dados = JSON.parse(JSON.stringify(DADOS_PADRAO)); }
-        for(let k in DADOS_PADRAO) if(!dados[k]) dados[k] = JSON.parse(JSON.stringify(DADOS_PADRAO[k]));
-      } else dados = JSON.parse(JSON.stringify(DADOS_PADRAO));
+    let dados = { config: [], produtos: [], faq: [], redes: [] };
+
+    // ===== CARREGAR TODOS OS DADOS =====
+    async function carregarDados() {
+      try {
+        const { data: configData, error: configError } = await supabase.from('configuracoes').select('*');
+        if (configError) throw configError;
+        dados.config = configData || [];
+
+        const { data: produtoData, error: produtoError } = await supabase.from('cardapio').select('*').order('id');
+        if (produtoError) throw produtoError;
+        dados.produtos = produtoData || [];
+
+        const { data: faqData, error: faqError } = await supabase.from('faq').select('*').order('ordem');
+        if (faqError) throw faqError;
+        dados.faq = faqData || [];
+
+        const { data: redesData, error: redesError } = await supabase.from('redes_sociais').select('*');
+        if (redesError) throw redesError;
+        dados.redes = redesData || [];
+
+        document.getElementById('status').innerHTML = '✅ Conectado ao Supabase - Dados carregados!';
+        document.getElementById('status').className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-800';
+        renderizarTudo();
+      } catch (err) {
+        document.getElementById('status').innerHTML = '❌ Erro ao carregar dados: ' + err.message;
+        document.getElementById('status').className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-red-100 text-red-800';
+        console.error(err);
+      }
     }
 
-    function salvar() {
-      localStorage.setItem('ilovedelicitas_dados', JSON.stringify(dados));
-      renderizar();
+    // ===== RENDERIZAR TUDO =====
+    function renderizarTudo() {
+      renderizarConfig();
+      renderizarProdutos();
+      renderizarFaq();
+      renderizarRedes();
     }
 
-    // ... (mesmas funções de renderização e CRUD do painel anterior)
+    function renderizarConfig() {
+      const container = document.getElementById('configList');
+      const campos = ['logo_url','banner_url','titulo_hero','subtitulo_hero','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
+      container.innerHTML = campos.map(chave => {
+        const item = dados.config.find(c => c.chave === chave);
+        return `<div class="admin-field"><label>${chave}</label><input type="text" id="cfg_${chave}" value="${escapeHtml(item?.valor || '')}"></div>`;
+      }).join('');
+    }
+
+    function renderizarProdutos() {
+      const container = document.getElementById('produtosList');
+      if (!dados.produtos.length) {
+        container.innerHTML = '<div class="text-center py-8 text-on-surface-variant italic">Nenhum produto. Adicione um.</div>';
+        return;
+      }
+      container.innerHTML = dados.produtos.map(p => `
+        <div class="admin-item">
+          <div><strong>${escapeHtml(p.nome)}</strong> - R$ ${p.preco} - ${p.categoria}</div>
+          <div>
+            <button class="admin-btn-primary text-xs px-3 py-1" onclick="editarProduto(${p.id})">Editar</button>
+            <button class="admin-btn-danger text-xs px-3 py-1" onclick="excluirProduto(${p.id})">Excluir</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderizarFaq() {
+      const container = document.getElementById('faqList');
+      if (!dados.faq.length) {
+        container.innerHTML = '<div class="text-center py-8 text-on-surface-variant italic">Nenhuma FAQ. Adicione uma.</div>';
+        return;
+      }
+      container.innerHTML = dados.faq.map(f => `
+        <div class="admin-item">
+          <div><strong>${escapeHtml(f.pergunta)}</strong></div>
+          <div>
+            <button class="admin-btn-primary text-xs px-3 py-1" onclick="editarFaq(${f.id})">Editar</button>
+            <button class="admin-btn-danger text-xs px-3 py-1" onclick="excluirFaq(${f.id})">Excluir</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderizarRedes() {
+      const plataformas = ['instagram','facebook','tiktok','youtube','twitter','linkedin'];
+      const container = document.getElementById('redesList');
+      container.innerHTML = plataformas.map(plat => {
+        const item = dados.redes.find(r => r.plataforma === plat);
+        return `<div class="admin-field"><label class="capitalize">${plat}</label><input type="url" id="rede_${plat}" value="${item?.url || ''}" placeholder="https://${plat}.com/..."></div>`;
+      }).join('');
+    }
+
+    // ===== ESCAPE =====
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        if (m === '"') return '&quot;';
+        return m;
+      });
+    }
+
+    // ===== SALVAR CONFIGURAÇÕES =====
+    async function salvarConfig() {
+      const campos = ['logo_url','banner_url','titulo_hero','subtitulo_hero','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
+      for (let chave of campos) {
+        const valor = document.getElementById(`cfg_${chave}`).value;
+        await supabase.from('configuracoes').upsert({ chave, valor }, { onConflict: 'chave' });
+      }
+      alert('✅ Configurações salvas! Recarregue o site para ver as mudanças.');
+      await carregarDados();
+    }
+
+    // ===== SALVAR REDES =====
+    async function salvarRedes() {
+      const plataformas = ['instagram','facebook','tiktok','youtube','twitter','linkedin'];
+      for (let plat of plataformas) {
+        const url = document.getElementById(`rede_${plat}`).value;
+        await supabase.from('redes_sociais').upsert({ plataforma: plat, url, ativo: true }, { onConflict: 'plataforma' });
+      }
+      alert('✅ Redes salvas!');
+      await carregarDados();
+    }
+
+    // ===== CRUD PRODUTOS =====
+    async function novoProduto() {
+      const nome = prompt('Nome do produto'); if (!nome) return;
+      const preco = parseFloat(prompt('Preço (R$)')); if (isNaN(preco)) return;
+      const categoria = prompt('Categoria (Fritos/Assados/Lanches/Doces)', 'Fritos');
+      const { error } = await supabase.from('cardapio').insert([{ nome, preco, categoria, unidade: 'Cento (100 un.)', descricao: '', imagem: 'https://via.placeholder.com/300x200' }]);
+      if (error) { alert('Erro: ' + error.message); return; }
+      alert('✅ Produto adicionado!');
+      await carregarDados();
+    }
+
+    async function editarProduto(id) {
+      const p = dados.produtos.find(x => x.id === id);
+      if (!p) return;
+      const nome = prompt('Nome', p.nome); if (nome) p.nome = nome;
+      const preco = parseFloat(prompt('Preço', p.preco)); if (!isNaN(preco)) p.preco = preco;
+      const categoria = prompt('Categoria', p.categoria); if (categoria) p.categoria = categoria;
+      const { error } = await supabase.from('cardapio').update({ nome, preco, categoria }).eq('id', id);
+      if (error) { alert('Erro: ' + error.message); return; }
+      alert('✅ Produto atualizado!');
+      await carregarDados();
+    }
+
+    async function excluirProduto(id) {
+      if (confirm('Excluir permanentemente?')) {
+        const { error } = await supabase.from('cardapio').delete().eq('id', id);
+        if (error) { alert('Erro: ' + error.message); return; }
+        alert('✅ Produto excluído!');
+        await carregarDados();
+      }
+    }
+
+    // ===== CRUD FAQ =====
+    async function novoFaq() {
+      const pergunta = prompt('Pergunta'); if (!pergunta) return;
+      const resposta = prompt('Resposta'); if (!resposta) return;
+      const ordem = dados.faq.length + 1;
+      const { error } = await supabase.from('faq').insert([{ pergunta, resposta, ordem }]);
+      if (error) { alert('Erro: ' + error.message); return; }
+      alert('✅ FAQ adicionada!');
+      await carregarDados();
+    }
+
+    async function editarFaq(id) {
+      const f = dados.faq.find(x => x.id === id);
+      if (!f) return;
+      const pergunta = prompt('Pergunta', f.pergunta); if (pergunta) f.pergunta = pergunta;
+      const resposta = prompt('Resposta', f.resposta); if (resposta) f.resposta = resposta;
+      const { error } = await supabase.from('faq').update({ pergunta, resposta }).eq('id', id);
+      if (error) { alert('Erro: ' + error.message); return; }
+      alert('✅ FAQ atualizada!');
+      await carregarDados();
+    }
+
+    async function excluirFaq(id) {
+      if (confirm('Excluir esta FAQ?')) {
+        const { error } = await supabase.from('faq').delete().eq('id', id);
+        if (error) { alert('Erro: ' + error.message); return; }
+        alert('✅ FAQ excluída!');
+        await carregarDados();
+      }
+    }
+
+    // ===== NAVEGAÇÃO =====
+    function mostrarAba(aba) {
+      const abas = ['config','cardapio','faq','redes'];
+      document.querySelectorAll('.admin-card').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('[class*="admin-tab-"]').forEach(el => {
+        el.classList.remove('admin-tab-active');
+        el.classList.add('admin-tab-inactive');
+      });
+      document.getElementById('aba-' + aba).classList.remove('hidden');
+      const btn = Array.from(document.querySelectorAll('[class*="admin-tab-"]')).find(b => b.textContent.includes(aba === 'config' ? 'Configurações' : aba.charAt(0).toUpperCase() + aba.slice(1)));
+      if (btn) {
+        btn.classList.remove('admin-tab-inactive');
+        btn.classList.add('admin-tab-active');
+      }
+    }
+
+    // ===== INICIAR =====
+    document.addEventListener('DOMContentLoaded', carregarDados);
   </script>
 </body>
 </html>
