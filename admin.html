@@ -37,6 +37,12 @@
           borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
           spacing: { "margin-mobile": "16px", "margin-desktop": "64px", "gutter": "24px", "section-padding": "80px" },
           fontFamily: { "headline": ["Be Vietnam Pro", "sans-serif"], "body": ["Plus Jakarta Sans", "sans-serif"] },
+          animation: { float: "float 3s ease-in-out infinite", "pulse-fast": "pulse-fast 0.3s ease-in-out", "slide-in": "slide-in 0.4s ease-out" },
+          keyframes: {
+            float: { "0%,100%": { transform: "translateY(0)" }, "50%": { transform: "translateY(-5px)" } },
+            "pulse-fast": { "0%": { transform: "scale(1)" }, "50%": { transform: "scale(1.02)" }, "100%": { transform: "scale(1)" } },
+            "slide-in": { "0%": { transform: "translateX(100%)" }, "100%": { transform: "translateX(0)" } }
+          }
         }
       }
     }
@@ -47,109 +53,319 @@
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .header-scrolled { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); background-color: rgba(255, 248, 247, 0.95); }
-    .admin-card { background: white; border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+    .admin-card {
+      background: white;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e0bfbd;
+    }
     .admin-tab-active { background: #ae2f34 !important; color: white !important; }
     .admin-tab-inactive { background: #e2e8f0 !important; color: #1e293b !important; }
-    .admin-btn-primary { background: #ae2f34; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; }
-    .admin-btn-primary:hover { background: #8b2327; }
-    .admin-btn-success { background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; }
-    .admin-btn-success:hover { background: #059669; }
-    .admin-btn-danger { background: #ef4444; color: white; padding: 0.25rem 0.75rem; border-radius: 0.5rem; }
-    input, textarea, select { border: 1px solid #cbd5e1; border-radius: 0.5rem; padding: 0.5rem; width: 100%; background: white; }
-    input:focus, textarea:focus, select:focus { outline: none; border-color: #ae2f34; box-shadow: 0 0 0 3px rgba(174,47,52,0.1); }
-    label { font-weight: 600; font-size: 0.875rem; margin-bottom: 0.25rem; display: block; color: #334155; }
-    .admin-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-bottom: 1px solid #e2e8f0; }
+    .admin-btn-primary {
+      background: #ae2f34;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .admin-btn-primary:hover { background: #8b2327; transform: translateY(-1px); }
+    .admin-btn-success {
+      background: #10b981;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .admin-btn-success:hover { background: #059669; transform: translateY(-1px); }
+    .admin-btn-danger {
+      background: #ef4444;
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+    }
+    .admin-btn-danger:hover { background: #dc2626; }
+    input, textarea, select {
+      border: 1px solid #cbd5e1;
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+      width: 100%;
+      background: white;
+      transition: border-color 0.2s;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #ae2f34;
+      box-shadow: 0 0 0 3px rgba(174,47,52,0.1);
+    }
+    label {
+      font-weight: 600;
+      font-size: 0.875rem;
+      margin-bottom: 0.25rem;
+      display: block;
+      color: #334155;
+    }
+    .admin-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
     .admin-item:last-child { border-bottom: none; }
+    .admin-item:hover { background: #f9f2f1; }
+    .admin-img-preview {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      border: 1px solid #e2e8f0;
+      margin-top: 0.5rem;
+    }
+    .admin-float-btn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: #ae2f34;
+      color: white;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      cursor: pointer;
+      z-index: 999;
+      box-shadow: 0 4px 12px rgba(174,47,52,0.4);
+      transition: transform 0.2s;
+    }
+    .admin-float-btn:hover { transform: scale(1.05); }
+    .admin-float-btn.hidden { display: none; }
   </style>
 </head>
 <body class="bg-background text-on-background font-body antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
 
+  <!-- HEADER -->
   <header class="bg-surface/80 backdrop-blur-md top-0 sticky z-50 transition-all duration-300 border-b border-outline-variant/10" id="main-header">
     <div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-max mx-auto">
-      <h1 class="font-headline text-2xl font-bold text-primary">⚙️ Painel I Love Delicitas</h1>
-      <a href="/" class="bg-primary text-on-primary px-4 py-2 rounded-lg font-semibold text-sm hover:shadow-md transition-all">← Voltar ao Site</a>
+      <h1 class="font-headline text-2xl font-bold text-primary flex items-center gap-2">
+        <span class="material-symbols-outlined icon-fill">settings</span> Painel I Love Delicitas
+      </h1>
+      <a href="/" class="bg-primary text-on-primary px-6 py-2.5 rounded-lg font-semibold text-sm hover:shadow-md transition-all flex items-center gap-2">
+        <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span> Voltar ao Site
+      </a>
     </div>
   </header>
 
   <main class="max-w-max mx-auto px-margin-mobile md:px-margin-desktop py-8">
-    <div id="status" class="mb-4 p-3 rounded-lg text-sm font-medium bg-yellow-100 text-yellow-800">🔄 Carregando dados do Supabase...</div>
+    <!-- Status -->
+    <div id="status" class="mb-4 p-3 rounded-lg text-sm font-medium bg-yellow-100 text-yellow-800 flex items-center gap-2">
+      <span class="material-symbols-outlined" style="font-size:18px;">sync</span> Carregando dados...
+    </div>
 
+    <!-- Tabs -->
     <div class="flex flex-wrap gap-2 mb-6 border-b border-outline-variant/30 pb-2">
-      <button class="admin-tab-active px-5 py-2.5 rounded-lg font-semibold" onclick="mostrarAba('config')">⚙️ Configurações</button>
-      <button class="admin-tab-inactive px-5 py-2.5 rounded-lg font-semibold" onclick="mostrarAba('produtos')">🍕 Cardápio</button>
-      <button class="admin-tab-inactive px-5 py-2.5 rounded-lg font-semibold" onclick="mostrarAba('faq')">❓ FAQ</button>
-      <button class="admin-tab-inactive px-5 py-2.5 rounded-lg font-semibold" onclick="mostrarAba('redes')">📱 Redes Sociais</button>
+      <button class="admin-tab-active px-5 py-2.5 rounded-lg font-semibold transition-all" onclick="mostrarAba('config')">
+        <span class="material-symbols-outlined icon-fill" style="font-size:18px; vertical-align:middle;">settings</span> Configurações
+      </button>
+      <button class="admin-tab-inactive px-5 py-2.5 rounded-lg font-semibold transition-all" onclick="mostrarAba('produtos')">
+        <span class="material-symbols-outlined icon-fill" style="font-size:18px; vertical-align:middle;">restaurant_menu</span> Cardápio
+      </button>
+      <button class="admin-tab-inactive px-5 py-2.5 rounded-lg font-semibold transition-all" onclick="mostrarAba('faq')">
+        <span class="material-symbols-outlined icon-fill" style="font-size:18px; vertical-align:middle;">help_outline</span> FAQ
+      </button>
+      <button class="admin-tab-inactive px-5 py-2.5 rounded-lg font-semibold transition-all" onclick="mostrarAba('redes')">
+        <span class="material-symbols-outlined icon-fill" style="font-size:18px; vertical-align:middle;">share</span> Redes Sociais
+      </button>
+      <button class="admin-tab-inactive px-5 py-2.5 rounded-lg font-semibold transition-all" onclick="mostrarAba('export')">
+        <span class="material-symbols-outlined icon-fill" style="font-size:18px; vertical-align:middle;">download</span> Exportar
+      </button>
     </div>
 
+    <!-- Configurações -->
     <div id="aba-config" class="admin-card">
-      <h2 class="text-xl font-bold mb-4">⚙️ Configurações Gerais</h2>
+      <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+        <span class="material-symbols-outlined icon-fill text-primary">settings</span> Configurações Gerais
+      </h2>
       <div id="configList" class="grid md:grid-cols-2 gap-4"></div>
-      <button class="admin-btn-success mt-4 w-full md:w-auto px-8 py-2" onclick="salvarConfig()">💾 Salvar Configurações</button>
+      <button class="admin-btn-success mt-4 w-full md:w-auto px-8 py-2 flex items-center gap-2" onclick="salvarConfig()">
+        <span class="material-symbols-outlined" style="font-size:18px;">save</span> Salvar Configurações
+      </button>
     </div>
 
+    <!-- Cardápio -->
     <div id="aba-produtos" class="admin-card hidden">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-bold">🍕 Cardápio</h2>
-        <button class="admin-btn-primary" onclick="novoProduto()">+ Adicionar Produto</button>
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
+        <h2 class="text-xl font-bold flex items-center gap-2">
+          <span class="material-symbols-outlined icon-fill text-primary">restaurant_menu</span> Cardápio
+        </h2>
+        <button class="admin-btn-primary px-4 py-2 text-sm flex items-center gap-2" onclick="novoProduto()">
+          <span class="material-symbols-outlined" style="font-size:18px;">add</span> Adicionar Produto
+        </button>
       </div>
-      <div id="produtosList" class="space-y-2"></div>
+      <div id="produtosList" class="space-y-2 max-h-[600px] overflow-y-auto pr-2"></div>
     </div>
 
+    <!-- FAQ -->
     <div id="aba-faq" class="admin-card hidden">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-bold">❓ FAQ</h2>
-        <button class="admin-btn-primary" onclick="novoFaq()">+ Adicionar FAQ</button>
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
+        <h2 class="text-xl font-bold flex items-center gap-2">
+          <span class="material-symbols-outlined icon-fill text-primary">help_outline</span> FAQ
+        </h2>
+        <button class="admin-btn-primary px-4 py-2 text-sm flex items-center gap-2" onclick="novoFaq()">
+          <span class="material-symbols-outlined" style="font-size:18px;">add</span> Adicionar FAQ
+        </button>
       </div>
-      <div id="faqList" class="space-y-2"></div>
+      <div id="faqList" class="space-y-2 max-h-[600px] overflow-y-auto pr-2"></div>
     </div>
 
+    <!-- Redes Sociais -->
     <div id="aba-redes" class="admin-card hidden">
-      <h2 class="text-xl font-bold mb-4">📱 Redes Sociais</h2>
+      <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+        <span class="material-symbols-outlined icon-fill text-primary">share</span> Redes Sociais
+      </h2>
       <div id="redesList" class="grid md:grid-cols-2 gap-4"></div>
-      <button class="admin-btn-success mt-4 w-full md:w-auto px-8 py-2" onclick="salvarRedes()">💾 Salvar Redes</button>
+      <button class="admin-btn-success mt-4 w-full md:w-auto px-8 py-2 flex items-center gap-2" onclick="salvarRedes()">
+        <span class="material-symbols-outlined" style="font-size:18px;">save</span> Salvar Redes
+      </button>
+    </div>
+
+    <!-- Exportar -->
+    <div id="aba-export" class="admin-card hidden">
+      <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+        <span class="material-symbols-outlined icon-fill text-primary">download</span> Exportar Dados
+      </h2>
+      <p class="text-sm text-on-surface-variant mb-4">Copie o JSON abaixo para usar em outro lugar ou fazer backup.</p>
+      <textarea id="exportJson" rows="10" class="w-full font-mono text-sm bg-surface-container-low p-3 rounded-lg border border-outline-variant" readonly></textarea>
+      <button class="admin-btn-primary mt-4 px-8 py-2 flex items-center gap-2" onclick="copiarJson()">
+        <span class="material-symbols-outlined" style="font-size:18px;">content_copy</span> Copiar JSON
+      </button>
     </div>
   </main>
 
   <script>
+    // ===== SUPABASE (se disponível) =====
     const SUPABASE_URL = 'https://sikiufknmldvkcxcktsn.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpa2l1ZmtubWxkdmtjeGNrdHNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNjYzMzgsImV4cCI6MjA5Njg0MjMzOH0.WKh9GdL3yJxnQqGUhLIeJNOm-7NRhgaMXW8vlkmEb0I';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    let supabase = null;
+    let supabaseOnline = false;
 
-    let dados = { config: [], produtos: [], faq: [], redes: [] };
-
-    async function carregarDados() {
-      try {
-        const { data: configData, error: configError } = await supabase.from('configuracoes').select('*');
-        if (configError) throw configError;
-        dados.config = configData || [];
-
-        const { data: produtoData, error: produtoError } = await supabase.from('cardapio').select('*').order('id');
-        if (produtoError) throw produtoError;
-        dados.produtos = produtoData || [];
-
-        const { data: faqData, error: faqError } = await supabase.from('faq').select('*').order('ordem');
-        if (faqError) throw faqError;
-        dados.faq = faqData || [];
-
-        const { data: redesData, error: redesError } = await supabase.from('redes_sociais').select('*');
-        if (redesError) throw redesError;
-        dados.redes = redesData || [];
-
-        document.getElementById('status').innerHTML = '✅ Conectado ao Supabase - Dados carregados!';
-        document.getElementById('status').className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-800';
-        renderizarTudo();
-      } catch (err) {
-        document.getElementById('status').innerHTML = '❌ Erro ao carregar dados: ' + err.message;
-        document.getElementById('status').className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-red-100 text-red-800';
-        console.error(err);
-      }
+    try {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      supabaseOnline = true;
+    } catch(e) {
+      console.warn('Supabase não disponível. Modo offline (localStorage).');
+      supabaseOnline = false;
     }
 
+    // ===== DADOS PADRÃO =====
+    const DADOS_PADRAO = {
+      config: [
+        { chave: 'logo_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo' },
+        { chave: 'banner_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY' },
+        { chave: 'titulo_hero', valor: 'A Celebração que o Seu Paladar Merece' },
+        { chave: 'subtitulo_hero', valor: 'Doces e salgados artesanais. Fritura no local, retirada ou frete por aplicativo. BH e região.' },
+        { chave: 'telefone', valor: '5531999999999' },
+        { chave: 'whatsapp_link', valor: 'https://wa.me/5531999999999' },
+        { chave: 'rodape_texto', valor: 'Gastronomia artesanal para festas em BH. Fritura no local, retirada ou frete por app. Pagamento em até 3x.' },
+        { chave: 'rodape_copyright', valor: '© 2025 I Love Delicitas. Todos os direitos reservados.' }
+      ],
+      produtos: [
+        { id: 1, nome: 'Coxinha de Frango', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Clássica massa de batata com frango desfiado.', imagem: 'https://via.placeholder.com/300x200?text=Coxinha' },
+        { id: 2, nome: 'Bolinha de Queijo', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Massa cremosa recheada com mussarela.', imagem: 'https://via.placeholder.com/300x200?text=Bolinha' },
+        { id: 3, nome: 'Brigadeiro', preco: 70, categoria: 'Doces', unidade: 'Cento (100 un.)', descricao: 'Brigadeiro gourmet com granulado belga.', imagem: 'https://via.placeholder.com/300x200?text=Brigadeiro' }
+      ],
+      faq: [
+        { id: 1, pergunta: 'Qual o prazo mínimo?', resposta: 'Recomendamos 7 dias para encomendas menores e 15 para grandes eventos.', ordem: 1 },
+        { id: 2, pergunta: 'Vocês entregam?', resposta: 'Cliente retira no local ou contrata entregador por app.', ordem: 2 }
+      ],
+      redes: [
+        { plataforma: 'instagram', url: 'https://instagram.com/ilovedelicitas' },
+        { plataforma: 'facebook', url: 'https://facebook.com/ilovedelicitas' }
+      ]
+    };
+
+    let dados = {};
+
+    // ===== CARREGAR DADOS =====
+    async function carregarDados() {
+      // 1. Tentar do localStorage primeiro (sempre)
+      const local = localStorage.getItem('ilovedelicitas_dados');
+      if (local) {
+        try {
+          dados = JSON.parse(local);
+        } catch(e) {
+          dados = JSON.parse(JSON.stringify(DADOS_PADRAO));
+        }
+      } else {
+        dados = JSON.parse(JSON.stringify(DADOS_PADRAO));
+      }
+
+      // Garantir que todas as chaves existam
+      for (let k in DADOS_PADRAO) {
+        if (!dados[k] || !Array.isArray(dados[k]) || dados[k].length === 0) {
+          dados[k] = JSON.parse(JSON.stringify(DADOS_PADRAO[k]));
+        }
+      }
+
+      // 2. Se Supabase online, tentar buscar dados mais recentes
+      if (supabaseOnline) {
+        try {
+          const { data: configData } = await supabase.from('configuracoes').select('*');
+          if (configData && configData.length > 0) dados.config = configData;
+
+          const { data: produtoData } = await supabase.from('cardapio').select('*').order('id');
+          if (produtoData && produtoData.length > 0) dados.produtos = produtoData;
+
+          const { data: faqData } = await supabase.from('faq').select('*').order('ordem');
+          if (faqData && faqData.length > 0) dados.faq = faqData;
+
+          const { data: redesData } = await supabase.from('redes_sociais').select('*');
+          if (redesData && redesData.length > 0) dados.redes = redesData;
+
+          document.getElementById('status').innerHTML = `
+            <span class="material-symbols-outlined" style="font-size:18px;">check_circle</span>
+            Conectado ao Supabase - Dados carregados!
+          `;
+          document.getElementById('status').className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-800 flex items-center gap-2';
+
+          // Salvar no localStorage para fallback
+          salvarLocal();
+        } catch (err) {
+          console.warn('Supabase indisponível, usando localStorage:', err);
+          document.getElementById('status').innerHTML = `
+            <span class="material-symbols-outlined" style="font-size:18px;">warning</span>
+            Modo offline - Dados do navegador
+          `;
+          document.getElementById('status').className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-yellow-100 text-yellow-800 flex items-center gap-2';
+        }
+      } else {
+        document.getElementById('status').innerHTML = `
+          <span class="material-symbols-outlined" style="font-size:18px;">storage</span>
+          Modo offline - Dados do navegador
+        `;
+        document.getElementById('status').className = 'mb-4 p-3 rounded-lg text-sm font-medium bg-yellow-100 text-yellow-800 flex items-center gap-2';
+      }
+
+      renderizarTudo();
+    }
+
+    function salvarLocal() {
+      localStorage.setItem('ilovedelicitas_dados', JSON.stringify(dados));
+    }
+
+    // ===== RENDERIZAR =====
     function renderizarTudo() {
       renderizarConfig();
       renderizarProdutos();
       renderizarFaq();
       renderizarRedes();
+      atualizarExportacao();
     }
 
     function renderizarConfig() {
@@ -157,7 +373,14 @@
       const campos = ['logo_url','banner_url','titulo_hero','subtitulo_hero','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
       container.innerHTML = campos.map(chave => {
         const item = dados.config.find(c => c.chave === chave);
-        return `<div><label>${chave}</label><input type="text" id="cfg_${chave}" value="${escapeHtml(item?.valor || '')}" class="w-full"></div>`;
+        const val = item?.valor || '';
+        return `
+          <div class="admin-field">
+            <label>${chave}</label>
+            <input type="text" id="cfg_${chave}" value="${escapeHtml(val)}" class="w-full">
+            ${chave.includes('url') && val ? `<img src="${val}" class="admin-img-preview" onerror="this.style.display='none'">` : ''}
+          </div>
+        `;
       }).join('');
     }
 
@@ -169,8 +392,11 @@
       }
       container.innerHTML = dados.produtos.map(p => `
         <div class="admin-item">
-          <div><strong>${escapeHtml(p.nome)}</strong> - R$ ${p.preco} - ${p.categoria}</div>
           <div>
+            <strong>${escapeHtml(p.nome)}</strong>
+            <span class="text-sm text-on-surface-variant"> - R$ ${p.preco.toFixed(2)} - ${p.categoria}</span>
+          </div>
+          <div class="flex gap-2">
             <button class="admin-btn-primary text-xs px-3 py-1" onclick="editarProduto(${p.id})">Editar</button>
             <button class="admin-btn-danger text-xs px-3 py-1" onclick="excluirProduto(${p.id})">Excluir</button>
           </div>
@@ -184,10 +410,14 @@
         container.innerHTML = '<div class="text-center py-8 text-on-surface-variant italic">Nenhuma FAQ. Adicione uma.</div>';
         return;
       }
-      container.innerHTML = dados.faq.map(f => `
+      const sorted = [...dados.faq].sort((a,b) => (a.ordem||0) - (b.ordem||0));
+      container.innerHTML = sorted.map(f => `
         <div class="admin-item">
-          <div><strong>${escapeHtml(f.pergunta)}</strong></div>
           <div>
+            <strong>${escapeHtml(f.pergunta)}</strong>
+            <span class="text-sm text-on-surface-variant block">${escapeHtml(f.resposta.substring(0,60))}${f.resposta.length > 60 ? '...' : ''}</span>
+          </div>
+          <div class="flex gap-2">
             <button class="admin-btn-primary text-xs px-3 py-1" onclick="editarFaq(${f.id})">Editar</button>
             <button class="admin-btn-danger text-xs px-3 py-1" onclick="excluirFaq(${f.id})">Excluir</button>
           </div>
@@ -200,8 +430,18 @@
       const container = document.getElementById('redesList');
       container.innerHTML = plataformas.map(plat => {
         const item = dados.redes.find(r => r.plataforma === plat);
-        return `<div><label class="capitalize">${plat}</label><input type="url" id="rede_${plat}" value="${item?.url || ''}" placeholder="https://${plat}.com/..." class="w-full"></div>`;
+        return `
+          <div class="admin-field">
+            <label class="capitalize">${plat}</label>
+            <input type="url" id="rede_${plat}" value="${escapeHtml(item?.url || '')}" placeholder="https://${plat}.com/..." class="w-full">
+          </div>
+        `;
       }).join('');
+    }
+
+    function atualizarExportacao() {
+      const json = document.getElementById('exportJson');
+      if (json) json.value = JSON.stringify(dados, null, 2);
     }
 
     function escapeHtml(str) {
@@ -215,8 +455,9 @@
       });
     }
 
+    // ===== NAVEGAÇÃO =====
     function mostrarAba(aba) {
-      const abas = ['config','produtos','faq','redes'];
+      const abas = ['config','produtos','faq','redes','export'];
       abas.forEach(a => {
         document.getElementById('aba-' + a).classList.add('hidden');
       });
@@ -226,7 +467,7 @@
         el.classList.add('admin-tab-inactive');
       });
       const btn = Array.from(document.querySelectorAll('[class*="admin-tab-"]')).find(b => 
-        b.textContent.includes(aba === 'config' ? 'Configurações' : aba.charAt(0).toUpperCase() + aba.slice(1))
+        b.textContent.includes(aba === 'config' ? 'Configurações' : aba === 'produtos' ? 'Cardápio' : aba === 'faq' ? 'FAQ' : aba === 'redes' ? 'Redes' : 'Exportar')
       );
       if (btn) {
         btn.classList.remove('admin-tab-inactive');
@@ -234,34 +475,57 @@
       }
     }
 
+    // ===== SALVAR =====
     async function salvarConfig() {
       const campos = ['logo_url','banner_url','titulo_hero','subtitulo_hero','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
       for (let chave of campos) {
         const valor = document.getElementById(`cfg_${chave}`).value;
-        await supabase.from('configuracoes').upsert({ chave, valor }, { onConflict: 'chave' });
+        let idx = dados.config.findIndex(c => c.chave === chave);
+        if (idx >= 0) dados.config[idx].valor = valor;
+        else dados.config.push({ chave, valor });
+      }
+      salvarLocal();
+      if (supabaseOnline) {
+        for (let chave of campos) {
+          const valor = document.getElementById(`cfg_${chave}`).value;
+          await supabase.from('configuracoes').upsert({ chave, valor }, { onConflict: 'chave' });
+        }
       }
       alert('✅ Configurações salvas!');
-      await carregarDados();
     }
 
     async function salvarRedes() {
       const plataformas = ['instagram','facebook','tiktok','youtube','twitter','linkedin'];
       for (let plat of plataformas) {
         const url = document.getElementById(`rede_${plat}`).value;
-        await supabase.from('redes_sociais').upsert({ plataforma: plat, url, ativo: true }, { onConflict: 'plataforma' });
+        let idx = dados.redes.findIndex(r => r.plataforma === plat);
+        if (idx >= 0) dados.redes[idx].url = url;
+        else dados.redes.push({ plataforma: plat, url });
+      }
+      salvarLocal();
+      if (supabaseOnline) {
+        for (let plat of plataformas) {
+          const url = document.getElementById(`rede_${plat}`).value;
+          await supabase.from('redes_sociais').upsert({ plataforma: plat, url, ativo: true }, { onConflict: 'plataforma' });
+        }
       }
       alert('✅ Redes salvas!');
-      await carregarDados();
     }
 
+    // ===== CRUD PRODUTOS =====
     async function novoProduto() {
       const nome = prompt('Nome do produto'); if (!nome) return;
       const preco = parseFloat(prompt('Preço (R$)')); if (isNaN(preco)) return;
       const categoria = prompt('Categoria (Fritos/Assados/Lanches/Doces)', 'Fritos');
-      const { error } = await supabase.from('cardapio').insert([{ nome, preco, categoria, unidade: 'Cento (100 un.)', descricao: '', imagem: 'https://via.placeholder.com/300x200' }]);
-      if (error) { alert('Erro: ' + error.message); return; }
-      alert('✅ Produto adicionado!');
-      await carregarDados();
+      const novoId = dados.produtos.length ? Math.max(...dados.produtos.map(p => p.id)) + 1 : 1;
+      const novo = { id: novoId, nome, preco, categoria, unidade: 'Cento (100 un.)', descricao: '', imagem: 'https://via.placeholder.com/300x200' };
+      dados.produtos.push(novo);
+      salvarLocal();
+      if (supabaseOnline) {
+        await supabase.from('cardapio').insert([{ nome, preco, categoria, unidade: 'Cento (100 un.)', descricao: '', imagem: 'https://via.placeholder.com/300x200' }]);
+      }
+      renderizarProdutos();
+      atualizarExportacao();
     }
 
     async function editarProduto(id) {
@@ -270,29 +534,40 @@
       const nome = prompt('Nome', p.nome); if (nome) p.nome = nome;
       const preco = parseFloat(prompt('Preço', p.preco)); if (!isNaN(preco)) p.preco = preco;
       const categoria = prompt('Categoria', p.categoria); if (categoria) p.categoria = categoria;
-      const { error } = await supabase.from('cardapio').update({ nome, preco, categoria }).eq('id', id);
-      if (error) { alert('Erro: ' + error.message); return; }
-      alert('✅ Produto atualizado!');
-      await carregarDados();
+      salvarLocal();
+      if (supabaseOnline) {
+        await supabase.from('cardapio').update({ nome, preco, categoria }).eq('id', id);
+      }
+      renderizarProdutos();
+      atualizarExportacao();
     }
 
     async function excluirProduto(id) {
       if (confirm('Excluir permanentemente?')) {
-        const { error } = await supabase.from('cardapio').delete().eq('id', id);
-        if (error) { alert('Erro: ' + error.message); return; }
-        alert('✅ Produto excluído!');
-        await carregarDados();
+        dados.produtos = dados.produtos.filter(p => p.id !== id);
+        salvarLocal();
+        if (supabaseOnline) {
+          await supabase.from('cardapio').delete().eq('id', id);
+        }
+        renderizarProdutos();
+        atualizarExportacao();
       }
     }
 
+    // ===== CRUD FAQ =====
     async function novoFaq() {
       const pergunta = prompt('Pergunta'); if (!pergunta) return;
       const resposta = prompt('Resposta'); if (!resposta) return;
+      const novoId = dados.faq.length ? Math.max(...dados.faq.map(f => f.id)) + 1 : 1;
       const ordem = dados.faq.length + 1;
-      const { error } = await supabase.from('faq').insert([{ pergunta, resposta, ordem }]);
-      if (error) { alert('Erro: ' + error.message); return; }
-      alert('✅ FAQ adicionada!');
-      await carregarDados();
+      const novo = { id: novoId, pergunta, resposta, ordem };
+      dados.faq.push(novo);
+      salvarLocal();
+      if (supabaseOnline) {
+        await supabase.from('faq').insert([{ pergunta, resposta, ordem }]);
+      }
+      renderizarFaq();
+      atualizarExportacao();
     }
 
     async function editarFaq(id) {
@@ -300,21 +575,39 @@
       if (!f) return;
       const pergunta = prompt('Pergunta', f.pergunta); if (pergunta) f.pergunta = pergunta;
       const resposta = prompt('Resposta', f.resposta); if (resposta) f.resposta = resposta;
-      const { error } = await supabase.from('faq').update({ pergunta, resposta }).eq('id', id);
-      if (error) { alert('Erro: ' + error.message); return; }
-      alert('✅ FAQ atualizada!');
-      await carregarDados();
+      salvarLocal();
+      if (supabaseOnline) {
+        await supabase.from('faq').update({ pergunta, resposta }).eq('id', id);
+      }
+      renderizarFaq();
+      atualizarExportacao();
     }
 
     async function excluirFaq(id) {
       if (confirm('Excluir esta FAQ?')) {
-        const { error } = await supabase.from('faq').delete().eq('id', id);
-        if (error) { alert('Erro: ' + error.message); return; }
-        alert('✅ FAQ excluída!');
-        await carregarDados();
+        dados.faq = dados.faq.filter(f => f.id !== id);
+        salvarLocal();
+        if (supabaseOnline) {
+          await supabase.from('faq').delete().eq('id', id);
+        }
+        renderizarFaq();
+        atualizarExportacao();
       }
     }
 
+    // ===== EXPORTAR =====
+    function copiarJson() {
+      const json = document.getElementById('exportJson');
+      navigator.clipboard.writeText(json.value).then(() => {
+        alert('✅ JSON copiado!');
+      }).catch(() => {
+        json.select();
+        document.execCommand('copy');
+        alert('✅ JSON copiado!');
+      });
+    }
+
+    // ===== INICIAR =====
     document.addEventListener('DOMContentLoaded', carregarDados);
   </script>
 </body>
