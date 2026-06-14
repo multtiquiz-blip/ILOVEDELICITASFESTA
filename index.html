@@ -12,8 +12,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     tailwind.config = {
       darkMode: "class",
@@ -158,11 +156,145 @@
       .delinha-ia-widget { width: 300px; bottom: 10px; right: 10px; }
       .delinha-ia-messages { height: 300px; }
     }
+
+    /* ===== PAINEL ADMIN ===== */
+    .admin-float-btn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: #ae2f34;
+      color: white;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      cursor: pointer;
+      z-index: 9999;
+      box-shadow: 0 4px 12px rgba(174,47,52,0.4);
+      transition: transform 0.2s;
+    }
+    .admin-float-btn:hover { transform: scale(1.05); }
+    .admin-panel {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      z-index: 99999;
+      overflow-y: auto;
+      padding: 20px;
+    }
+    .admin-panel.active { display: flex; justify-content: center; align-items: center; }
+    .admin-content {
+      background: white;
+      max-width: 1000px;
+      width: 100%;
+      border-radius: 1rem;
+      padding: 24px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    .admin-close {
+      position: absolute;
+      top: 12px;
+      right: 20px;
+      font-size: 28px;
+      cursor: pointer;
+      color: #666;
+      transition: color 0.2s;
+    }
+    .admin-close:hover { color: #ae2f34; }
+    .admin-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    .admin-tab {
+      padding: 8px 20px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .admin-tab.active { background: #ae2f34; color: white; }
+    .admin-tab:hover:not(.active) { background: #d1d5db; }
+    .admin-section { display: none; }
+    .admin-section.active { display: block; }
+    .admin-field { margin-bottom: 12px; }
+    .admin-field label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 4px; color: #334155; }
+    .admin-field input, .admin-field textarea, .admin-field select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 14px;
+      background: white;
+      transition: border-color 0.2s;
+    }
+    .admin-field input:focus, .admin-field textarea:focus, .admin-field select:focus {
+      outline: none;
+      border-color: #ae2f34;
+      box-shadow: 0 0 0 3px rgba(174,47,52,0.1);
+    }
+    .admin-btn-primary {
+      background: #ae2f34;
+      color: white;
+      padding: 8px 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .admin-btn-primary:hover { background: #8b2327; transform: translateY(-1px); }
+    .admin-btn-success {
+      background: #10b981;
+      color: white;
+      padding: 8px 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .admin-btn-success:hover { background: #059669; transform: translateY(-1px); }
+    .admin-btn-danger {
+      background: #ef4444;
+      color: white;
+      padding: 4px 12px;
+      border: none;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .admin-btn-danger:hover { background: #dc2626; }
+    .admin-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .admin-item:last-child { border-bottom: none; }
+    .admin-item:hover { background: #f9f2f1; }
+    .admin-img-preview {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+      margin-top: 4px;
+    }
   </style>
 </head>
 <body class="bg-background text-on-background font-body antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
 
-  <!-- DRAWER (CARRINHO) -->
+  <!-- ===== DRAWER (CARRINHO) ===== -->
   <div class="fixed inset-y-0 right-0 w-full md:w-96 bg-surface z-[60] shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col" id="quote-drawer">
     <div class="p-6 border-b border-outline-variant flex items-center justify-between bg-primary text-on-primary">
       <h3 class="font-headline font-semibold text-xl">Meu Orçamento</h3>
@@ -175,7 +307,7 @@
     </div>
   </div>
 
-  <!-- MODAL LEAD -->
+  <!-- ===== MODAL LEAD ===== -->
   <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 modal-backdrop" id="lead-modal" onclick="closeLeadModalOnBackdrop(event)">
     <div class="bg-surface w-full max-w-md rounded-xl shadow-2xl overflow-hidden animate-slide-in" onclick="event.stopPropagation()">
       <div class="p-6 bg-surface-container-highest flex justify-between items-center border-b border-outline-variant/30"><h3 class="font-headline font-semibold text-lg text-on-surface">Só mais um passo!</h3><button class="text-on-surface-variant hover:text-primary transition-colors" onclick="closeLeadModal()"><span class="material-symbols-outlined">close</span></button></div>
@@ -189,7 +321,66 @@
     </div>
   </div>
 
-  <!-- HEADER -->
+  <!-- ===== BOTÃO ADMIN ===== -->
+  <div class="admin-float-btn" onclick="abrirAdmin()" title="Painel Administrativo">⚙️</div>
+
+  <!-- ===== PAINEL ADMIN ===== -->
+  <div class="admin-panel" id="adminPanel">
+    <div class="admin-content">
+      <span class="admin-close" onclick="fecharAdmin()">×</span>
+      <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+        <span class="material-symbols-outlined icon-fill">settings</span> Painel Administrativo
+        <span class="text-sm font-normal text-on-surface-variant">(dados salvos no navegador)</span>
+      </h2>
+
+      <div class="admin-tabs">
+        <span class="admin-tab active" onclick="mudarAba('config',this)">⚙️ Configurações</span>
+        <span class="admin-tab" onclick="mudarAba('produtos',this)">🍕 Cardápio</span>
+        <span class="admin-tab" onclick="mudarAba('faq',this)">❓ FAQ</span>
+        <span class="admin-tab" onclick="mudarAba('redes',this)">📱 Redes</span>
+        <span class="admin-tab" onclick="mudarAba('export',this)">📤 Exportar</span>
+      </div>
+
+      <!-- Configurações -->
+      <div class="admin-section active" id="aba-config">
+        <div id="configList" class="grid md:grid-cols-2 gap-4"></div>
+        <button class="admin-btn-success mt-4 w-full md:w-auto px-8 py-2" onclick="salvarConfig()">💾 Salvar Configurações</button>
+      </div>
+
+      <!-- Cardápio -->
+      <div class="admin-section" id="aba-produtos">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-bold">Cardápio</h3>
+          <button class="admin-btn-primary" onclick="novoProduto()">+ Adicionar Produto</button>
+        </div>
+        <div id="produtosList" class="space-y-2"></div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="admin-section" id="aba-faq">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-bold">FAQ</h3>
+          <button class="admin-btn-primary" onclick="novoFaq()">+ Adicionar FAQ</button>
+        </div>
+        <div id="faqList" class="space-y-2"></div>
+      </div>
+
+      <!-- Redes -->
+      <div class="admin-section" id="aba-redes">
+        <div id="redesList" class="grid md:grid-cols-2 gap-4"></div>
+        <button class="admin-btn-success mt-4 w-full md:w-auto px-8 py-2" onclick="salvarRedes()">💾 Salvar Redes</button>
+      </div>
+
+      <!-- Exportar -->
+      <div class="admin-section" id="aba-export">
+        <p class="text-sm text-on-surface-variant mb-4">Copie este JSON para fazer backup ou usar em outro lugar.</p>
+        <textarea id="exportJson" rows="8" class="w-full font-mono text-sm bg-surface-container-low p-3 rounded-lg border border-outline-variant" readonly></textarea>
+        <button class="admin-btn-primary mt-4 px-8 py-2" onclick="copiarJson()">📋 Copiar JSON</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== HEADER ===== -->
   <header class="bg-surface/80 backdrop-blur-md top-0 sticky z-50 transition-all duration-300 border-b border-outline-variant/10" id="main-header">
     <div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-max mx-auto">
       <a class="flex-shrink-0 hover:scale-105 transition-all duration-300" href="#"><img id="logo-img" class="h-12 md:h-16 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo"></a>
@@ -199,13 +390,13 @@
   </header>
 
   <main>
-    <!-- HERO -->
+    <!-- ===== HERO ===== -->
     <section class="relative w-full min-h-[600px] flex items-center overflow-hidden bg-surface-container-high">
       <div class="absolute inset-0 w-full h-full"><div class="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent z-10"></div><img id="banner-img" class="w-full h-full object-cover object-center" src="https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY"></div>
       <div class="relative z-20 w-full px-margin-mobile md:px-margin-desktop py-16 max-w-max mx-auto"><div class="max-w-2xl"><div class="inline-flex items-center gap-2 bg-primary/10 px-4 py-1.5 rounded-full mb-6"><span class="material-symbols-outlined text-primary text-[18px] icon-fill">stars</span><span class="text-xs font-bold text-primary uppercase tracking-widest" id="hero-badge">Qualidade Premium & Artesanal</span></div><h1 id="hero-title" class="font-headline text-4xl md:text-5xl lg:text-6xl font-bold text-on-surface leading-tight mb-6">A Celebração que o Seu <span class="text-primary">Paladar Merece</span></h1><p id="hero-subtitle" class="font-body text-lg text-on-surface-variant mb-10 max-w-xl">Doces e salgados artesanais. Fritura no local, retirada ou frete por aplicativo. BH e região.</p><div class="flex flex-col sm:flex-row gap-4"><a class="bg-primary text-on-primary px-10 py-4 rounded-lg font-semibold hover:shadow-xl transition-all flex items-center justify-center gap-2 group" href="#calculadora"><span class="material-symbols-outlined group-hover:rotate-12 transition-transform">calculate</span> Calcular Minha Festa</a><button class="bg-surface text-primary border-2 border-primary/20 px-10 py-4 rounded-lg font-semibold hover:bg-primary/5 transition-all flex items-center justify-center gap-2" onclick="openChat()"><span class="material-symbols-outlined">chat_bubble</span> Falar com a Delinha</button></div></div></div>
     </section>
 
-    <!-- SEÇÃO COMO FUNCIONA (4 passos) -->
+    <!-- ===== SEÇÃO COMO FUNCIONA ===== -->
     <section class="py-section-padding px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto" id="como-funciona">
       <div class="text-center mb-16"><h2 class="font-headline text-3xl font-bold text-on-surface flex items-center justify-center gap-4"><span class="h-[1px] w-12 bg-outline-variant"></span> Como funciona? <span class="h-[1px] w-12 bg-outline-variant"></span></h2></div>
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
@@ -217,7 +408,7 @@
       </div>
     </section>
 
-    <!-- CALCULADORA (sem jantar) -->
+    <!-- ===== CALCULADORA ===== -->
     <section class="py-section-padding px-margin-mobile md:px-margin-desktop bg-surface-container-low" id="calculadora">
       <div class="max-w-max mx-auto"><div class="text-center mb-16"><h2 class="font-headline text-3xl md:text-4xl font-bold text-on-surface mb-4">Calculadora Inteligente</h2><p class="text-on-surface-variant max-w-2xl mx-auto">Descubra as quantidades ideais de salgados e doces para seu evento.</p></div>
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
@@ -229,35 +420,22 @@
       </div></div>
     </section>
 
-    <!-- CARDÁPIO (dinâmico) -->
+    <!-- ===== CARDÁPIO ===== -->
     <section class="py-section-padding px-margin-mobile md:px-margin-desktop" id="cardapio">
       <div class="max-w-max mx-auto"><div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6"><div><h2 class="font-headline text-3xl font-bold text-on-surface">Nosso Cardápio Artesanal</h2><p class="text-on-surface-variant mt-2">Sabores selecionados para encantar seus convidados.</p></div><div class="flex gap-2 overflow-x-auto pb-2 w-full md:w-auto hide-scrollbar"><button class="filter-btn px-6 py-2 bg-primary text-on-primary rounded-full text-sm font-semibold whitespace-nowrap" onclick="filterCatalog('Todos')">Todos</button><button class="filter-btn px-6 py-2 bg-surface-container text-on-surface-variant rounded-full text-sm font-semibold whitespace-nowrap" onclick="filterCatalog('Fritos')">Fritos</button><button class="filter-btn px-6 py-2 bg-surface-container text-on-surface-variant rounded-full text-sm font-semibold whitespace-nowrap" onclick="filterCatalog('Assados')">Assados</button><button class="filter-btn px-6 py-2 bg-surface-container text-on-surface-variant rounded-full text-sm font-semibold whitespace-nowrap" onclick="filterCatalog('Lanches')">Lanches</button><button class="filter-btn px-6 py-2 bg-surface-container text-on-surface-variant rounded-full text-sm font-semibold whitespace-nowrap" onclick="filterCatalog('Doces')">Doces</button></div></div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter" id="catalog-grid"></div></div>
     </section>
 
-    <!-- FAQ (fixo, 13 perguntas) -->
+    <!-- ===== FAQ ===== -->
     <section class="py-section-padding px-margin-mobile md:px-margin-desktop bg-surface-container-low" id="faq">
       <div class="max-w-3xl mx-auto">
         <div class="text-center mb-16"><span class="text-primary font-bold text-xs uppercase tracking-[0.2em] mb-4 block">Dúvidas Frequentes</span><h2 class="font-headline text-3xl font-bold text-on-surface">Informações Importantes</h2></div>
-        <div class="space-y-4">
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Qual o prazo mínimo para encomendar?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Recomendamos um prazo mínimo de 7 dias para encomendas menores e 15 dias para grandes eventos, garantindo a qualidade e frescor dos nossos produtos artesanais.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Como faço para reservar minha data?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">A reserva é confirmada mediante o pagamento de um sinal ou aprovação total do orçamento via Pix ou Cartão.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Posso alterar meu pedido depois de confirmado?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Alterações podem ser solicitadas com até 72 horas de antecedência, sujeitas a disponibilidade de agenda e insumos.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Vocês entregam?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">O cliente retira no local ou contrata um entregador por aplicativo (Uber, 99, etc.). Não temos frota própria.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Posso retirar meu pedido?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Sim, a retirada pode ser agendada em nossa unidade central em horários pré-estabelecidos.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Como é calculado o frete?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">O valor do frete é calculado com base na distância entre nossa cozinha e o local do seu evento, quando você contrata o entregador.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Quais formas de pagamento são aceitas?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Aceitamos PIX e Cartão de Crédito em até 3 vezes.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">É possível parcelar?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Sim, oferecemos parcelamento em até 3x no cartão de crédito.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Como funciona a segurança da minha encomenda?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Seguimos rigorosos protocolos de higiene. Sua encomenda é preparada com cuidado e embalada adequadamente.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Existe contrato?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Para todos os pedidos, emitimos um comprovante detalhado que serve como contrato de prestação de serviços.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Como meus dados são utilizados?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Seus dados são usados exclusivamente para a gestão do seu pedido e melhoria da sua experiência, em conformidade com a LGPD.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Meus dados são protegidos?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">Sim, utilizamos criptografia e servidores seguros para garantir que suas informações pessoais estejam sempre protegidas.</div></details>
-          <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm"><summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">Como falar com o suporte?<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span></summary><div class="p-6 pt-0 space-y-4 border-t border-outline-variant/10"><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4"><div class="flex items-center gap-3 bg-surface p-3 rounded-lg border border-outline-variant/20"><span class="material-symbols-outlined text-primary">whatsapp</span><div><p class="text-[10px] uppercase font-bold text-outline">WhatsApp</p><p class="text-sm text-on-surface">(31) 99999-9999</p></div></div><div class="flex items-center gap-3 bg-surface p-3 rounded-lg border border-outline-variant/20"><span class="material-symbols-outlined text-primary">call</span><div><p class="text-[10px] uppercase font-bold text-outline">Telefone</p><p class="text-sm text-on-surface">(31) 3333-3333</p></div></div><div class="flex items-center gap-3 bg-surface p-3 rounded-lg border border-outline-variant/20"><span class="material-symbols-outlined text-primary">mail</span><div><p class="text-[10px] uppercase font-bold text-outline">E-mail</p><p class="text-sm text-on-surface">suporte@ilovedelicitas.com.br</p></div></div><div class="flex items-center gap-3 bg-surface p-3 rounded-lg border border-outline-variant/20"><span class="material-symbols-outlined text-primary">schedule</span><div><p class="text-[10px] uppercase font-bold text-outline">Horário</p><p class="text-sm text-on-surface">Seg à Sex, 09h às 18h</p></div></div></div></div></details>
-        </div>
+        <div class="space-y-4" id="faq-container"></div>
       </div>
     </section>
   </main>
 
+  <!-- ===== FOOTER ===== -->
   <footer class="bg-inverse-surface text-inverse-on-surface py-20">
     <div class="max-w-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-16">
       <div class="col-span-1 md:col-span-1"><img id="footer-logo" class="h-16 mb-8 brightness-0 invert object-contain" src="https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo"><p id="footer-text" class="opacity-70 text-sm leading-relaxed max-w-xs">Gastronomia artesanal para festas em BH. Fritura no local, retirada ou frete por app. Pagamento em até 3x.</p></div>
@@ -267,7 +445,7 @@
     </div>
   </footer>
 
-  <!-- CHAT IA (widget flutuante) -->
+  <!-- ===== CHAT IA ===== -->
   <div class="delinha-ia-widget" id="delinhaIaWidget">
     <div class="delinha-ia-header" id="delinhaIaHeader">
       <h3><span>🤖</span> Delinha IA (Assistente)</h3>
@@ -282,7 +460,7 @@
     </div>
   </div>
 
-  <!-- Script do Chat IA (com fallback local) -->
+  <!-- ===== SCRIPTS ===== -->
   <script>
     (function() {
       const messagesDiv = document.getElementById('delinhaIaMessages');
@@ -300,7 +478,6 @@
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
       }
 
-      // Fallback local com base no SYSTEM_PROMPT
       function respostaLocal(msg) {
         const lower = msg.toLowerCase();
         if (lower.includes('prazo')) return "Prazo: até 300 un = 72h; 300-800 = 7 dias; +800 = 15 dias.";
@@ -338,7 +515,6 @@
         } catch (e) {
           console.error('Erro na API:', e);
           messagesDiv.removeChild(typingDiv);
-          // Fallback local
           const fallback = respostaLocal(userText);
           addMessage(fallback, false);
         }
@@ -360,119 +536,115 @@
     })();
   </script>
 
-  <!-- Script principal do site (com correções COMPLETAS) -->
+  <!-- ===== SCRIPT PRINCIPAL (com painel e dados) ===== -->
   <script>
     (function() {
-      const SUPABASE_URL = 'https://sikiufknmldvkcxcktsn.supabase.co';
-      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpa2l1ZmtubWxkdmtjeGNrdHNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNjYzMzgsImV4cCI6MjA5Njg0MjMzOH0.WKh9GdL3yJxnQqGUhLIeJNOm-7NRhgaMXW8vlkmEb0I';
-      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      
-      let cart = [];
-      let calcState = { type: 'adult', guests: 50, duration: 'med' };
-      let CATALOG_DATA = [];
-      let CONFIG = {};
-
-      // ===== DADOS LOCAIS DE FALLBACK (COMPLETOS) =====
-      const CONFIG_LOCAL = {
-        logo_url: 'https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo',
-        banner_url: 'https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY',
-        titulo_hero: 'A Celebração que o Seu <span class="text-primary">Paladar Merece</span>',
-        subtitulo_hero: 'Doces e salgados artesanais. Fritura no local, retirada ou frete por aplicativo. BH e região.',
-        telefone: '5531999999999',
-        whatsapp_link: 'https://wa.me/5531999999999',
-        rodape_texto: 'Gastronomia artesanal para festas em BH. Fritura no local, retirada ou frete por app. Pagamento em até 3x.',
-        rodape_copyright: '© 2025 I Love Delicitas. Todos os direitos reservados.'
+      // ===== DADOS PADRÃO =====
+      const DADOS_PADRAO = {
+        config: [
+          { chave: 'logo_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo' },
+          { chave: 'banner_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY' },
+          { chave: 'titulo_hero', valor: 'A Celebração que o Seu Paladar Merece' },
+          { chave: 'subtitulo_hero', valor: 'Doces e salgados artesanais. Fritura no local, retirada ou frete por aplicativo. BH e região.' },
+          { chave: 'telefone', valor: '5531999999999' },
+          { chave: 'whatsapp_link', valor: 'https://wa.me/5531999999999' },
+          { chave: 'rodape_texto', valor: 'Gastronomia artesanal para festas em BH. Fritura no local, retirada ou frete por app. Pagamento em até 3x.' },
+          { chave: 'rodape_copyright', valor: '© 2025 I Love Delicitas. Todos os direitos reservados.' }
+        ],
+        produtos: [
+          { id: 1, nome: 'Coxinha de Frango', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Clássica massa de batata com frango desfiado temperado.', imagem: 'https://via.placeholder.com/300x200?text=Coxinha' },
+          { id: 2, nome: 'Bolinha de Queijo', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Massa cremosa recheada com mussarela selecionada.', imagem: 'https://via.placeholder.com/300x200?text=Bolinha' },
+          { id: 3, nome: 'Brigadeiro', preco: 70, categoria: 'Doces', unidade: 'Cento (100 un.)', descricao: 'Brigadeiro gourmet com granulado belga.', imagem: 'https://via.placeholder.com/300x200?text=Brigadeiro' }
+        ],
+        faq: [
+          { id: 1, pergunta: 'Qual o prazo mínimo para encomendar?', resposta: 'Recomendamos um prazo mínimo de 7 dias para encomendas menores e 15 dias para grandes eventos.', ordem: 1 },
+          { id: 2, pergunta: 'Como faço para reservar minha data?', resposta: 'A reserva é confirmada mediante o pagamento de um sinal ou aprovação total do orçamento via Pix ou Cartão.', ordem: 2 },
+          { id: 3, pergunta: 'Vocês entregam?', resposta: 'O cliente retira no local ou contrata um entregador por aplicativo (Uber, 99, etc.). Não temos frota própria.', ordem: 3 },
+          { id: 4, pergunta: 'Quais formas de pagamento são aceitas?', resposta: 'Aceitamos PIX e Cartão de Crédito em até 3 vezes.', ordem: 4 }
+        ],
+        redes: [
+          { plataforma: 'instagram', url: 'https://instagram.com/ilovedelicitas' },
+          { plataforma: 'facebook', url: 'https://facebook.com/ilovedelicitas' },
+          { plataforma: 'tiktok', url: 'https://tiktok.com/@ilovedelicitas' }
+        ]
       };
 
-      const CATALOG_LOCAL = [
-        { nome: 'Coxinha de Frango', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Clássica massa de batata com frango desfiado temperado.', imagem: 'https://via.placeholder.com/300x200?text=Coxinha' },
-        { nome: 'Bolinha de Queijo', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Massa cremosa recheada com mussarela selecionada.', imagem: 'https://via.placeholder.com/300x200?text=Bolinha' },
-        { nome: 'Empada de Frango', preco: 125, categoria: 'Assados', unidade: 'Cento (100 un.)', descricao: 'Massa podre tradicional com recheio cremoso.', imagem: 'https://via.placeholder.com/300x200?text=Empada' },
-        { nome: 'Quibe', preco: 90, categoria: 'Assados', unidade: 'Cento (100 un.)', descricao: 'Quibe tradicional de carne moída com especiarias.', imagem: 'https://via.placeholder.com/300x200?text=Quibe' },
-        { nome: 'Risole de Milho', preco: 95, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Massa cremosa de milho com recheio cremoso.', imagem: 'https://via.placeholder.com/300x200?text=Risole' },
-        { nome: 'Mini Hambúrguer', preco: 140, categoria: 'Lanches', unidade: 'Cento (100 un.)', descricao: 'Mini pão brioche com hambúrguer artesanal e queijo.', imagem: 'https://via.placeholder.com/300x200?text=Hamburguer' },
-        { nome: 'Brigadeiro', preco: 70, categoria: 'Doces', unidade: 'Cento (100 un.)', descricao: 'Brigadeiro gourmet com granulado belga.', imagem: 'https://via.placeholder.com/300x200?text=Brigadeiro' },
-        { nome: 'Beijinho', preco: 70, categoria: 'Doces', unidade: 'Cento (100 un.)', descricao: 'Beijinho cremoso com coco ralado fresco.', imagem: 'https://via.placeholder.com/300x200?text=Beijinho' }
-      ];
+      let dados = {};
 
-      // ===== CARREGAR CONFIGURAÇÕES COM FALLBACK ROBUSTO =====
-      async function carregarConfiguracoes() {
-        try {
-          const { data } = await supabase.from('configuracoes').select('*');
-          if (data && data.length > 0) {
-            data.forEach(item => { CONFIG[item.chave] = item.valor; });
-          } else {
-            // Se não houver dados no Supabase, usa fallback
-            CONFIG = { ...CONFIG_LOCAL };
+      // ===== CARREGAR DADOS =====
+      function carregarDados() {
+        const salvo = localStorage.getItem('ilovedelicitas_dados');
+        if (salvo) {
+          try {
+            dados = JSON.parse(salvo);
+            for (let k in DADOS_PADRAO) {
+              if (!dados[k] || !Array.isArray(dados[k]) || dados[k].length === 0) {
+                dados[k] = JSON.parse(JSON.stringify(DADOS_PADRAO[k]));
+              }
+            }
+          } catch(e) {
+            dados = JSON.parse(JSON.stringify(DADOS_PADRAO));
           }
-        } catch (err) {
-          console.error('Erro ao carregar configurações do Supabase, usando fallback local:', err);
-          CONFIG = { ...CONFIG_LOCAL };
+        } else {
+          dados = JSON.parse(JSON.stringify(DADOS_PADRAO));
         }
-        
-        // Aplicar configurações no DOM (com fallback garantido)
-        document.getElementById('logo-img').src = CONFIG.logo_url || CONFIG_LOCAL.logo_url;
-        document.getElementById('banner-img').src = CONFIG.banner_url || CONFIG_LOCAL.banner_url;
-        document.getElementById('hero-title').innerHTML = CONFIG.titulo_hero || CONFIG_LOCAL.titulo_hero;
-        document.getElementById('hero-subtitle').innerHTML = CONFIG.subtitulo_hero || CONFIG_LOCAL.subtitulo_hero;
-        document.getElementById('footer-phone').innerHTML = CONFIG.telefone || CONFIG_LOCAL.telefone;
-        document.getElementById('footer-text').innerHTML = CONFIG.rodape_texto || CONFIG_LOCAL.rodape_texto;
-        document.getElementById('footer-copyright').innerHTML = CONFIG.rodape_copyright || CONFIG_LOCAL.rodape_copyright;
-        
-        if (CONFIG.whatsapp_link || CONFIG_LOCAL.whatsapp_link) {
-          const link = CONFIG.whatsapp_link || CONFIG_LOCAL.whatsapp_link;
-          document.getElementById('footer-email').innerHTML = `<a href="${link}" class="opacity-70 hover:opacity-100">WhatsApp</a>`;
-        }
+        salvarDados();
       }
 
-      // ===== CARREGAR CARDÁPIO COM FALLBACK =====
-      async function carregarCardapio() {
-        try {
-          const { data } = await supabase.from('cardapio').select('*');
-          if (data && data.length > 0) {
-            CATALOG_DATA = data;
-          } else {
-            CATALOG_DATA = CATALOG_LOCAL;
-          }
-        } catch (err) {
-          console.error('Erro ao carregar cardápio do Supabase, usando fallback local:', err);
-          CATALOG_DATA = CATALOG_LOCAL;
-        }
-        renderCatalog('Todos');
+      function salvarDados() {
+        localStorage.setItem('ilovedelicitas_dados', JSON.stringify(dados));
       }
 
-      // ===== RENDERIZAR CATÁLOGO =====
-      function renderCatalog(filter = 'Todos') {
+      // ===== RENDERIZAR SITE =====
+      function renderizarSite() {
+        const getConfig = (chave) => {
+          const item = dados.config.find(c => c.chave === chave);
+          return item ? item.valor : '';
+        };
+
+        // Imagens
+        document.getElementById('logo-img').src = getConfig('logo_url') || DADOS_PADRAO.config.find(c=>c.chave==='logo_url').valor;
+        document.getElementById('banner-img').src = getConfig('banner_url') || DADOS_PADRAO.config.find(c=>c.chave==='banner_url').valor;
+        document.getElementById('footer-logo').src = getConfig('logo_url') || DADOS_PADRAO.config.find(c=>c.chave==='logo_url').valor;
+
+        // Textos
+        document.getElementById('hero-title').innerHTML = getConfig('titulo_hero') || 'A Celebração que o Seu Paladar Merece';
+        document.getElementById('hero-subtitle').innerHTML = getConfig('subtitulo_hero') || 'Doces e salgados artesanais. Fritura no local, retirada ou frete por aplicativo. BH e região.';
+        document.getElementById('footer-text').innerHTML = getConfig('rodape_texto') || 'Gastronomia artesanal para festas em BH. Fritura no local, retirada ou frete por app. Pagamento em até 3x.';
+        document.getElementById('footer-copyright').innerHTML = getConfig('rodape_copyright') || '© 2025 I Love Delicitas. Todos os direitos reservados.';
+        document.getElementById('footer-phone').innerHTML = getConfig('telefone') || '(31) 99999-9999';
+        if (getConfig('whatsapp_link')) {
+          document.getElementById('footer-email').innerHTML = `<a href="${getConfig('whatsapp_link')}" class="opacity-70 hover:opacity-100">WhatsApp</a>`;
+        }
+
+        // Cardápio
         const grid = document.getElementById('catalog-grid');
-        if (!grid) return;
-        const filtered = filter === 'Todos' ? CATALOG_DATA : CATALOG_DATA.filter(item => item.categoria === filter);
-        
-        if (filtered.length === 0) {
-          grid.innerHTML = '<div class="col-span-full text-center py-10 text-on-surface-variant">Nenhum item encontrado nesta categoria.</div>';
-          return;
+        if (grid) {
+          grid.innerHTML = dados.produtos.map(p => `
+            <div class="bg-surface rounded-xl border border-outline-variant overflow-hidden group hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
+              <div class="h-56 overflow-hidden relative"><img src="${p.imagem || 'https://via.placeholder.com/300x200?text=Sem+Imagem'}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"><span class="absolute top-4 left-4 bg-primary text-white text-[10px] px-3 py-1 rounded-full uppercase font-bold tracking-widest shadow-lg">${p.categoria}</span></div>
+              <div class="p-6"><div class="flex justify-between items-start mb-2"><h3 class="font-bold text-on-surface text-lg">${escapeHtml(p.nome)}</h3><span class="text-primary font-bold text-lg">R$ ${Number(p.preco).toFixed(2)}</span></div><p class="text-xs text-on-surface-variant mb-6 line-clamp-2 leading-relaxed italic">${escapeHtml(p.descricao || '')}</p><div class="flex items-center justify-between border-t border-outline-variant/30 pt-4"><span class="text-[10px] text-outline font-semibold uppercase tracking-tight">${p.unidade || 'Unidade'}</span><button onclick="addToCart('${escapeHtml(p.nome)}', ${Number(p.preco)})" class="w-12 h-12 bg-primary-container/20 text-primary rounded-lg flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all shadow-sm active:scale-90"><span class="material-symbols-outlined">add_shopping_cart</span></button></div></div>
+            </div>
+          `).join('');
         }
-        
-        grid.innerHTML = filtered.map(item => `
-          <div class="bg-surface rounded-xl border border-outline-variant overflow-hidden group hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
-            <div class="h-56 overflow-hidden relative"><img src="${item.imagem || 'https://via.placeholder.com/300x200?text=Sem+Imagem'}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"><span class="absolute top-4 left-4 bg-primary text-white text-[10px] px-3 py-1 rounded-full uppercase font-bold tracking-widest shadow-lg">${item.categoria}</span></div>
-            <div class="p-6"><div class="flex justify-between items-start mb-2"><h3 class="font-bold text-on-surface text-lg">${escapeHtml(item.nome)}</h3><span class="text-primary font-bold text-lg">R$ ${Number(item.preco).toFixed(2)}</span></div><p class="text-xs text-on-surface-variant mb-6 line-clamp-2 leading-relaxed italic">${escapeHtml(item.descricao || '')}</p><div class="flex items-center justify-between border-t border-outline-variant/30 pt-4"><span class="text-[10px] text-outline font-semibold uppercase tracking-tight">${item.unidade || 'Unidade'}</span><button onclick="addToCart(${JSON.stringify(item.nome)}, ${Number(item.preco)})" class="w-12 h-12 bg-primary-container/20 text-primary rounded-lg flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all shadow-sm active:scale-90"><span class="material-symbols-outlined">add_shopping_cart</span></button></div></div>
-          </div>
-        `).join('');
+
+        // FAQ
+        const faqContainer = document.getElementById('faq-container');
+        if (faqContainer) {
+          const sorted = [...dados.faq].sort((a,b) => (a.ordem||0) - (b.ordem||0));
+          faqContainer.innerHTML = sorted.map(f => `
+            <details class="group bg-surface rounded-xl border border-outline-variant/30 overflow-hidden shadow-sm">
+              <summary class="flex justify-between items-center p-6 cursor-pointer list-none font-semibold text-on-surface hover:text-primary transition-colors">
+                ${escapeHtml(f.pergunta)}
+                <span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+              </summary>
+              <div class="p-6 pt-0 text-sm text-on-surface-variant leading-relaxed border-t border-outline-variant/10">${escapeHtml(f.resposta)}</div>
+            </details>
+          `).join('');
+        }
       }
 
-      function filterCatalog(category) {
-        renderCatalog(category);
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-          if (btn.textContent === category) {
-            btn.classList.add('bg-primary', 'text-on-primary');
-            btn.classList.remove('bg-surface-container', 'text-on-surface-variant');
-          } else {
-            btn.classList.remove('bg-primary', 'text-on-primary');
-            btn.classList.add('bg-surface-container', 'text-on-surface-variant');
-          }
-        });
-      }
-
+      // ===== ESCAPE HTML =====
       function escapeHtml(str) {
         if (!str) return '';
         return String(str).replace(/[&<>"]/g, function(m) {
@@ -484,56 +656,14 @@
         });
       }
 
-      function setCalcVar(key, val) {
-        calcState[key] = val;
-        if (key === 'type') {
-          ['kids', 'adult', 'corp'].forEach(t => {
-            const btn = document.getElementById(`btn-${t}`);
-            if (btn) {
-              if (t === val) {
-                btn.classList.add('border-2', 'border-primary', 'bg-primary/5');
-                btn.classList.remove('border-outline-variant');
-              } else {
-                btn.classList.remove('border-2', 'border-primary', 'bg-primary/5');
-                btn.classList.add('border-outline-variant');
-              }
-            }
-          });
-        }
-        updateCalculator();
-      }
-
-      function updateCalculator() {
-        const guests = parseInt(calcState.guests) || 50;
-        let sPer = 12, dPer = 5;
-        if (calcState.type === 'kids') { sPer = 10; dPer = 7; }
-        if (calcState.type === 'corp') { sPer = 8; dPer = 3; }
-        if (calcState.duration === 'long') { sPer *= 1.4; dPer *= 1.2; }
-        document.getElementById('res-salgados').innerHTML = `${Math.round(guests * sPer)} un.`;
-        document.getElementById('res-doces').innerHTML = `${Math.round(guests * dPer)} un.`;
-        const card = document.getElementById('calc-result-card');
-        if (card) {
-          card.classList.remove('animate-pulse-fast');
-          void card.offsetWidth;
-          card.classList.add('animate-pulse-fast');
-        }
-      }
+      // ===== CARRINHO =====
+      let cart = [];
+      let calcState = { type: 'adult', guests: 50, duration: 'med' };
 
       function addToCart(name, price) {
         cart.push({ name, price });
         updateCartUI();
         notify(`➕ ${name} adicionado!`);
-      }
-
-      function applyCalcToQuote() {
-        const guests = parseInt(calcState.guests) || 50;
-        if (guests < 1) {
-          notify('⚠️ Número de convidados inválido.');
-          return;
-        }
-        cart.push({ name: `Kit para ${guests} convidados`, price: guests * 45 });
-        updateCartUI();
-        toggleDrawer(true);
       }
 
       function updateCartUI() {
@@ -572,6 +702,77 @@
         }
       }
 
+      function applyCalcToQuote() {
+        const guests = parseInt(calcState.guests) || 50;
+        if (guests < 1) {
+          notify('⚠️ Número de convidados inválido.');
+          return;
+        }
+        cart.push({ name: `Kit para ${guests} convidados`, price: guests * 45 });
+        updateCartUI();
+        toggleDrawer(true);
+      }
+
+      function notify(msg) {
+        const t = document.createElement('div');
+        t.className = "fixed bottom-8 left-1/2 -translate-x-1/2 bg-primary text-white px-6 py-3 rounded-full shadow-lg z-[100] animate-pulse";
+        t.innerText = msg;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 2500);
+      }
+
+      // ===== CALCULADORA =====
+      function setCalcVar(key, val) {
+        calcState[key] = val;
+        if (key === 'type') {
+          ['kids', 'adult', 'corp'].forEach(t => {
+            const btn = document.getElementById(`btn-${t}`);
+            if (btn) {
+              if (t === val) {
+                btn.classList.add('border-2', 'border-primary', 'bg-primary/5');
+                btn.classList.remove('border-outline-variant');
+              } else {
+                btn.classList.remove('border-2', 'border-primary', 'bg-primary/5');
+                btn.classList.add('border-outline-variant');
+              }
+            }
+          });
+        }
+        updateCalculator();
+      }
+
+      function updateCalculator() {
+        const guests = parseInt(calcState.guests) || 50;
+        let sPer = 12, dPer = 5;
+        if (calcState.type === 'kids') { sPer = 10; dPer = 7; }
+        if (calcState.type === 'corp') { sPer = 8; dPer = 3; }
+        if (calcState.duration === 'long') { sPer *= 1.4; dPer *= 1.2; }
+        document.getElementById('res-salgados').innerHTML = `${Math.round(guests * sPer)} un.`;
+        document.getElementById('res-doces').innerHTML = `${Math.round(guests * dPer)} un.`;
+      }
+
+      // ===== FILTRO CARDÁPIO =====
+      function filterCatalog(category) {
+        const grid = document.getElementById('catalog-grid');
+        if (!grid) return;
+        const filtered = category === 'Todos' ? dados.produtos : dados.produtos.filter(item => item.categoria === category);
+        grid.innerHTML = filtered.map(item => `
+          <div class="bg-surface rounded-xl border border-outline-variant overflow-hidden group hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
+            <div class="h-56 overflow-hidden relative"><img src="${item.imagem || 'https://via.placeholder.com/300x200?text=Sem+Imagem'}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"><span class="absolute top-4 left-4 bg-primary text-white text-[10px] px-3 py-1 rounded-full uppercase font-bold tracking-widest shadow-lg">${item.categoria}</span></div>
+            <div class="p-6"><div class="flex justify-between items-start mb-2"><h3 class="font-bold text-on-surface text-lg">${escapeHtml(item.nome)}</h3><span class="text-primary font-bold text-lg">R$ ${Number(item.preco).toFixed(2)}</span></div><p class="text-xs text-on-surface-variant mb-6 line-clamp-2 leading-relaxed italic">${escapeHtml(item.descricao || '')}</p><div class="flex items-center justify-between border-t border-outline-variant/30 pt-4"><span class="text-[10px] text-outline font-semibold uppercase tracking-tight">${item.unidade || 'Unidade'}</span><button onclick="addToCart('${escapeHtml(item.nome)}', ${Number(item.preco)})" class="w-12 h-12 bg-primary-container/20 text-primary rounded-lg flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all shadow-sm active:scale-90"><span class="material-symbols-outlined">add_shopping_cart</span></button></div></div>
+          </div>
+        `).join('');
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+          btn.classList.remove('bg-primary', 'text-on-primary');
+          btn.classList.add('bg-surface-container', 'text-on-surface-variant');
+          if (btn.textContent === category) {
+            btn.classList.add('bg-primary', 'text-on-primary');
+            btn.classList.remove('bg-surface-container', 'text-on-surface-variant');
+          }
+        });
+      }
+
+      // ===== MODAL LEAD =====
       function openLeadModal() {
         const m = document.getElementById('lead-modal');
         if (m) {
@@ -595,62 +796,220 @@
         }
       }
 
-      function notify(msg) {
-        const t = document.createElement('div');
-        t.className = "fixed bottom-8 left-1/2 -translate-x-1/2 bg-primary text-white px-6 py-3 rounded-full shadow-lg z-[100] animate-pulse";
-        t.innerText = msg;
-        document.body.appendChild(t);
-        setTimeout(() => t.remove(), 2500);
-      }
-
       function openChat() {
         const widget = document.getElementById('delinhaIaWidget');
         if (widget) widget.classList.remove('delinha-ia-closed');
       }
 
-      document.addEventListener('DOMContentLoaded', () => {
-        carregarConfiguracoes();
-        carregarCardapio();
-        const range = document.getElementById('guest-range');
-        const display = document.getElementById('guest-val');
-        const dur = document.getElementById('calc-duration');
-        if (range && display) {
-          range.addEventListener('input', (e) => {
-            display.textContent = e.target.value;
-            calcState.guests = parseInt(e.target.value);
-            updateCalculator();
-          });
-        }
-        if (dur) {
-          dur.addEventListener('change', (e) => {
-            calcState.duration = e.target.value;
-            updateCalculator();
-          });
-        }
-        document.getElementById('lead-form')?.addEventListener('submit', (e) => {
-          e.preventDefault();
-          const data = new FormData(e.target);
-          const name = data.get('name');
-          const guests = data.get('guests') || calcState.guests;
-          const summary = `Orçamento para ${name}: ${calcState.type}, ${guests} convidados.`;
-          const cartText = cart.map(i => i.name).join(', ') || 'Recomendação';
-          const total = document.getElementById('cart-total')?.textContent || 'R$ 0,00';
-          const whatsapp = data.get('whatsapp');
-          const date = data.get('date');
-          let numeroWhatsApp = CONFIG.telefone ? CONFIG.telefone.replace(/\D/g, '') : '5531999999999';
-          if (!numeroWhatsApp.startsWith('55')) numeroWhatsApp = '55' + numeroWhatsApp;
-          const text = encodeURIComponent(`Olá Delinha! ${summary}\nSacola: ${cartText}\nTotal: ${total}\nWhatsApp: ${whatsapp}\nData: ${date}`);
-          window.open(`https://wa.me/${numeroWhatsApp}?text=${text}`, '_blank');
-          closeLeadModal();
-        });
+      // ===== PAINEL ADMIN =====
+      function abrirAdmin() {
+        document.getElementById('adminPanel').classList.add('active');
+        renderizarAdmin();
+      }
 
-        // Fechar modal com ESC
-        document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape') closeLeadModal();
+      function fecharAdmin() {
+        document.getElementById('adminPanel').classList.remove('active');
+      }
+
+      function mudarAba(aba, el) {
+        document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('aba-' + aba).classList.add('active');
+        el.classList.add('active');
+      }
+
+      function renderizarAdmin() {
+        // Configurações
+        const camposConfig = ['logo_url','banner_url','titulo_hero','subtitulo_hero','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
+        const configContainer = document.getElementById('configList');
+        configContainer.innerHTML = camposConfig.map(chave => {
+          const item = dados.config.find(c => c.chave === chave);
+          return `<div class="admin-field"><label>${chave}</label><input type="text" id="cfg_${chave}" value="${escapeHtml(item?.valor || '')}"></div>`;
+        }).join('');
+
+        // Produtos
+        const produtosContainer = document.getElementById('produtosList');
+        produtosContainer.innerHTML = dados.produtos.map(p => `
+          <div class="admin-item">
+            <div><strong>${escapeHtml(p.nome)}</strong> - R$ ${p.preco} - ${p.categoria}</div>
+            <div>
+              <button class="admin-btn-primary text-xs px-3 py-1" onclick="editarProduto(${p.id})">Editar</button>
+              <button class="admin-btn-danger text-xs px-3 py-1" onclick="excluirProduto(${p.id})">Excluir</button>
+            </div>
+          </div>
+        `).join('');
+
+        // FAQ
+        const faqContainer = document.getElementById('faqList');
+        faqContainer.innerHTML = dados.faq.map(f => `
+          <div class="admin-item">
+            <div><strong>${escapeHtml(f.pergunta)}</strong></div>
+            <div>
+              <button class="admin-btn-primary text-xs px-3 py-1" onclick="editarFaq(${f.id})">Editar</button>
+              <button class="admin-btn-danger text-xs px-3 py-1" onclick="excluirFaq(${f.id})">Excluir</button>
+            </div>
+          </div>
+        `).join('');
+
+        // Redes
+        const plataformas = ['instagram','facebook','tiktok','youtube','twitter','linkedin'];
+        const redesContainer = document.getElementById('redesList');
+        redesContainer.innerHTML = plataformas.map(plat => {
+          const item = dados.redes.find(r => r.plataforma === plat);
+          return `<div class="admin-field"><label class="capitalize">${plat}</label><input type="url" id="rede_${plat}" value="${item?.url || ''}" placeholder="https://${plat}.com/..."></div>`;
+        }).join('');
+
+        // Exportar
+        const exportJson = document.getElementById('exportJson');
+        if (exportJson) exportJson.value = JSON.stringify(dados, null, 2);
+      }
+
+      // ===== SALVAR CONFIGURAÇÕES =====
+      function salvarConfig() {
+        const campos = ['logo_url','banner_url','titulo_hero','subtitulo_hero','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
+        for (let chave of campos) {
+          const valor = document.getElementById(`cfg_${chave}`).value;
+          let idx = dados.config.findIndex(c => c.chave === chave);
+          if (idx >= 0) dados.config[idx].valor = valor;
+          else dados.config.push({ chave, valor });
+        }
+        salvarDados();
+        renderizarSite();
+        alert('✅ Configurações salvas!');
+      }
+
+      // ===== SALVAR REDES =====
+      function salvarRedes() {
+        const plataformas = ['instagram','facebook','tiktok','youtube','twitter','linkedin'];
+        for (let plat of plataformas) {
+          const url = document.getElementById(`rede_${plat}`).value;
+          let idx = dados.redes.findIndex(r => r.plataforma === plat);
+          if (idx >= 0) dados.redes[idx].url = url;
+          else dados.redes.push({ plataforma: plat, url });
+        }
+        salvarDados();
+        alert('✅ Redes salvas!');
+      }
+
+      // ===== CRUD PRODUTOS =====
+      function novoProduto() {
+        const nome = prompt('Nome do produto'); if (!nome) return;
+        const preco = parseFloat(prompt('Preço (R$)')); if (isNaN(preco)) return;
+        const categoria = prompt('Categoria (Fritos/Assados/Lanches/Doces)', 'Fritos');
+        const novoId = dados.produtos.length ? Math.max(...dados.produtos.map(p => p.id)) + 1 : 1;
+        dados.produtos.push({ id: novoId, nome, preco, categoria, unidade: 'Cento (100 un.)', descricao: '', imagem: 'https://via.placeholder.com/300x200' });
+        salvarDados();
+        renderizarSite();
+        renderizarAdmin();
+      }
+
+      function editarProduto(id) {
+        const p = dados.produtos.find(x => x.id == id);
+        if (!p) return;
+        const nome = prompt('Nome', p.nome); if (nome) p.nome = nome;
+        const preco = parseFloat(prompt('Preço', p.preco)); if (!isNaN(preco)) p.preco = preco;
+        const categoria = prompt('Categoria', p.categoria); if (categoria) p.categoria = categoria;
+        salvarDados();
+        renderizarSite();
+        renderizarAdmin();
+      }
+
+      function excluirProduto(id) {
+        if (confirm('Excluir permanentemente?')) {
+          dados.produtos = dados.produtos.filter(p => p.id !== id);
+          salvarDados();
+          renderizarSite();
+          renderizarAdmin();
+        }
+      }
+
+      // ===== CRUD FAQ =====
+      function novoFaq() {
+        const pergunta = prompt('Pergunta'); if (!pergunta) return;
+        const resposta = prompt('Resposta'); if (!resposta) return;
+        const novoId = dados.faq.length ? Math.max(...dados.faq.map(f => f.id)) + 1 : 1;
+        dados.faq.push({ id: novoId, pergunta, resposta, ordem: dados.faq.length + 1 });
+        salvarDados();
+        renderizarSite();
+        renderizarAdmin();
+      }
+
+      function editarFaq(id) {
+        const f = dados.faq.find(x => x.id == id);
+        if (!f) return;
+        const pergunta = prompt('Pergunta', f.pergunta); if (pergunta) f.pergunta = pergunta;
+        const resposta = prompt('Resposta', f.resposta); if (resposta) f.resposta = resposta;
+        salvarDados();
+        renderizarSite();
+        renderizarAdmin();
+      }
+
+      function excluirFaq(id) {
+        if (confirm('Excluir esta FAQ?')) {
+          dados.faq = dados.faq.filter(f => f.id !== id);
+          salvarDados();
+          renderizarSite();
+          renderizarAdmin();
+        }
+      }
+
+      // ===== EXPORTAR =====
+      function copiarJson() {
+        const json = document.getElementById('exportJson');
+        navigator.clipboard.writeText(json.value).then(() => {
+          alert('✅ JSON copiado!');
+        }).catch(() => {
+          json.select();
+          document.execCommand('copy');
+          alert('✅ JSON copiado!');
         });
+      }
+
+      // ===== INICIAR =====
+      carregarDados();
+      renderizarSite();
+
+      // Eventos do DOM
+      const range = document.getElementById('guest-range');
+      const display = document.getElementById('guest-val');
+      const dur = document.getElementById('calc-duration');
+      if (range && display) {
+        range.addEventListener('input', function(e) {
+          display.textContent = e.target.value;
+          calcState.guests = parseInt(e.target.value);
+          updateCalculator();
+        });
+      }
+      if (dur) {
+        dur.addEventListener('change', function(e) {
+          calcState.duration = e.target.value;
+          updateCalculator();
+        });
+      }
+
+      document.getElementById('lead-form')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const data = new FormData(e.target);
+        const name = data.get('name');
+        const guests = data.get('guests') || calcState.guests;
+        const summary = `Orçamento para ${name}: ${calcState.type}, ${guests} convidados.`;
+        const cartText = cart.map(i => i.name).join(', ') || 'Recomendação';
+        const total = document.getElementById('cart-total')?.textContent || 'R$ 0,00';
+        const whatsapp = data.get('whatsapp');
+        const date = data.get('date');
+        let numeroWhatsApp = dados.config.find(c => c.chave === 'telefone')?.valor || '5531999999999';
+        numeroWhatsApp = numeroWhatsApp.replace(/\D/g, '');
+        if (!numeroWhatsApp.startsWith('55')) numeroWhatsApp = '55' + numeroWhatsApp;
+        const text = encodeURIComponent(`Olá Delinha! ${summary}\nSacola: ${cartText}\nTotal: ${total}\nWhatsApp: ${whatsapp}\nData: ${date}`);
+        window.open(`https://wa.me/${numeroWhatsApp}?text=${text}`, '_blank');
+        closeLeadModal();
       });
 
-      window.addEventListener('scroll', () => {
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeLeadModal();
+      });
+
+      window.addEventListener('scroll', function() {
         const h = document.getElementById('main-header');
         if (h) {
           if (window.scrollY > 20) h.classList.add('header-scrolled');
@@ -658,7 +1017,7 @@
         }
       });
 
-      // Expor funções globalmente para uso no HTML
+      // Expor funções globalmente
       window.setCalcVar = setCalcVar;
       window.filterCatalog = filterCatalog;
       window.addToCart = addToCart;
@@ -669,6 +1028,18 @@
       window.closeLeadModal = closeLeadModal;
       window.closeLeadModalOnBackdrop = closeLeadModalOnBackdrop;
       window.openChat = openChat;
+      window.abrirAdmin = abrirAdmin;
+      window.fecharAdmin = fecharAdmin;
+      window.mudarAba = mudarAba;
+      window.salvarConfig = salvarConfig;
+      window.salvarRedes = salvarRedes;
+      window.novoProduto = novoProduto;
+      window.editarProduto = editarProduto;
+      window.excluirProduto = excluirProduto;
+      window.novoFaq = novoFaq;
+      window.editarFaq = editarFaq;
+      window.excluirFaq = excluirFaq;
+      window.copiarJson = copiarJson;
     })();
   </script>
 </body>
