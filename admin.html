@@ -36,7 +36,7 @@
       <h1 class="text-2xl font-bold text-gray-800">Painel I Love Delicitas</h1>
       <p class="text-sm text-gray-500 mt-1">Gerencie todos os dados (offline + online)</p>
     </div>
-    <div id="status" class="status-badge status-warning">🔄 Carregando dados locais...</div>
+    <div id="status" class="status-badge status-warning">🔄 Carregando dados...</div>
   </div>
 
   <!-- Abas -->
@@ -163,8 +163,10 @@
   async function inicializar() {
     try {
       supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      
       // Tenta buscar um registro para testar conexão
       const { error } = await supabase.from('configuracoes').select('*').limit(1);
+      
       if (error && error.message.includes('does not exist')) {
         // Se a tabela não existe, ignora e mantém dados locais
         console.warn('Tabelas não existem no Supabase. Usando dados locais.');
@@ -183,6 +185,8 @@
       document.getElementById('status').className = 'status-badge status-warning';
       console.warn('Erro ao conectar Supabase:', e);
     }
+    
+    // SEMPRE renderizar os dados, independente de conexão
     renderizarTudo();
   }
 
@@ -291,6 +295,8 @@
       const item = dados.horario.find(h => h.dia === dia);
       return `<div class="border p-3 rounded"><label class="font-bold">${labels[idx]}</label><div class="grid grid-cols-2 gap-2 mt-1"><div><label class="text-xs">Abertura</label><input type="time" id="abertura_${dia}" value="${item?.abertura || '09:00'}"></div><div><label class="text-xs">Fechamento</label><input type="time" id="fechamento_${dia}" value="${item?.fechamento || '18:00'}"></div></div><label class="flex items-center gap-2 mt-2"><input type="checkbox" id="fechado_${dia}" ${item?.fechado ? 'checked' : ''}> Fechado</label></div>`;
     }).join('');
+    
+    // Adicionar eventos para checkbox
     dias.forEach(dia => {
       const cb = document.getElementById(`fechado_${dia}`);
       if(cb) cb.addEventListener('change', e => {
@@ -374,6 +380,7 @@
     if (supabaseConectado) await supabase.from('cardapio').insert([{ nome, preco, categoria, unidade, descricao, imagem }]);
     renderizarProdutos();
   }
+  
   async function editarProduto(id) {
     const p = dados.produtos.find(x => x.id == id);
     if (!p) return;
@@ -386,6 +393,7 @@
     if (supabaseConectado) await supabase.from('cardapio').update(p).eq('id', id);
     renderizarProdutos();
   }
+  
   async function excluirProduto(id) {
     if (confirm('Excluir permanentemente?')) {
       dados.produtos = dados.produtos.filter(p => p.id !== id);
@@ -404,6 +412,7 @@
     if (supabaseConectado) await supabase.from('faq').insert([{ pergunta, resposta, ordem: dados.faq.length + 1 }]);
     renderizarFaq();
   }
+  
   async function editarFaq(id) {
     const f = dados.faq.find(x => x.id == id);
     if (!f) return;
@@ -412,6 +421,7 @@
     if (supabaseConectado) await supabase.from('faq').update({ pergunta, resposta }).eq('id', id);
     renderizarFaq();
   }
+  
   async function excluirFaq(id) {
     if (confirm('Excluir esta FAQ?')) {
       dados.faq = dados.faq.filter(f => f.id !== id);
@@ -431,9 +441,15 @@
     document.getElementById(`btn${aba.charAt(0).toUpperCase() + aba.slice(1)}`).classList.add('tab-active');
   }
 
-  function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;')); }
+  function escapeHtml(str) { 
+    if (!str) return ''; 
+    return String(str).replace(/[&<>]/g, m => m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;')); 
+  }
 
-  inicializar();
+  // ========== INICIALIZAR ==========
+  document.addEventListener('DOMContentLoaded', function() {
+    inicializar();
+  });
 </script>
 </body>
 </html>
