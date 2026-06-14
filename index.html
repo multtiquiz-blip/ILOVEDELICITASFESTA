@@ -360,7 +360,7 @@
     })();
   </script>
 
-  <!-- Script principal do site (com correções) -->
+  <!-- Script principal do site (com CORREÇÕES COMPLETAS) -->
   <script>
     (function() {
       const SUPABASE_URL = 'https://sikiufknmldvkcxcktsn.supabase.co';
@@ -371,6 +371,19 @@
       let calcState = { type: 'adult', guests: 50, duration: 'med' };
       let CATALOG_DATA = [];
       let CONFIG = {};
+
+      // ========== DADOS DE FALLBACK COMPLETOS ==========
+      const CONFIG_LOCAL = {
+        logo_url: 'https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo',
+        banner_url: 'https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY',
+        titulo_hero: 'A Celebração que o Seu <span class="text-primary">Paladar Merece</span>',
+        subtitulo_hero: 'Doces e salgados artesanais. Fritura no local, retirada ou frete por aplicativo. BH e região.',
+        telefone: '5531999999999',
+        whatsapp_link: 'https://wa.me/5531999999999',
+        rodape_texto: 'Gastronomia artesanal para festas em BH. Fritura no local, retirada ou frete por app. Pagamento em até 3x.',
+        rodape_copyright: '© 2025 I Love Delicitas. Todos os direitos reservados.',
+        hero_badge: 'Qualidade Premium & Artesanal'
+      };
 
       const CATALOG_LOCAL = [
         { nome: 'Coxinha de Frango', preco: 90, categoria: 'Fritos', unidade: 'Cento (100 un.)', descricao: 'Clássica massa de batata com frango desfiado temperado.', imagem: 'https://via.placeholder.com/300x200?text=Coxinha' },
@@ -383,51 +396,73 @@
         { nome: 'Beijinho', preco: 70, categoria: 'Doces', unidade: 'Cento (100 un.)', descricao: 'Beijinho cremoso com coco ralado fresco.', imagem: 'https://via.placeholder.com/300x200?text=Beijinho' }
       ];
 
+      // ========== CARREGAR CONFIGURAÇÕES COM FALLBACK ==========
       async function carregarConfiguracoes() {
         try {
           const { data } = await supabase.from('configuracoes').select('*');
-          if (data) {
+          if (data && data.length > 0) {
             data.forEach(item => { CONFIG[item.chave] = item.valor; });
-            if (CONFIG.logo_url) document.getElementById('logo-img').src = CONFIG.logo_url;
-            if (CONFIG.banner_url) document.getElementById('banner-img').src = CONFIG.banner_url;
-            if (CONFIG.titulo_hero) document.getElementById('hero-title').innerHTML = CONFIG.titulo_hero;
-            if (CONFIG.subtitulo_hero) document.getElementById('hero-subtitle').innerHTML = CONFIG.subtitulo_hero;
-            if (CONFIG.telefone) document.getElementById('footer-phone').innerHTML = CONFIG.telefone;
-            if (CONFIG.rodape_texto) document.getElementById('footer-text').innerHTML = CONFIG.rodape_texto;
-            if (CONFIG.rodape_copyright) document.getElementById('footer-copyright').innerHTML = CONFIG.rodape_copyright;
-            if (CONFIG.whatsapp_link) {
-              document.getElementById('footer-email').innerHTML = `<a href="${CONFIG.whatsapp_link}" class="opacity-70 hover:opacity-100">WhatsApp</a>`;
-            }
+          } else {
+            // Se não houver dados, usa fallback
+            CONFIG = { ...CONFIG_LOCAL };
           }
         } catch (err) {
           console.error('Erro ao carregar configurações:', err);
+          // Em caso de erro, usa fallback completo
+          CONFIG = { ...CONFIG_LOCAL };
+        }
+        
+        // Aplicar configurações (com fallback para valores padrão)
+        document.getElementById('logo-img').src = CONFIG.logo_url || CONFIG_LOCAL.logo_url;
+        document.getElementById('banner-img').src = CONFIG.banner_url || CONFIG_LOCAL.banner_url;
+        document.getElementById('hero-title').innerHTML = CONFIG.titulo_hero || CONFIG_LOCAL.titulo_hero;
+        document.getElementById('hero-subtitle').innerHTML = CONFIG.subtitulo_hero || CONFIG_LOCAL.subtitulo_hero;
+        document.getElementById('footer-phone').innerHTML = CONFIG.telefone || CONFIG_LOCAL.telefone;
+        document.getElementById('footer-text').innerHTML = CONFIG.rodape_texto || CONFIG_LOCAL.rodape_texto;
+        document.getElementById('footer-copyright').innerHTML = CONFIG.rodape_copyright || CONFIG_LOCAL.rodape_copyright;
+        
+        if (CONFIG.whatsapp_link || CONFIG_LOCAL.whatsapp_link) {
+          const link = CONFIG.whatsapp_link || CONFIG_LOCAL.whatsapp_link;
+          document.getElementById('footer-email').innerHTML = `<a href="${link}" class="opacity-70 hover:opacity-100">WhatsApp</a>`;
         }
       }
 
+      // ========== CARREGAR CARDÁPIO COM FALLBACK ==========
       async function carregarCardapio() {
         try {
           const { data } = await supabase.from('cardapio').select('*');
-          CATALOG_DATA = (data && data.length) ? data : CATALOG_LOCAL;
-          renderCatalog('Todos');
+          if (data && data.length > 0) {
+            CATALOG_DATA = data;
+          } else {
+            CATALOG_DATA = CATALOG_LOCAL;
+          }
         } catch (err) {
           console.error('Erro ao carregar cardápio:', err);
           CATALOG_DATA = CATALOG_LOCAL;
-          renderCatalog('Todos');
         }
+        renderCatalog('Todos');
       }
 
+      // ========== RENDERIZAR CATÁLOGO ==========
       function renderCatalog(filter = 'Todos') {
         const grid = document.getElementById('catalog-grid');
         if (!grid) return;
         const filtered = filter === 'Todos' ? CATALOG_DATA : CATALOG_DATA.filter(item => item.categoria === filter);
+        
+        if (filtered.length === 0) {
+          grid.innerHTML = '<div class="col-span-full text-center py-10 text-on-surface-variant">Nenhum item encontrado nesta categoria.</div>';
+          return;
+        }
+        
         grid.innerHTML = filtered.map(item => `
           <div class="bg-surface rounded-xl border border-outline-variant overflow-hidden group hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
             <div class="h-56 overflow-hidden relative"><img src="${item.imagem || 'https://via.placeholder.com/300x200?text=Sem+Imagem'}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"><span class="absolute top-4 left-4 bg-primary text-white text-[10px] px-3 py-1 rounded-full uppercase font-bold tracking-widest shadow-lg">${item.categoria}</span></div>
-            <div class="p-6"><div class="flex justify-between items-start mb-2"><h3 class="font-bold text-on-surface text-lg">${escapeHtml(item.nome)}</h3><span class="text-primary font-bold text-lg">R$ ${Number(item.preco).toFixed(2)}</span></div><p class="text-xs text-on-surface-variant mb-6 line-clamp-2 leading-relaxed italic">${escapeHtml(item.descricao || '')}</p><div class="flex items-center justify-between border-t border-outline-variant/30 pt-4"><span class="text-[10px] text-outline font-semibold uppercase tracking-tight">${item.unidade || 'Unidade'}</span><button onclick="addToCart(${JSON.stringify(item.nome)}, ${Number(item.preco)})" class="w-12 h-12 bg-primary-container/20 text-primary rounded-lg flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all shadow-sm active:scale-90"><span class="material-symbols-outlined">add_shopping_cart</span></button></div></div>
+            <div class="p-6"><div class="flex justify-between items-start mb-2"><h3 class="font-bold text-on-surface text-lg">${escapeHtml(item.nome)}</h3><span class="text-primary font-bold text-lg">R$ ${Number(item.preco).toFixed(2)}</span></div><p class="text-xs text-on-surface-variant mb-6 line-clamp-2 leading-relaxed italic">${escapeHtml(item.descricao || '')}</p><div class="flex items-center justify-between border-t border-outline-variant/30 pt-4"><span class="text-[10px] text-outline font-semibold uppercase tracking-tight">${item.unidade || 'Unidade'}</span><button onclick="addToCart('${escapeHtml(item.nome)}', ${Number(item.preco)})" class="w-12 h-12 bg-primary-container/20 text-primary rounded-lg flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all shadow-sm active:scale-90"><span class="material-symbols-outlined">add_shopping_cart</span></button></div></div>
           </div>
         `).join('');
       }
 
+      // ========== FILTRAR CATÁLOGO ==========
       function filterCatalog(category) {
         renderCatalog(category);
         document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -441,9 +476,10 @@
         });
       }
 
+      // ========== ESCAPE HTML ==========
       function escapeHtml(str) {
         if (!str) return '';
-        return str.replace(/[&<>"]/g, function(m) {
+        return String(str).replace(/[&<>"]/g, function(m) {
           if (m === '&') return '&amp;';
           if (m === '<') return '&lt;';
           if (m === '>') return '&gt;';
@@ -452,6 +488,7 @@
         });
       }
 
+      // ========== CALCULADORA ==========
       function setCalcVar(key, val) {
         calcState[key] = val;
         if (key === 'type') {
@@ -487,6 +524,7 @@
         }
       }
 
+      // ========== CARRINHO ==========
       function addToCart(name, price) {
         cart.push({ name, price });
         updateCartUI();
@@ -576,26 +614,34 @@
         if (widget) widget.classList.remove('delinha-ia-closed');
       }
 
-      document.addEventListener('DOMContentLoaded', () => {
+      // ========== INICIALIZAÇÃO ==========
+      document.addEventListener('DOMContentLoaded', function() {
+        // Carregar dados com fallback
         carregarConfiguracoes();
         carregarCardapio();
+        
+        // Configurar eventos da calculadora
         const range = document.getElementById('guest-range');
         const display = document.getElementById('guest-val');
         const dur = document.getElementById('calc-duration');
+        
         if (range && display) {
-          range.addEventListener('input', (e) => {
+          range.addEventListener('input', function(e) {
             display.textContent = e.target.value;
             calcState.guests = parseInt(e.target.value);
             updateCalculator();
           });
         }
+        
         if (dur) {
-          dur.addEventListener('change', (e) => {
+          dur.addEventListener('change', function(e) {
             calcState.duration = e.target.value;
             updateCalculator();
           });
         }
-        document.getElementById('lead-form')?.addEventListener('submit', (e) => {
+        
+        // Formulário de lead
+        document.getElementById('lead-form')?.addEventListener('submit', function(e) {
           e.preventDefault();
           const data = new FormData(e.target);
           const name = data.get('name');
@@ -613,12 +659,13 @@
         });
 
         // Fechar modal com ESC
-        document.addEventListener('keydown', (e) => {
+        document.addEventListener('keydown', function(e) {
           if (e.key === 'Escape') closeLeadModal();
         });
       });
 
-      window.addEventListener('scroll', () => {
+      // ========== SCROLL DO HEADER ==========
+      window.addEventListener('scroll', function() {
         const h = document.getElementById('main-header');
         if (h) {
           if (window.scrollY > 20) h.classList.add('header-scrolled');
@@ -626,7 +673,7 @@
         }
       });
 
-      // Expor funções globalmente para uso no HTML
+      // ========== EXPOR FUNÇÕES GLOBALMENTE ==========
       window.setCalcVar = setCalcVar;
       window.filterCatalog = filterCatalog;
       window.addToCart = addToCart;
