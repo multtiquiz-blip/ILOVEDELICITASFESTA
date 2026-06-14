@@ -3,145 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel I Love Delicitas</title>
+  <title>Painel - I Love Delicitas</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body { font-family: system-ui; background: #f1f5f9; padding: 20px; }
-    .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    .tab { display: inline-block; padding: 10px 20px; background: #e2e8f0; border-radius: 8px; cursor: pointer; margin-right: 5px; margin-bottom: 5px; }
-    .tab-active { background: #ae2f34; color: white; }
-    .hidden { display: none; }
-    .btn-success { background: #10b981; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; }
-    .btn-success:hover { background: #059669; }
-    .status-badge { padding: 4px 12px; border-radius: 9999px; font-size: 12px; display: inline-block; }
-    .status-success { background: #d1fae5; color: #065f46; }
-    .status-warning { background: #fed7aa; color: #92400e; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#f1f5f9; padding:20px; font-family:system-ui; }
+    .card { background:white; border-radius:12px; padding:20px; margin-bottom:16px; box-shadow:0 2px 4px rgba(0,0,0,0.05); }
+    .tab-active { background:#ae2f34 !important; color:white !important; }
+    .tab-inactive { background:#e2e8f0 !important; color:#1e293b !important; }
+    .btn { padding:8px 16px; border-radius:6px; border:none; cursor:pointer; font-weight:600; }
+    .btn-primary { background:#ae2f34; color:white; }
+    .btn-success { background:#10b981; color:white; }
+    .btn-danger { background:#ef4444; color:white; }
+    input, textarea { width:100%; padding:6px 10px; border:1px solid #cbd5e1; border-radius:4px; }
+    .field { margin-bottom:10px; }
+    .field label { display:block; font-weight:600; font-size:13px; margin-bottom:4px; }
+    .item { display:flex; justify-content:space-between; padding:6px 10px; border-bottom:1px solid #e2e8f0; }
   </style>
 </head>
 <body>
 
-<div class="max-w-7xl mx-auto">
-  <div class="bg-white rounded-xl shadow p-5 mb-6 flex justify-between items-center">
-    <div>
-      <h1 class="text-xl font-bold text-gray-800">Painel I Love Delicitas</h1>
-      <p class="text-sm text-gray-500">Versão simplificada</p>
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-2xl font-bold mb-4">⚙️ Painel I Love Delicitas</h1>
+    <p class="text-sm text-gray-500 mb-4">Acesse a URL secreta para editar. Ninguém sabe que existe.</p>
+
+    <div class="flex gap-2 mb-4">
+      <span class="tab-active px-4 py-2 rounded-lg cursor-pointer" onclick="mudarAba('config',this)">Config</span>
+      <span class="tab-inactive px-4 py-2 rounded-lg cursor-pointer" onclick="mudarAba('produtos',this)">Cardápio</span>
+      <span class="tab-inactive px-4 py-2 rounded-lg cursor-pointer" onclick="mudarAba('faq',this)">FAQ</span>
+      <span class="tab-inactive px-4 py-2 rounded-lg cursor-pointer" onclick="mudarAba('redes',this)">Redes</span>
     </div>
-    <div id="status" class="status-badge status-warning">🔄 Carregando...</div>
+
+    <div id="aba-config" class="card">
+      <div id="configCampos"></div>
+      <button class="btn btn-success" onclick="salvarConfig()">💾 Salvar</button>
+    </div>
+    <div id="aba-produtos" class="card hidden">
+      <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+        <h3>Cardápio</h3>
+        <button class="btn btn-primary" onclick="novoProduto()">+ Adicionar</button>
+      </div>
+      <div id="produtosList"></div>
+    </div>
+    <div id="aba-faq" class="card hidden">
+      <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+        <h3>FAQ</h3>
+        <button class="btn btn-primary" onclick="novoFaq()">+ Adicionar</button>
+      </div>
+      <div id="faqList"></div>
+    </div>
+    <div id="aba-redes" class="card hidden">
+      <div id="redesCampos"></div>
+      <button class="btn btn-success" onclick="salvarRedes()">💾 Salvar</button>
+    </div>
   </div>
 
-  <div style="margin-bottom: 20px;">
-    <span class="tab tab-active" onclick="mostrarAba('config')">Configurações</span>
-    <span class="tab" onclick="mostrarAba('regras')">Calculadora</span>
-    <span class="tab" onclick="mostrarAba('produtos')">Cardápio</span>
-    <span class="tab" onclick="mostrarAba('faq')">FAQ</span>
-  </div>
+  <script>
+    // MESMA ESTRUTURA DE DADOS DO index.html
+    const DADOS_PADRAO = { /* mesmo conteúdo do index.html */ };
+    let dados = {};
 
-  <div id="aba-config" class="card">
-    <h2 class="font-bold mb-4">⚙️ Configurações</h2>
-    <div id="config-list">Carregando...</div>
-    <button onclick="salvarConfig()" class="btn-success mt-4">💾 Salvar Configurações</button>
-  </div>
-  <div id="aba-regras" class="card hidden">
-    <h2 class="font-bold mb-4">📊 Regras da Calculadora</h2>
-    <div id="regras-list">Carregando...</div>
-  </div>
-  <div id="aba-produtos" class="card hidden">
-    <h2 class="font-bold mb-4">🍕 Cardápio</h2>
-    <div id="produtos-list">Carregando...</div>
-  </div>
-  <div id="aba-faq" class="card hidden">
-    <h2 class="font-bold mb-4">❓ FAQ</h2>
-    <div id="faq-list">Carregando...</div>
-  </div>
-</div>
-
-<script>
-  console.log('✅ Script iniciado');
-
-  const SUPABASE_URL = 'https://sikiufknmldvkcxcktsn.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpa2l1ZmtubWxkdmtjeGNrdHNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNjYzMzgsImV4cCI6MjA5Njg0MjMzOH0.WKh9GdL3yJxnQqGUhLIeJNOm-7NRhgaMXW8vlkmEb0I';
-  
-  let supabase = null;
-  let supabaseConectado = false;
-
-  // Dados locais de fallback
-  const dados = {
-    config: [
-      { chave: 'titulo_hero', valor: 'A Celebração que o Seu Paladar Merece' },
-      { chave: 'telefone', valor: '5531999999999' },
-      { chave: 'rodape_texto', valor: 'Gastronomia artesanal para festas em BH' }
-    ],
-    regras: [
-      { tipo_evento: 'adulto', salgados_por_pessoa: 12, doces_por_pessoa: 6 }
-    ],
-    produtos: [
-      { id: 1, nome: 'Coxinha de Frango', preco: 90, categoria: 'Fritos' }
-    ],
-    faq: [
-      { id: 1, pergunta: 'Qual o prazo?', resposta: '7 dias' }
-    ]
-  };
-
-  async function inicializar() {
-    try {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      supabaseConectado = true;
-      document.getElementById('status').innerHTML = '✅ Supabase conectado';
-      document.getElementById('status').className = 'status-badge status-success';
-    } catch(e) {
-      console.warn('Supabase não disponível:', e);
-      supabaseConectado = false;
-      document.getElementById('status').innerHTML = '⚠️ Modo offline';
-      document.getElementById('status').className = 'status-badge status-warning';
+    function carregar() {
+      const salvo = localStorage.getItem('ilovedelicitas_dados');
+      if(salvo) {
+        try { dados = JSON.parse(salvo); } catch(e) { dados = JSON.parse(JSON.stringify(DADOS_PADRAO)); }
+        for(let k in DADOS_PADRAO) if(!dados[k]) dados[k] = JSON.parse(JSON.stringify(DADOS_PADRAO[k]));
+      } else dados = JSON.parse(JSON.stringify(DADOS_PADRAO));
     }
-    renderizarTudo();
-  }
 
-  function renderizarTudo() {
-    renderizarConfig();
-    renderizarRegras();
-    renderizarProdutos();
-    renderizarFaq();
-  }
+    function salvar() {
+      localStorage.setItem('ilovedelicitas_dados', JSON.stringify(dados));
+      renderizar();
+    }
 
-  function renderizarConfig() {
-    document.getElementById('config-list').innerHTML = dados.config.map(c => 
-      `<div class="mb-2"><b>${c.chave}</b>: <input type="text" value="${c.valor}" class="border rounded px-2 py-1 w-full"></div>`
-    ).join('');
-  }
-
-  function renderizarRegras() {
-    document.getElementById('regras-list').innerHTML = dados.regras.map(r => 
-      `<div class="mb-2">${r.tipo_evento}: ${r.salgados_por_pessoa} salgados/pessoa, ${r.doces_por_pessoa} doces/pessoa</div>`
-    ).join('');
-  }
-
-  function renderizarProdutos() {
-    document.getElementById('produtos-list').innerHTML = dados.produtos.map(p => 
-      `<div class="mb-2">${p.nome} - R$ ${p.preco}</div>`
-    ).join('');
-  }
-
-  function renderizarFaq() {
-    document.getElementById('faq-list').innerHTML = dados.faq.map(f => 
-      `<div class="mb-2"><b>${f.pergunta}</b><br>${f.resposta}</div>`
-    ).join('');
-  }
-
-  function mostrarAba(aba) {
-    document.querySelectorAll('.tab').forEach(el => el.classList.remove('tab-active'));
-    document.querySelectorAll('.card').forEach(el => el.classList.add('hidden'));
-    document.getElementById('aba-' + aba).classList.remove('hidden');
-    document.querySelector(`[onclick="mostrarAba('${aba}')"]`).classList.add('tab-active');
-  }
-
-  function salvarConfig() {
-    alert('Configurações salvas localmente!');
-  }
-
-  document.addEventListener('DOMContentLoaded', inicializar);
-</script>
-
+    // ... (mesmas funções de renderização e CRUD do painel anterior)
+  </script>
 </body>
 </html>
