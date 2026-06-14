@@ -37,12 +37,6 @@
           borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
           spacing: { "margin-mobile": "16px", "margin-desktop": "64px", "gutter": "24px", "section-padding": "80px" },
           fontFamily: { "headline": ["Be Vietnam Pro", "sans-serif"], "body": ["Plus Jakarta Sans", "sans-serif"] },
-          animation: { float: "float 3s ease-in-out infinite", "pulse-fast": "pulse-fast 0.3s ease-in-out", "slide-in": "slide-in 0.4s ease-out" },
-          keyframes: {
-            float: { "0%,100%": { transform: "translateY(0)" }, "50%": { transform: "translateY(-5px)" } },
-            "pulse-fast": { "0%": { transform: "scale(1)" }, "50%": { transform: "scale(1.02)" }, "100%": { transform: "scale(1)" } },
-            "slide-in": { "0%": { transform: "translateX(100%)" }, "100%": { transform: "translateX(0)" } }
-          }
         }
       }
     }
@@ -53,57 +47,47 @@
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .header-scrolled { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); background-color: rgba(255, 248, 247, 0.95); }
-    .modal-backdrop { background-color: rgba(29, 27, 27, 0.6); backdrop-filter: blur(4px); }
-    .calculator-card { background: linear-gradient(135deg, #ae2f34 0%, #8d151f 100%); }
-    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-
-    /* Admin Panel Styles */
+    .admin-card { background: white; border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
     .admin-tab-active { background: #ae2f34 !important; color: white !important; }
-    .admin-tab-inactive { background-color: #e2e8f0 !important; color: #1e293b !important; }
-    .admin-card { background: white; border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-    .admin-btn-primary { background: #ae2f34; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500; transition: all 0.2s; }
+    .admin-tab-inactive { background: #e2e8f0 !important; color: #1e293b !important; }
+    .admin-btn-primary { background: #ae2f34; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; }
     .admin-btn-primary:hover { background: #8b2327; }
-    .admin-btn-success { background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500; }
+    .admin-btn-success { background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; }
     .admin-btn-success:hover { background: #059669; }
     .admin-btn-danger { background: #ef4444; color: white; padding: 0.25rem 0.75rem; border-radius: 0.5rem; }
-    .admin-field input, .admin-field textarea, .admin-field select { border: 1px solid #cbd5e1; border-radius: 0.5rem; padding: 0.5rem; width: 100%; background: white; }
-    .admin-field input:focus, .admin-field textarea:focus { outline: none; border-color: #ae2f34; box-shadow: 0 0 0 3px rgba(174,47,52,0.1); }
-    .admin-field label { font-weight: 600; font-size: 0.875rem; margin-bottom: 0.25rem; display: block; color: #334155; }
-    .image-preview { width: 60px; height: 60px; object-fit: cover; border-radius: 0.5rem; border: 1px solid #e2e8f0; margin-top: 0.5rem; }
+    input, textarea, select { border: 1px solid #cbd5e1; border-radius: 0.5rem; padding: 0.5rem; width: 100%; background: white; }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: #ae2f34; box-shadow: 0 0 0 3px rgba(174,47,52,0.1); }
+    label { font-weight: 600; font-size: 0.875rem; margin-bottom: 0.25rem; display: block; color: #334155; }
     .admin-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-bottom: 1px solid #e2e8f0; }
     .admin-item:last-child { border-bottom: none; }
   </style>
 </head>
 <body class="bg-background text-on-background font-body antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
 
-  <!-- HEADER -->
   <header class="bg-surface/80 backdrop-blur-md top-0 sticky z-50 transition-all duration-300 border-b border-outline-variant/10" id="main-header">
     <div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-max mx-auto">
-      <h1 class="font-headline text-2xl font-bold text-primary">Painel I Love Delicitas</h1>
+      <h1 class="font-headline text-2xl font-bold text-primary">⚙️ Painel I Love Delicitas</h1>
       <a href="/" class="bg-primary text-on-primary px-4 py-2 rounded-lg font-semibold text-sm hover:shadow-md transition-all">← Voltar ao Site</a>
     </div>
   </header>
 
   <main class="max-w-max mx-auto px-margin-mobile md:px-margin-desktop py-8">
-    <!-- Status -->
     <div id="status" class="mb-4 p-3 rounded-lg text-sm font-medium bg-yellow-100 text-yellow-800">🔄 Carregando dados do Supabase...</div>
 
-    <!-- Tabs -->
     <div class="flex flex-wrap gap-2 mb-6 border-b border-outline-variant/30 pb-2">
       <button class="admin-tab-active px-5 py-2.5 rounded-lg font-semibold" onclick="mostrarAba('config')">⚙️ Configurações</button>
-      <button class="admin-tab-inactive px-5 py-2.5 rounded-lg font-semibold" onclick="mostrarAba('cardapio')">🍕 Cardápio</button>
+      <button class="admin-tab-inactive px-5 py-2.5 rounded-lg font-semibold" onclick="mostrarAba('produtos')">🍕 Cardápio</button>
       <button class="admin-tab-inactive px-5 py-2.5 rounded-lg font-semibold" onclick="mostrarAba('faq')">❓ FAQ</button>
       <button class="admin-tab-inactive px-5 py-2.5 rounded-lg font-semibold" onclick="mostrarAba('redes')">📱 Redes Sociais</button>
     </div>
 
-    <!-- Abas -->
     <div id="aba-config" class="admin-card">
       <h2 class="text-xl font-bold mb-4">⚙️ Configurações Gerais</h2>
       <div id="configList" class="grid md:grid-cols-2 gap-4"></div>
       <button class="admin-btn-success mt-4 w-full md:w-auto px-8 py-2" onclick="salvarConfig()">💾 Salvar Configurações</button>
     </div>
 
-    <div id="aba-cardapio" class="admin-card hidden">
+    <div id="aba-produtos" class="admin-card hidden">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold">🍕 Cardápio</h2>
         <button class="admin-btn-primary" onclick="novoProduto()">+ Adicionar Produto</button>
@@ -133,7 +117,6 @@
 
     let dados = { config: [], produtos: [], faq: [], redes: [] };
 
-    // ===== CARREGAR TODOS OS DADOS =====
     async function carregarDados() {
       try {
         const { data: configData, error: configError } = await supabase.from('configuracoes').select('*');
@@ -162,7 +145,6 @@
       }
     }
 
-    // ===== RENDERIZAR TUDO =====
     function renderizarTudo() {
       renderizarConfig();
       renderizarProdutos();
@@ -175,7 +157,7 @@
       const campos = ['logo_url','banner_url','titulo_hero','subtitulo_hero','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
       container.innerHTML = campos.map(chave => {
         const item = dados.config.find(c => c.chave === chave);
-        return `<div class="admin-field"><label>${chave}</label><input type="text" id="cfg_${chave}" value="${escapeHtml(item?.valor || '')}"></div>`;
+        return `<div><label>${chave}</label><input type="text" id="cfg_${chave}" value="${escapeHtml(item?.valor || '')}" class="w-full"></div>`;
       }).join('');
     }
 
@@ -218,11 +200,10 @@
       const container = document.getElementById('redesList');
       container.innerHTML = plataformas.map(plat => {
         const item = dados.redes.find(r => r.plataforma === plat);
-        return `<div class="admin-field"><label class="capitalize">${plat}</label><input type="url" id="rede_${plat}" value="${item?.url || ''}" placeholder="https://${plat}.com/..."></div>`;
+        return `<div><label class="capitalize">${plat}</label><input type="url" id="rede_${plat}" value="${item?.url || ''}" placeholder="https://${plat}.com/..." class="w-full"></div>`;
       }).join('');
     }
 
-    // ===== ESCAPE =====
     function escapeHtml(str) {
       if (!str) return '';
       return String(str).replace(/[&<>"]/g, function(m) {
@@ -234,18 +215,35 @@
       });
     }
 
-    // ===== SALVAR CONFIGURAÇÕES =====
+    function mostrarAba(aba) {
+      const abas = ['config','produtos','faq','redes'];
+      abas.forEach(a => {
+        document.getElementById('aba-' + a).classList.add('hidden');
+      });
+      document.getElementById('aba-' + aba).classList.remove('hidden');
+      document.querySelectorAll('[class*="admin-tab-"]').forEach(el => {
+        el.classList.remove('admin-tab-active');
+        el.classList.add('admin-tab-inactive');
+      });
+      const btn = Array.from(document.querySelectorAll('[class*="admin-tab-"]')).find(b => 
+        b.textContent.includes(aba === 'config' ? 'Configurações' : aba.charAt(0).toUpperCase() + aba.slice(1))
+      );
+      if (btn) {
+        btn.classList.remove('admin-tab-inactive');
+        btn.classList.add('admin-tab-active');
+      }
+    }
+
     async function salvarConfig() {
       const campos = ['logo_url','banner_url','titulo_hero','subtitulo_hero','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
       for (let chave of campos) {
         const valor = document.getElementById(`cfg_${chave}`).value;
         await supabase.from('configuracoes').upsert({ chave, valor }, { onConflict: 'chave' });
       }
-      alert('✅ Configurações salvas! Recarregue o site para ver as mudanças.');
+      alert('✅ Configurações salvas!');
       await carregarDados();
     }
 
-    // ===== SALVAR REDES =====
     async function salvarRedes() {
       const plataformas = ['instagram','facebook','tiktok','youtube','twitter','linkedin'];
       for (let plat of plataformas) {
@@ -256,7 +254,6 @@
       await carregarDados();
     }
 
-    // ===== CRUD PRODUTOS =====
     async function novoProduto() {
       const nome = prompt('Nome do produto'); if (!nome) return;
       const preco = parseFloat(prompt('Preço (R$)')); if (isNaN(preco)) return;
@@ -288,7 +285,6 @@
       }
     }
 
-    // ===== CRUD FAQ =====
     async function novoFaq() {
       const pergunta = prompt('Pergunta'); if (!pergunta) return;
       const resposta = prompt('Resposta'); if (!resposta) return;
@@ -319,23 +315,6 @@
       }
     }
 
-    // ===== NAVEGAÇÃO =====
-    function mostrarAba(aba) {
-      const abas = ['config','cardapio','faq','redes'];
-      document.querySelectorAll('.admin-card').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('[class*="admin-tab-"]').forEach(el => {
-        el.classList.remove('admin-tab-active');
-        el.classList.add('admin-tab-inactive');
-      });
-      document.getElementById('aba-' + aba).classList.remove('hidden');
-      const btn = Array.from(document.querySelectorAll('[class*="admin-tab-"]')).find(b => b.textContent.includes(aba === 'config' ? 'Configurações' : aba.charAt(0).toUpperCase() + aba.slice(1)));
-      if (btn) {
-        btn.classList.remove('admin-tab-inactive');
-        btn.classList.add('admin-tab-active');
-      }
-    }
-
-    // ===== INICIAR =====
     document.addEventListener('DOMContentLoaded', carregarDados);
   </script>
 </body>
