@@ -237,7 +237,7 @@
       z-index: 999;
       opacity: 0.4;
       transition: opacity 0.3s, transform 0.3s;
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: center;
       color: #584140;
@@ -249,6 +249,7 @@
     .admin-trigger .material-symbols-outlined {
       font-size: 20px;
     }
+    .admin-trigger.active { display: flex; }
 
     /* ===== PAINEL ADMIN ===== */
     .admin-panel {
@@ -397,7 +398,7 @@
   </div>
 
   <!-- ===== BOTÃO ADMIN ULTRADISCRETO ===== -->
-  <button class="admin-trigger" id="adminTrigger" onclick="abrirAdmin()" style="display:none;">
+  <button class="admin-trigger" id="adminTrigger" onclick="abrirAdmin()">
     <span class="material-symbols-outlined">settings</span>
   </button>
 
@@ -450,31 +451,9 @@
     </div>
   </div>
 
-  <!-- ===== DRAWER (CARRINHO) ===== -->
-  <div class="fixed inset-y-0 right-0 w-full md:w-96 bg-surface z-[60] shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col" id="quote-drawer">
-    <div class="p-6 border-b border-outline-variant flex items-center justify-between bg-primary text-on-primary">
-      <h3 class="font-headline font-semibold text-xl">Meu Orçamento</h3>
-      <button class="p-2 hover:bg-white/10 rounded-full" onclick="toggleDrawer()"><span class="material-symbols-outlined">close</span></button>
-    </div>
-    <div class="flex-grow overflow-y-auto p-6 space-y-4" id="cart-items"><div class="text-center py-10 text-on-surface-variant italic">Sua sacola está vazia.</div></div>
-    <div class="p-6 border-t border-outline-variant bg-surface-container-low">
-      <div class="flex justify-between items-center mb-6"><span class="text-sm font-semibold uppercase tracking-wider text-on-surface-variant">Total Estimado</span><span class="font-headline text-2xl font-bold text-primary" id="cart-total">R$ 0,00</span></div>
-      <button class="w-full bg-primary text-on-primary py-4 rounded-lg font-semibold hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2" onclick="openLeadModal()"><span class="material-symbols-outlined">send</span> Finalizar Orçamento</button>
-    </div>
-  </div>
-
-  <!-- ===== MODAL LEAD ===== -->
-  <div class="fixed inset-0 z-[70] hidden items-center justify-center p-4 modal-backdrop" id="lead-modal" onclick="closeLeadModalOnBackdrop(event)">
-    <div class="bg-surface w-full max-w-md rounded-xl shadow-2xl overflow-hidden animate-slide-in" onclick="event.stopPropagation()">
-      <div class="p-6 bg-surface-container-highest flex justify-between items-center border-b border-outline-variant/30"><h3 class="font-headline font-semibold text-lg text-on-surface">Só mais um passo!</h3><button class="text-on-surface-variant hover:text-primary transition-colors" onclick="closeLeadModal()"><span class="material-symbols-outlined">close</span></button></div>
-      <form class="p-6 space-y-4" id="lead-form">
-        <div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">Seu Nome</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" name="name" required type="text"></div>
-        <div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">WhatsApp</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" name="whatsapp" placeholder="(00) 00000-0000" required type="tel"></div>
-        <div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">Data da Festa</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" name="date" required type="date"></div><div><label class="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-tight">Convidados</label><input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary outline-none" id="modal-guests" name="guests" required type="number" min="1"></div></div>
-        <button class="w-full bg-primary text-on-primary py-4 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center justify-center gap-2 mt-4" type="submit"><span class="material-symbols-outlined">whatsapp</span> Enviar para Delinha</button>
-        <p class="text-[10px] text-on-surface-variant text-center opacity-70">Seus dados estão seguros conosco.</p>
-      </form>
-    </div>
+  <!-- ===== BANNER EXTRA (proximo ao cabeçalho) ===== -->
+  <div id="top-banner-container" class="w-full bg-background">
+    <img id="top-banner-img" class="w-full h-auto object-cover" src="" alt="Banner Topo">
   </div>
 
   <!-- ===== HEADER ===== -->
@@ -505,13 +484,12 @@
       </div>
     </section>
 
-    <!-- ===== CALCULADORA ===== -->
+    <!-- ===== CALCULADORA (sem duração) ===== -->
     <section class="py-section-padding px-margin-mobile md:px-margin-desktop bg-surface-container-low" id="calculadora">
       <div class="max-w-max mx-auto"><div class="text-center mb-16"><h2 class="font-headline text-3xl md:text-4xl font-bold text-on-surface mb-4">Calculadora Inteligente</h2><p class="text-on-surface-variant max-w-2xl mx-auto">Descubra as quantidades ideais de salgados e doces para seu evento.</p></div>
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
         <div class="lg:col-span-7 bg-surface rounded-xl p-6 md:p-10 shadow-sm border border-outline-variant/30 flex flex-col justify-between"><div class="space-y-10"><div><label class="block text-sm font-bold text-on-surface mb-4 uppercase tracking-wider">Tipo de Evento</label><div class="grid grid-cols-3 gap-4"><button class="calc-btn flex flex-col items-center p-4 border border-outline-variant rounded-lg hover:border-primary transition-all group" id="btn-kids" onclick="setCalcVar('type', 'kids')"><span class="material-symbols-outlined text-3xl mb-2 group-hover:scale-110 transition-transform">child_care</span><span class="text-xs font-bold uppercase">Infantil</span></button><button class="calc-btn flex flex-col items-center p-4 border-2 border-primary bg-primary/5 rounded-lg transition-all group" id="btn-adult" onclick="setCalcVar('type', 'adult')"><span class="material-symbols-outlined text-3xl mb-2 icon-fill group-hover:scale-110 transition-transform">celebration</span><span class="text-xs font-bold uppercase">Adulto</span></button><button class="calc-btn flex flex-col items-center p-4 border border-outline-variant rounded-lg hover:border-primary transition-all group" id="btn-corp" onclick="setCalcVar('type', 'corp')"><span class="material-symbols-outlined text-3xl mb-2 group-hover:scale-110 transition-transform">business_center</span><span class="text-xs font-bold uppercase">Corporativo</span></button></div></div>
-        <div><label class="block text-sm font-bold text-on-surface mb-3 uppercase tracking-wider">Duração</label><select class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-3 focus:ring-primary focus:border-primary outline-none" id="calc-duration"><option value="short">Até 3 horas</option><option selected value="med">4 a 6 horas</option><option value="long">Mais de 6 horas</option></select></div>
-        <div><div class="flex justify-between items-end mb-4"><label class="text-sm font-bold text-on-surface uppercase tracking-wider">Total de Convidados</label><span class="text-4xl font-headline font-bold text-primary" id="guest-val">50</span></div><input class="w-full h-2 bg-surface-variant rounded-lg appearance-none cursor-pointer accent-primary" id="guest-range" max="500" min="10" type="range" value="50"></div></div></div>
+          <div><div class="flex justify-between items-end mb-4"><label class="text-sm font-bold text-on-surface uppercase tracking-wider">Total de Convidados</label><span class="text-4xl font-headline font-bold text-primary" id="guest-val">50</span></div><input class="w-full h-2 bg-surface-variant rounded-lg appearance-none cursor-pointer accent-primary" id="guest-range" max="500" min="10" type="range" value="50"></div></div></div>
         <div class="lg:col-span-5 space-y-6 flex flex-col"><div class="calculator-card text-on-primary rounded-xl p-8 shadow-xl relative overflow-hidden flex-grow flex flex-col justify-between" id="calc-result-card"><div class="absolute -right-8 -top-8 opacity-10"><span class="material-symbols-outlined text-[180px]">restaurant</span></div><div><h3 class="font-headline text-2xl font-bold mb-8 flex items-center gap-3"><span class="material-symbols-outlined icon-fill">verified</span> Guia Delinha</h3><div class="space-y-5 relative z-10"><div class="flex justify-between items-center border-b border-white/20 pb-3"><span class="flex items-center gap-3 text-sm font-medium"><span class="material-symbols-outlined opacity-80">tapas</span> Salgados</span><span class="font-bold text-xl" id="res-salgados">600 un.</span></div><div class="flex justify-between items-center border-b border-white/20 pb-3"><span class="flex items-center gap-3 text-sm font-medium"><span class="material-symbols-outlined opacity-80">bakery_dining</span> Doces</span><span class="font-bold text-xl" id="res-doces">250 un.</span></div></div></div><div class="mt-10"><button class="w-full bg-white text-primary py-4 rounded-lg font-bold hover:scale-[1.02] transition-transform shadow-lg active:scale-95" onclick="applyCalcToQuote()">Adicionar Recomendação à Sacola</button></div></div>
         </div>
       </div></div>
@@ -557,6 +535,7 @@
     </div>
   </div>
 
+  <!-- ===== SCRIPTS ===== -->
   <script>
     (function() {
       const messagesDiv = document.getElementById('delinhaIaMessages');
@@ -638,6 +617,7 @@
         config: [
           { chave: 'logo_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo' },
           { chave: 'banner_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY' },
+          { chave: 'top_banner_url', valor: '' },
           { chave: 'titulo_hero', valor: 'A Celebração que o Seu Paladar Merece' },
           { chave: 'subtitulo_hero', valor: 'Doces e salgados artesanais. Fritura no local, retirada ou frete por aplicativo. BH e região.' },
           { chave: 'telefone', valor: '5531999999999' },
@@ -697,6 +677,7 @@
         document.getElementById('logo-img').src = getConfig('logo_url') || DADOS_PADRAO.config.find(c=>c.chave==='logo_url').valor;
         document.getElementById('banner-img').src = getConfig('banner_url') || DADOS_PADRAO.config.find(c=>c.chave==='banner_url').valor;
         document.getElementById('footer-logo').src = getConfig('logo_url') || DADOS_PADRAO.config.find(c=>c.chave==='logo_url').valor;
+        document.getElementById('top-banner-img').src = getConfig('top_banner_url') || '';
         document.getElementById('hero-title').innerHTML = getConfig('titulo_hero') || 'A Celebração que o Seu Paladar Merece';
         document.getElementById('hero-subtitle').innerHTML = getConfig('subtitulo_hero') || 'Doces e salgados artesanais. Fritura no local, retirada ou frete por aplicativo. BH e região.';
         document.getElementById('footer-text').innerHTML = getConfig('rodape_texto') || 'Gastronomia artesanal para festas em BH. Fritura no local, retirada ou frete por app. Pagamento em até 3x.';
@@ -743,7 +724,7 @@
       }
 
       let cart = [];
-      let calcState = { type: 'adult', guests: 50, duration: 'med' };
+      let calcState = { type: 'adult', guests: 50 };
 
       function addToCart(name, price) {
         cart.push({ name, price });
@@ -830,9 +811,14 @@
         let sPer = 12, dPer = 5;
         if (calcState.type === 'kids') { sPer = 10; dPer = 7; }
         if (calcState.type === 'corp') { sPer = 8; dPer = 3; }
-        if (calcState.duration === 'long') { sPer *= 1.4; dPer *= 1.2; }
         document.getElementById('res-salgados').innerHTML = `${Math.round(guests * sPer)} un.`;
         document.getElementById('res-doces').innerHTML = `${Math.round(guests * dPer)} un.`;
+        const card = document.getElementById('calc-result-card');
+        if (card) {
+          card.classList.remove('animate-pulse-fast');
+          void card.offsetWidth;
+          card.classList.add('animate-pulse-fast');
+        }
       }
 
       function filterCatalog(category) {
@@ -890,7 +876,7 @@
         const senha = document.getElementById('loginSenha').value;
         if (senha === senhaCorreta) {
           document.getElementById('loginOverlay').classList.remove('active');
-          document.getElementById('adminTrigger').style.display = 'flex';
+          document.getElementById('adminTrigger').classList.add('active');
           loginState = true;
         } else {
           document.getElementById('loginError').style.display = 'block';
@@ -899,7 +885,7 @@
 
       function logout() {
         loginState = false;
-        document.getElementById('adminTrigger').style.display = 'none';
+        document.getElementById('adminTrigger').classList.remove('active');
         document.getElementById('adminPanel').classList.remove('active');
         document.getElementById('loginOverlay').classList.add('active');
         document.getElementById('loginSenha').value = '';
@@ -924,7 +910,7 @@
       }
 
       function renderizarAdmin() {
-        const camposConfig = ['logo_url','banner_url','titulo_hero','subtitulo_hero','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
+        const camposConfig = ['logo_url','banner_url','top_banner_url','titulo_hero','subtitulo_hero','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
         const configContainer = document.getElementById('configList');
         configContainer.innerHTML = camposConfig.map(chave => {
           const item = dados.config.find(c => c.chave === chave);
@@ -962,7 +948,7 @@
       }
 
       function salvarConfig() {
-        const campos = ['logo_url','banner_url','titulo_hero','subtitulo_hero','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
+        const campos = ['logo_url','banner_url','top_banner_url','titulo_hero','subtitulo_hero','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
         for (let chave of campos) {
           const valor = document.getElementById(`cfg_${chave}`).value;
           let idx = dados.config.findIndex(c => c.chave === chave);
@@ -1051,17 +1037,10 @@
 
       const range = document.getElementById('guest-range');
       const display = document.getElementById('guest-val');
-      const dur = document.getElementById('calc-duration');
       if (range && display) {
         range.addEventListener('input', function(e) {
           display.textContent = e.target.value;
           calcState.guests = parseInt(e.target.value);
-          updateCalculator();
-        });
-      }
-      if (dur) {
-        dur.addEventListener('change', function(e) {
-          calcState.duration = e.target.value;
           updateCalculator();
         });
       }
