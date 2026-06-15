@@ -157,7 +157,7 @@
       .delinha-ia-messages { height: 300px; }
     }
 
-    /* ===== LOGIN MODAL ===== */
+    /* ===== LOGIN MODAL (só para o painel) ===== */
     .login-overlay {
       position: fixed;
       top: 0;
@@ -224,10 +224,10 @@
       display: none;
     }
 
-    /* ===== BOTÃO ADMIN ===== */
+    /* ===== BOTÃO ADMIN (só para quem sabe) ===== */
     .admin-trigger {
       position: fixed;
-      bottom: 80px;
+      bottom: 20px;
       right: 20px;
       width: 28px;
       height: 28px;
@@ -385,7 +385,7 @@
 <body class="bg-background text-on-background font-body antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
 
   <!-- ===== LOGIN MODAL ===== -->
-  <div class="login-overlay active" id="loginOverlay">
+  <div class="login-overlay" id="loginOverlay">
     <div class="login-box">
       <h2>🔐 Acesso ao Painel</h2>
       <p>Digite a senha para acessar o painel administrativo.</p>
@@ -876,7 +876,8 @@
         if (senha === senhaCorreta) {
           document.getElementById('loginOverlay').classList.remove('active');
           loginState = true;
-          alert('✅ Login bem-sucedido! Clique no ícone de engrenagem para abrir o painel.');
+          document.getElementById('adminPanel').classList.add('active');
+          renderizarAdmin();
         } else {
           document.getElementById('loginError').style.display = 'block';
         }
@@ -885,7 +886,7 @@
       function logout() {
         loginState = false;
         document.getElementById('adminPanel').classList.remove('active');
-        document.getElementById('loginOverlay').classList.add('active');
+        document.getElementById('loginOverlay').classList.remove('active');
         document.getElementById('loginSenha').value = '';
         document.getElementById('loginError').style.display = 'none';
       }
