@@ -224,7 +224,7 @@
       display: none;
     }
 
-    /* ===== BOTÃO ADMIN ULTRADISCRETO ===== */
+    /* ===== BOTÃO ADMIN ===== */
     .admin-trigger {
       position: fixed;
       bottom: 80px;
@@ -237,7 +237,7 @@
       z-index: 999;
       opacity: 0.4;
       transition: opacity 0.3s, transform 0.3s;
-      display: none;
+      display: flex;
       align-items: center;
       justify-content: center;
       color: #584140;
@@ -249,7 +249,6 @@
     .admin-trigger .material-symbols-outlined {
       font-size: 20px;
     }
-    .admin-trigger.active { display: flex; }
 
     /* ===== PAINEL ADMIN ===== */
     .admin-panel {
@@ -386,7 +385,7 @@
 <body class="bg-background text-on-background font-body antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
 
   <!-- ===== LOGIN MODAL ===== -->
-  <div class="login-overlay" id="loginOverlay">
+  <div class="login-overlay active" id="loginOverlay">
     <div class="login-box">
       <h2>🔐 Acesso ao Painel</h2>
       <p>Digite a senha para acessar o painel administrativo.</p>
@@ -397,7 +396,7 @@
     </div>
   </div>
 
-  <!-- ===== BOTÃO ADMIN ULTRADISCRETO ===== -->
+  <!-- ===== BOTÃO ADMIN ===== -->
   <button class="admin-trigger" id="adminTrigger" onclick="abrirAdmin()">
     <span class="material-symbols-outlined">settings</span>
   </button>
@@ -453,7 +452,7 @@
 
   <!-- ===== BANNER EXTRA (proximo ao cabeçalho) ===== -->
   <div id="top-banner-container" class="w-full bg-background">
-    <img id="top-banner-img" class="w-full h-auto object-cover" src="" alt="Banner Topo">
+    <img id="top-banner-img" class="w-full h-auto object-cover" src="https://via.placeholder.com/1920x400/ae2f34/ffffff?text=Banner+Extra" alt="Banner Topo">
   </div>
 
   <!-- ===== HEADER ===== -->
@@ -617,7 +616,7 @@
         config: [
           { chave: 'logo_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo' },
           { chave: 'banner_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY' },
-          { chave: 'top_banner_url', valor: '' },
+          { chave: 'top_banner_url', valor: 'https://via.placeholder.com/1920x400/ae2f34/ffffff?text=Banner+Extra' },
           { chave: 'titulo_hero', valor: 'A Celebração que o Seu Paladar Merece' },
           { chave: 'subtitulo_hero', valor: 'Doces e salgados artesanais. Fritura no local, retirada ou frete por aplicativo. BH e região.' },
           { chave: 'telefone', valor: '5531999999999' },
@@ -677,7 +676,7 @@
         document.getElementById('logo-img').src = getConfig('logo_url') || DADOS_PADRAO.config.find(c=>c.chave==='logo_url').valor;
         document.getElementById('banner-img').src = getConfig('banner_url') || DADOS_PADRAO.config.find(c=>c.chave==='banner_url').valor;
         document.getElementById('footer-logo').src = getConfig('logo_url') || DADOS_PADRAO.config.find(c=>c.chave==='logo_url').valor;
-        document.getElementById('top-banner-img').src = getConfig('top_banner_url') || '';
+        document.getElementById('top-banner-img').src = getConfig('top_banner_url') || 'https://via.placeholder.com/1920x400/ae2f34/ffffff?text=Banner+Extra';
         document.getElementById('hero-title').innerHTML = getConfig('titulo_hero') || 'A Celebração que o Seu Paladar Merece';
         document.getElementById('hero-subtitle').innerHTML = getConfig('subtitulo_hero') || 'Doces e salgados artesanais. Fritura no local, retirada ou frete por aplicativo. BH e região.';
         document.getElementById('footer-text').innerHTML = getConfig('rodape_texto') || 'Gastronomia artesanal para festas em BH. Fritura no local, retirada ou frete por app. Pagamento em até 3x.';
@@ -876,8 +875,8 @@
         const senha = document.getElementById('loginSenha').value;
         if (senha === senhaCorreta) {
           document.getElementById('loginOverlay').classList.remove('active');
-          document.getElementById('adminTrigger').classList.add('active');
           loginState = true;
+          alert('✅ Login bem-sucedido! Clique no ícone de engrenagem para abrir o painel.');
         } else {
           document.getElementById('loginError').style.display = 'block';
         }
@@ -885,7 +884,6 @@
 
       function logout() {
         loginState = false;
-        document.getElementById('adminTrigger').classList.remove('active');
         document.getElementById('adminPanel').classList.remove('active');
         document.getElementById('loginOverlay').classList.add('active');
         document.getElementById('loginSenha').value = '';
@@ -893,7 +891,10 @@
       }
 
       function abrirAdmin() {
-        if (!loginState) return;
+        if (!loginState) {
+          document.getElementById('loginOverlay').classList.add('active');
+          return;
+        }
         document.getElementById('adminPanel').classList.add('active');
         renderizarAdmin();
       }
