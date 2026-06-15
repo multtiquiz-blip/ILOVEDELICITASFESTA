@@ -364,7 +364,7 @@
     .admin-logout-btn {
       position: absolute;
       bottom: 16px;
-      left: 20px;
+      right: 20px; /* Movido para a direita */
       background: #ef4444;
       color: white;
       padding: 6px 16px;
@@ -387,6 +387,11 @@
       <p>Digite a senha para acessar o painel administrativo.</p>
       <input type="password" id="loginSenha" placeholder="Senha" onkeydown="if(event.key==='Enter') verificarLogin()">
       <button onclick="verificarLogin()">Entrar</button>
+      
+      <!-- Campo para alterar a senha -->
+      <input type="password" id="novaSenha" placeholder="Nova Senha" style="margin-top:10px;">
+      <button onclick="alterarSenha()" style="margin-top:4px; background:#10b981; color:white; padding:8px; border:none; border-radius:4px; font-size:14px; width:100%; cursor:pointer;">🔑 Alterar Senha</button>
+      
       <div class="login-error" id="loginError">Senha incorreta. Tente novamente.</div>
     </div>
   </div>
@@ -414,12 +419,18 @@
 
       <!-- Configurações -->
       <div class="admin-section active" id="aba-config">
+        <div style="margin-bottom:12px; padding:10px; background:#fefaf9; border-left:4px solid #ae2f34;">
+          <p class="text-sm font-medium">📝 <strong>Instruções:</strong> Cole as URLs das imagens nos campos abaixo. O <strong>subtitulo_hero</strong> é o texto que aparece logo abaixo do título principal.</p>
+        </div>
         <div id="configList" class="grid md:grid-cols-2 gap-4"></div>
         <button class="admin-btn-success mt-4 w-full md:w-auto px-8 py-2" onclick="salvarConfig()">💾 Salvar Configurações</button>
       </div>
 
       <!-- Cardápio -->
       <div class="admin-section" id="aba-produtos">
+        <div style="margin-bottom:12px; padding:10px; background:#fefaf9; border-left:4px solid #ae2f34;">
+          <p class="text-sm font-medium">📸 <strong>Para colocar fotos no cardápio:</strong> Ao adicionar ou editar um produto, você verá um campo chamado <strong>"URL da imagem"</strong>. Cole o link da sua imagem ali (pode ser do Supabase Storage).</p>
+        </div>
         <div class="flex justify-between items-center mb-4">
           <h3 class="font-bold">Cardápio</h3>
           <button class="admin-btn-primary" onclick="novoProduto()">+ Adicionar Produto</button>
@@ -485,7 +496,7 @@
 
     <!-- ===== CALCULADORA (sem duração) ===== -->
     <section class="py-section-padding px-margin-mobile md:px-margin-desktop bg-surface-container-low" id="calculadora">
-      <div class="max-w-max mx-auto"><div class="text-center mb-16"><h2 class="font-headline text-3xl md:text-4xl font-bold text-on-surface mb-4">Calculadora Inteligente</h2><p class="text-on-surface-variant max-w-2xl mx-auto">Descubra as quantidades ideais de salgados e doces para seu evento.</p></div>
+      <div class="max-w-max mx-auto"><div class="text-center mb-16"><h2 class="font-headline text-3xl md:text-4xl font-bold text-on-surface mb-4">Calculadora de Festa</h2><p class="text-on-surface-variant max-w-2xl mx-auto">Descubra as quantidades ideais de salgados e doces para seu evento.</p></div>
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
         <div class="lg:col-span-7 bg-surface rounded-xl p-6 md:p-10 shadow-sm border border-outline-variant/30 flex flex-col justify-between"><div class="space-y-10"><div><label class="block text-sm font-bold text-on-surface mb-4 uppercase tracking-wider">Tipo de Evento</label><div class="grid grid-cols-3 gap-4"><button class="calc-btn flex flex-col items-center p-4 border border-outline-variant rounded-lg hover:border-primary transition-all group" id="btn-kids" onclick="setCalcVar('type', 'kids')"><span class="material-symbols-outlined text-3xl mb-2 group-hover:scale-110 transition-transform">child_care</span><span class="text-xs font-bold uppercase">Infantil</span></button><button class="calc-btn flex flex-col items-center p-4 border-2 border-primary bg-primary/5 rounded-lg transition-all group" id="btn-adult" onclick="setCalcVar('type', 'adult')"><span class="material-symbols-outlined text-3xl mb-2 icon-fill group-hover:scale-110 transition-transform">celebration</span><span class="text-xs font-bold uppercase">Adulto</span></button><button class="calc-btn flex flex-col items-center p-4 border border-outline-variant rounded-lg hover:border-primary transition-all group" id="btn-corp" onclick="setCalcVar('type', 'corp')"><span class="material-symbols-outlined text-3xl mb-2 group-hover:scale-110 transition-transform">business_center</span><span class="text-xs font-bold uppercase">Corporativo</span></button></div></div>
           <div><div class="flex justify-between items-end mb-4"><label class="text-sm font-bold text-on-surface uppercase tracking-wider">Total de Convidados</label><span class="text-4xl font-headline font-bold text-primary" id="guest-val">50</span></div><input class="w-full h-2 bg-surface-variant rounded-lg appearance-none cursor-pointer accent-primary" id="guest-range" max="500" min="10" type="range" value="50"></div></div></div>
@@ -541,7 +552,6 @@
     </div>
   </div>
 
-  <!-- ===== SCRIPTS ===== -->
   <script>
     (function() {
       const messagesDiv = document.getElementById('delinhaIaMessages');
@@ -895,7 +905,7 @@
       }
 
       let loginState = false;
-      let senhaCorreta = 'delinha2025';
+      let senhaCorreta = localStorage.getItem('adminSenha') || 'delinha2025';
 
       function verificarLogin() {
         const senha = document.getElementById('loginSenha').value;
@@ -907,6 +917,18 @@
         } else {
           document.getElementById('loginError').style.display = 'block';
         }
+      }
+
+      function alterarSenha() {
+        const novaSenha = document.getElementById('novaSenha').value;
+        if (novaSenha.length < 4) {
+          alert('A senha deve ter pelo menos 4 caracteres.');
+          return;
+        }
+        senhaCorreta = novaSenha;
+        localStorage.setItem('adminSenha', novaSenha);
+        alert('✅ Senha alterada com sucesso!');
+        document.getElementById('novaSenha').value = '';
       }
 
       function logout() {
@@ -1048,9 +1070,17 @@
         const nome = prompt('Nome do produto'); if (!nome) return;
         const preco = parseFloat(prompt('Preço (R$)')); if (isNaN(preco)) return;
         const categoria = prompt('Categoria (Fritos/Assados/Lanches/Doces)', 'Fritos');
-        const imagem = prompt('URL da imagem (link do Supabase Storage)', 'https://via.placeholder.com/300x200');
+        const imagem = prompt('URL da imagem (link da foto do produto)');
         const novoId = dados.produtos.length ? Math.max(...dados.produtos.map(p => p.id)) + 1 : 1;
-        dados.produtos.push({ id: novoId, nome, preco, categoria, unidade: 'Cento (100 un.)', descricao: '', imagem });
+        dados.produtos.push({
+          id: novoId,
+          nome: nome,
+          preco: preco,
+          categoria: categoria,
+          unidade: 'Cento (100 un.)',
+          descricao: '',
+          imagem: imagem || 'https://via.placeholder.com/300x200'
+        });
         salvarDados();
         renderizarSite();
         renderizarAdmin();
@@ -1161,6 +1191,7 @@
       window.closeLeadModalOnBackdrop = closeLeadModalOnBackdrop;
       window.openChat = openChat;
       window.verificarLogin = verificarLogin;
+      window.alterarSenha = alterarSenha;
       window.logout = logout;
       window.abrirAdmin = abrirAdmin;
       window.fecharAdmin = fecharAdmin;
