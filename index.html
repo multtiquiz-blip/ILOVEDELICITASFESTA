@@ -226,33 +226,24 @@
       display: none;
     }
 
-    /* ===== BOTÃO ADMIN (canto inferior esquerdo) ===== */
-    .admin-trigger {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      width: 48px;
-      height: 48px;
-      background: rgba(174, 47, 52, 0.15);
-      border: 2px solid #ae2f34;
-      border-radius: 50%;
-      cursor: pointer;
-      z-index: 9999;
-      display: flex !important;
+    /* ===== BOTÃO ADMIN (fixado no rodapé, lado esquerdo, discreto) ===== */
+    .admin-footer-trigger {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      color: #ae2f34;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 4px;
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,0.4);
+      cursor: pointer;
+      transition: color 0.2s;
+      font-size: 20px;
     }
-    .admin-trigger:hover {
-      background: #ae2f34;
-      color: white;
-      transform: scale(1.05);
-      box-shadow: 0 4px 16px rgba(174, 47, 52, 0.3);
+    .admin-footer-trigger:hover {
+      color: rgba(255,255,255,0.8);
     }
-    .admin-trigger .material-symbols-outlined {
-      font-size: 28px;
+    .admin-footer-trigger .material-symbols-outlined {
+      font-size: 20px;
     }
 
     /* ===== PAINEL ADMIN ===== */
@@ -400,10 +391,8 @@
     </div>
   </div>
 
-  <!-- ===== BOTÃO ADMIN (canto inferior esquerdo) ===== -->
-  <button class="admin-trigger" id="adminTrigger" onclick="abrirAdmin()">
-    <span class="material-symbols-outlined">settings</span>
-  </button>
+  <!-- ===== BOTÃO ADMIN NO RODAPÉ (DISCRETO) ===== -->
+  <!-- O botão será inserido no footer através do JavaScript -->
 
   <!-- ===== PAINEL ADMIN ===== -->
   <div class="admin-panel" id="adminPanel">
@@ -523,7 +512,14 @@
   <!-- ===== FOOTER ===== -->
   <footer class="bg-inverse-surface text-inverse-on-surface py-20">
     <div class="max-w-max mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-4 gap-16">
-      <div class="col-span-1 md:col-span-1"><img id="footer-logo" class="h-16 mb-8 brightness-0 invert object-contain" src="https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo"><p id="footer-text" class="opacity-70 text-sm leading-relaxed max-w-xs">Gastronomia artesanal para festas em BH. Fritura no local, retirada ou frete por app. Pagamento em até 3x.</p></div>
+      <div class="col-span-1 md:col-span-1">
+        <img id="footer-logo" class="h-16 mb-8 brightness-0 invert object-contain" src="https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo">
+        <p id="footer-text" class="opacity-70 text-sm leading-relaxed max-w-xs">Gastronomia artesanal para festas em BH. Fritura no local, retirada ou frete por app. Pagamento em até 3x.</p>
+        <!-- Botão ADMIN discreto no rodapé -->
+        <button class="admin-footer-trigger" id="adminTrigger" onclick="abrirAdmin()">
+          <span class="material-symbols-outlined">settings</span>
+        </button>
+      </div>
       <div><h4 class="font-bold text-sm uppercase tracking-widest mb-8 text-primary-fixed">Navegação</h4><ul class="space-y-4 text-sm font-medium"><li><a class="opacity-70 hover:opacity-100 transition-opacity" href="#">Início</a></li><li><a class="opacity-70 hover:opacity-100 transition-opacity" href="#cardapio">Cardápio</a></li><li><a class="opacity-70 hover:opacity-100 transition-opacity" href="#calculadora">Calculadora</a></li><li><a class="opacity-70 hover:opacity-100 transition-opacity" href="#faq">Dúvidas</a></li></ul></div>
       <div><h4 class="font-bold text-sm uppercase tracking-widest mb-8 text-primary-fixed">Contato</h4><ul class="space-y-4 text-sm font-medium"><li><span class="opacity-70">BH e Região Metropolitana</span></li><li><span id="footer-email" class="opacity-70">contato@ilovedelicitas.com.br</span></li><li><span id="footer-phone" class="opacity-70">(31) 99999-9999</span></li></ul></div>
       <div><h4 class="font-bold text-sm uppercase tracking-widest mb-8 text-primary-fixed">Acompanhe</h4><div class="flex gap-4"><a class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary transition-colors" href="#"><span class="material-symbols-outlined text-[20px] icon-fill">photo_camera</span></a><a class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary transition-colors" href="#"><span class="material-symbols-outlined text-[20px] icon-fill">thumb_up</span></a></div><p id="footer-copyright" class="mt-8 text-[11px] opacity-40">© 2025 I Love Delicitas. Todos os direitos reservados.</p></div>
