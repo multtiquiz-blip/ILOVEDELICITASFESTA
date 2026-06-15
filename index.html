@@ -224,30 +224,33 @@
       display: none;
     }
 
-    /* ===== BOTÃO ADMIN (só para quem sabe) ===== */
+    /* ===== BOTÃO ADMIN (visível e destacado) ===== */
     .admin-trigger {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      width: 28px;
-      height: 28px;
-      background: transparent;
-      border: none;
+      width: 48px;
+      height: 48px;
+      background: rgba(174, 47, 52, 0.15);
+      border: 2px solid #ae2f34;
+      border-radius: 50%;
       cursor: pointer;
-      z-index: 999;
-      opacity: 0.4;
-      transition: opacity 0.3s, transform 0.3s;
-      display: flex;
+      z-index: 9999;
+      display: flex !important;
       align-items: center;
       justify-content: center;
-      color: #584140;
+      color: #ae2f34;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     .admin-trigger:hover {
-      opacity: 0.8;
+      background: #ae2f34;
+      color: white;
       transform: scale(1.05);
+      box-shadow: 0 4px 16px rgba(174, 47, 52, 0.3);
     }
     .admin-trigger .material-symbols-outlined {
-      font-size: 20px;
+      font-size: 28px;
     }
 
     /* ===== PAINEL ADMIN ===== */
@@ -396,7 +399,7 @@
     </div>
   </div>
 
-  <!-- ===== BOTÃO ADMIN ===== -->
+  <!-- ===== BOTÃO ADMIN (visível e destacado) ===== -->
   <button class="admin-trigger" id="adminTrigger" onclick="abrirAdmin()">
     <span class="material-symbols-outlined">settings</span>
   </button>
