@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>I Love Delicitas - Salgados e Doces Artesanais</title>
+  <!-- Favicon -->
+  <link id="favicon-link" rel="icon" href="https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo">
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
@@ -224,11 +226,11 @@
       display: none;
     }
 
-    /* ===== BOTÃO ADMIN (visível e destacado) ===== */
+    /* ===== BOTÃO ADMIN (canto inferior esquerdo) ===== */
     .admin-trigger {
       position: fixed;
       bottom: 20px;
-      right: 20px;
+      left: 20px;
       width: 48px;
       height: 48px;
       background: rgba(174, 47, 52, 0.15);
@@ -395,11 +397,10 @@
       <input type="password" id="loginSenha" placeholder="Senha" onkeydown="if(event.key==='Enter') verificarLogin()">
       <button onclick="verificarLogin()">Entrar</button>
       <div class="login-error" id="loginError">Senha incorreta. Tente novamente.</div>
-      <p style="font-size:12px; color:#999; margin-top:12px;">Senha padrão: <strong>delinha2025</strong></p>
     </div>
   </div>
 
-  <!-- ===== BOTÃO ADMIN (visível e destacado) ===== -->
+  <!-- ===== BOTÃO ADMIN (canto inferior esquerdo) ===== -->
   <button class="admin-trigger" id="adminTrigger" onclick="abrirAdmin()">
     <span class="material-symbols-outlined">settings</span>
   </button>
@@ -419,6 +420,7 @@
         <span class="admin-tab" onclick="mudarAba('produtos',this)">🍕 Cardápio</span>
         <span class="admin-tab" onclick="mudarAba('faq',this)">❓ FAQ</span>
         <span class="admin-tab" onclick="mudarAba('redes',this)">📱 Redes</span>
+        <span class="admin-tab" onclick="mudarAba('horario',this)">🕐 Horário</span>
       </div>
 
       <!-- Configurações -->
@@ -449,6 +451,12 @@
       <div class="admin-section" id="aba-redes">
         <div id="redesList" class="grid md:grid-cols-2 gap-4"></div>
         <button class="admin-btn-success mt-4 w-full md:w-auto px-8 py-2" onclick="salvarRedes()">💾 Salvar Redes</button>
+      </div>
+
+      <!-- Horário -->
+      <div class="admin-section" id="aba-horario">
+        <div id="horarioList" class="grid md:grid-cols-2 gap-4"></div>
+        <button class="admin-btn-success mt-4 w-full md:w-auto px-8 py-2" onclick="salvarHorario()">💾 Salvar Horário</button>
       </div>
     </div>
   </div>
@@ -617,6 +625,7 @@
     (function() {
       const DADOS_PADRAO = {
         config: [
+          { chave: 'favicon_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo' },
           { chave: 'logo_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0ugXUlfqE_riiemrY0lMebk7m_HbF7pAOWpdvMCNcI2BwK6RveR6gfTI2jFu6jfjPjSMwtn0dyt7peowpzaAcEH3Nk9WzDnzP4M7fhm3HTJ5dkbioz0QtyJzMUh0NNzyDpMId9lMbQIcSSYEHcuLbf2Ah-GIfB-WC_6YoCjzwspIGCi32KPGu549MNkiZWi5fKxBiY963AMd_EDvtGiOWuwaQOM-XnfjNf7Pg-5rfo7ogV00qHHkSFy8XUfo' },
           { chave: 'banner_url', valor: 'https://lh3.googleusercontent.com/aida/ADBb0uhRIn7kgpa8myTqSiWgqQ8tV7xYshJQRfSu6QHG9NnxML9H8DIEHiGa-wZabvTTaGvW2KXKo1V9Fz56HBM9_1nhtpzjsGaL57McDPNFzTMyoTN_XXwU2ycSyfLlm8iXLS7DwNPZ4iLWe-WplQc3_BGKLXeP4mz7b3V4SSqWzTK4S2iFdbOFFe_sJFlcfgvDp4Dg8Pgbrem8tH0L2K8L5boZk2ESadA5cZVGxqy9y2p3Jvis-oZnG79vPgY' },
           { chave: 'top_banner_url', valor: 'https://via.placeholder.com/1920x400/ae2f34/ffffff?text=Banner+Extra' },
@@ -642,6 +651,15 @@
           { plataforma: 'instagram', url: 'https://instagram.com/ilovedelicitas' },
           { plataforma: 'facebook', url: 'https://facebook.com/ilovedelicitas' },
           { plataforma: 'tiktok', url: 'https://tiktok.com/@ilovedelicitas' }
+        ],
+        horario: [
+          { dia: 'segunda', abertura: '09:00', fechamento: '18:00', fechado: false },
+          { dia: 'terca', abertura: '09:00', fechamento: '18:00', fechado: false },
+          { dia: 'quarta', abertura: '09:00', fechamento: '18:00', fechado: false },
+          { dia: 'quinta', abertura: '09:00', fechamento: '18:00', fechado: false },
+          { dia: 'sexta', abertura: '09:00', fechamento: '18:00', fechado: false },
+          { dia: 'sabado', abertura: '09:00', fechamento: '16:00', fechado: false },
+          { dia: 'domingo', abertura: '', fechamento: '', fechado: true }
         ]
       };
 
@@ -676,10 +694,17 @@
           return item ? item.valor : '';
         };
 
+        // Favicon
+        const faviconUrl = getConfig('favicon_url') || DADOS_PADRAO.config.find(c=>c.chave==='favicon_url').valor;
+        document.getElementById('favicon-link').href = faviconUrl;
+
+        // Imagens
         document.getElementById('logo-img').src = getConfig('logo_url') || DADOS_PADRAO.config.find(c=>c.chave==='logo_url').valor;
         document.getElementById('banner-img').src = getConfig('banner_url') || DADOS_PADRAO.config.find(c=>c.chave==='banner_url').valor;
         document.getElementById('footer-logo').src = getConfig('logo_url') || DADOS_PADRAO.config.find(c=>c.chave==='logo_url').valor;
         document.getElementById('top-banner-img').src = getConfig('top_banner_url') || 'https://via.placeholder.com/1920x400/ae2f34/ffffff?text=Banner+Extra';
+
+        // Textos
         document.getElementById('hero-title').innerHTML = getConfig('titulo_hero') || 'A Celebração que o Seu Paladar Merece';
         document.getElementById('hero-subtitle').innerHTML = getConfig('subtitulo_hero') || 'Doces e salgados artesanais. Fritura no local, retirada ou frete por aplicativo. BH e região.';
         document.getElementById('footer-text').innerHTML = getConfig('rodape_texto') || 'Gastronomia artesanal para festas em BH. Fritura no local, retirada ou frete por app. Pagamento em até 3x.';
@@ -689,6 +714,7 @@
           document.getElementById('footer-email').innerHTML = `<a href="${getConfig('whatsapp_link')}" class="opacity-70 hover:opacity-100">WhatsApp</a>`;
         }
 
+        // Cardápio
         const grid = document.getElementById('catalog-grid');
         if (grid) {
           grid.innerHTML = dados.produtos.map(p => `
@@ -699,6 +725,7 @@
           `).join('');
         }
 
+        // FAQ
         const faqContainer = document.getElementById('faq-container');
         if (faqContainer) {
           const sorted = [...dados.faq].sort((a,b) => (a.ordem||0) - (b.ordem||0));
@@ -915,13 +942,15 @@
       }
 
       function renderizarAdmin() {
-        const camposConfig = ['logo_url','banner_url','top_banner_url','titulo_hero','subtitulo_hero','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
+        // Configurações
+        const camposConfig = ['favicon_url','logo_url','banner_url','top_banner_url','titulo_hero','subtitulo_hero','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
         const configContainer = document.getElementById('configList');
         configContainer.innerHTML = camposConfig.map(chave => {
           const item = dados.config.find(c => c.chave === chave);
           return `<div class="admin-field"><label>${chave}</label><input type="text" id="cfg_${chave}" value="${escapeHtml(item?.valor || '')}"></div>`;
         }).join('');
 
+        // Produtos
         const produtosContainer = document.getElementById('produtosList');
         produtosContainer.innerHTML = dados.produtos.map(p => `
           <div class="admin-item">
@@ -933,6 +962,7 @@
           </div>
         `).join('');
 
+        // FAQ
         const faqContainer = document.getElementById('faqList');
         faqContainer.innerHTML = dados.faq.map(f => `
           <div class="admin-item">
@@ -944,16 +974,38 @@
           </div>
         `).join('');
 
+        // Redes
         const plataformas = ['instagram','facebook','tiktok','youtube','twitter','linkedin'];
         const redesContainer = document.getElementById('redesList');
         redesContainer.innerHTML = plataformas.map(plat => {
           const item = dados.redes.find(r => r.plataforma === plat);
           return `<div class="admin-field"><label class="capitalize">${plat}</label><input type="url" id="rede_${plat}" value="${item?.url || ''}" placeholder="https://${plat}.com/..."></div>`;
         }).join('');
+
+        // Horário
+        const dias = ['segunda','terca','quarta','quinta','sexta','sabado','domingo'];
+        const labels = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
+        const horarioContainer = document.getElementById('horarioList');
+        horarioContainer.innerHTML = dias.map((dia, idx) => {
+          const item = dados.horario.find(h => h.dia === dia);
+          return `
+            <div class="admin-field">
+              <label class="font-bold">${labels[idx]}</label>
+              <div class="grid grid-cols-2 gap-2">
+                <div><label class="text-xs">Abertura</label><input type="time" id="abertura_${dia}" value="${item?.abertura || '09:00'}"></div>
+                <div><label class="text-xs">Fechamento</label><input type="time" id="fechamento_${dia}" value="${item?.fechamento || '18:00'}"></div>
+              </div>
+              <label class="flex items-center gap-2 mt-1">
+                <input type="checkbox" id="fechado_${dia}" ${item?.fechado ? 'checked' : ''}>
+                <span class="text-sm">Fechado</span>
+              </label>
+            </div>
+          `;
+        }).join('');
       }
 
       function salvarConfig() {
-        const campos = ['logo_url','banner_url','top_banner_url','titulo_hero','subtitulo_hero','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
+        const campos = ['favicon_url','logo_url','banner_url','top_banner_url','titulo_hero','subtitulo_hero','telefone','whatsapp_link','rodape_texto','rodape_copyright'];
         for (let chave of campos) {
           const valor = document.getElementById(`cfg_${chave}`).value;
           let idx = dados.config.findIndex(c => c.chave === chave);
@@ -977,12 +1029,32 @@
         alert('✅ Redes salvas!');
       }
 
+      function salvarHorario() {
+        const dias = ['segunda','terca','quarta','quinta','sexta','sabado','domingo'];
+        for (let dia of dias) {
+          const fechado = document.getElementById(`fechado_${dia}`).checked;
+          const abertura = document.getElementById(`abertura_${dia}`).value;
+          const fechamento = document.getElementById(`fechamento_${dia}`).value;
+          let idx = dados.horario.findIndex(h => h.dia === dia);
+          if (idx >= 0) {
+            dados.horario[idx].abertura = abertura;
+            dados.horario[idx].fechamento = fechamento;
+            dados.horario[idx].fechado = fechado;
+          } else {
+            dados.horario.push({ dia, abertura, fechamento, fechado });
+          }
+        }
+        salvarDados();
+        alert('✅ Horário salvo!');
+      }
+
       function novoProduto() {
         const nome = prompt('Nome do produto'); if (!nome) return;
         const preco = parseFloat(prompt('Preço (R$)')); if (isNaN(preco)) return;
         const categoria = prompt('Categoria (Fritos/Assados/Lanches/Doces)', 'Fritos');
+        const imagem = prompt('URL da imagem (link do Supabase Storage)', 'https://via.placeholder.com/300x200');
         const novoId = dados.produtos.length ? Math.max(...dados.produtos.map(p => p.id)) + 1 : 1;
-        dados.produtos.push({ id: novoId, nome, preco, categoria, unidade: 'Cento (100 un.)', descricao: '', imagem: 'https://via.placeholder.com/300x200' });
+        dados.produtos.push({ id: novoId, nome, preco, categoria, unidade: 'Cento (100 un.)', descricao: '', imagem });
         salvarDados();
         renderizarSite();
         renderizarAdmin();
@@ -994,6 +1066,8 @@
         const nome = prompt('Nome', p.nome); if (nome) p.nome = nome;
         const preco = parseFloat(prompt('Preço', p.preco)); if (!isNaN(preco)) p.preco = preco;
         const categoria = prompt('Categoria', p.categoria); if (categoria) p.categoria = categoria;
+        const imagem = prompt('URL da imagem', p.imagem);
+        if (imagem) p.imagem = imagem;
         salvarDados();
         renderizarSite();
         renderizarAdmin();
@@ -1097,6 +1171,7 @@
       window.mudarAba = mudarAba;
       window.salvarConfig = salvarConfig;
       window.salvarRedes = salvarRedes;
+      window.salvarHorario = salvarHorario;
       window.novoProduto = novoProduto;
       window.editarProduto = editarProduto;
       window.excluirProduto = excluirProduto;
